@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,10 +29,7 @@ export function Navbar() {
         <div className='flex justify-between items-center h-16'>
           {/* Logo */}
           <div className='flex items-center space-x-2'>
-            <div className='w-8 h-8 bg-black flex items-center justify-center'>
-              <div className='w-0 h-0 border-l-[6px] border-r-[6px] border-b-[10px] border-l-transparent border-r-transparent border-b-white'></div>
-            </div>
-            <span className='text-xl font-bold text-gray-900'>GETAVAILS</span>
+            <Image src='/logo.png' alt='Logo' width={56} height={56} />
           </div>
 
           {/* Desktop Navigation */}
@@ -40,7 +38,7 @@ export function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className='text-gray-600 hover:text-gray-900 transition-colors duration-200 font-medium'
+                className='text-[#6B7280] hover:text-gray-900 transition-colors duration-200 font-medium'
               >
                 {item.name}
               </Link>
