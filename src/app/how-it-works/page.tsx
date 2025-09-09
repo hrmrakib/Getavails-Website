@@ -1,13 +1,13 @@
-import { AIAssistantSection } from "@/components/how-it-works/AiAssistantSection";
+import ContactFormSection from "@/components/contact/ContactFormSection";
 import { HowItWorksHeroSection } from "@/components/how-it-works/HowItWorksHeroSection";
-import { RoleJourneySection } from "@/components/how-it-works/RoleJourneySection";
+import ProcessFlow from "@/components/how-it-works/ProcessFlow";
 
 export default function HowItWorksPage() {
   return (
     <div>
       <HowItWorksHeroSection />
-      <RoleJourneySection />
-      <AIAssistantSection />
+      <ProcessFlow />
+      <ContactFormSection />
     </div>
   );
 }

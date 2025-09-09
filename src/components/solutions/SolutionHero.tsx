@@ -1,7 +1,7 @@
 export default function SolutionsHeroSection() {
   return (
     <section className='relative w-full px-4 py-6 md:pb-24'>
-      <div className='mx-auto max-w-7xl'>
+      <div className='mx-auto container'>
         <div
           className='relative overflow-hidden rounded-3xl bg-cover bg-center bg-no-repeat px-8 py-16 md:px-16 md:py-48'
           style={{

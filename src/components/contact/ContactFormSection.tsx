@@ -15,7 +15,7 @@ const roles = [
   { id: "buyer", label: "Buyer" },
 ];
 
-export function ContactSection() {
+export default function ContactFormSection() {
   const [selectedRole, setSelectedRole] = useState("artist");
   const [formData, setFormData] = useState({
     name: "",
@@ -48,62 +48,62 @@ export function ContactSection() {
 
   return (
     <section className='py-16 px-4 bg-gray-50'>
-      <div className='max-w-7xl mx-auto'>
+      <div className='container mx-auto'>
         <div className='grid lg:grid-cols-2 gap-12 lg:gap-16 items-start'>
           {/* Left side - Contact Info */}
-          <div className='space-y-8'>
+          <div className='order-2 lg:order-1 space-y-8'>
             <div>
-              <h2 className='text-4xl lg:text-5xl font-bold text-gray-900 leading-tight'>
-                Let&apos;s talk <br className='hidden sm:block' />
-                on something <span className='text-blue-600'>great</span>{" "}
-                <br className='hidden sm:block' />
-                together
+              <h2 className='text-4xl lg:text-6xl font-bold text-[#235789] leading-tight'>
+                Have Questions?
+                <span className='text-[#2C73B8]'> Let’s Chat.</span>{" "}
               </h2>
             </div>
 
             <div className='space-y-6'>
               <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center'>
-                  <Mail className='w-6 h-6 text-blue-600' />
+                <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
+                  <Mail className='w-6 h-6 text-[#235789]' />
                 </div>
-                <span className='text-lg text-gray-700'>
+                <span className='text-lg text-[#235789]'>
                   support@getavails.com
                 </span>
               </div>
 
               <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center'>
-                  <Phone className='w-6 h-6 text-blue-600' />
+                <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
+                  <Phone className='w-6 h-6 text-[#235789]' />
                 </div>
-                <span className='text-lg text-gray-700'>+1 (555) 123-4567</span>
+                <span className='text-lg text-[#235789]'>
+                  +1 (555) 123-4567
+                </span>
               </div>
 
               <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center'>
-                  <MapPin className='w-6 h-6 text-blue-600' />
+                <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
+                  <MapPin className='w-6 h-6 text-[#235789]' />
                 </div>
-                <span className='text-lg text-gray-700'>
+                <span className='text-lg text-[#235789]'>
                   Remote-first / USA HQ
                 </span>
               </div>
             </div>
 
             <div className='flex gap-4'>
-              <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer'>
-                <Linkedin className='w-6 h-6 text-blue-600' />
+              <div className='w-12 h-12 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer'>
+                <Linkedin className='w-6 h-6 text-[#235789]' />
               </div>
-              <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer'>
-                <Mail className='w-6 h-6 text-blue-600' />
+              <div className='w-12 h-12 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer'>
+                <Mail className='w-6 h-6 text-[#235789]' />
               </div>
             </div>
           </div>
 
           {/* Right side - Contact Form */}
-          <div className='bg-white rounded-2xl p-8 shadow-lg border border-gray-200'>
+          <div className='order-1 lg:order-2 bg-white rounded-2xl p-8 shadow-xl border border-[#23578933]'>
             <form onSubmit={handleSubmit} className='space-y-6'>
               {/* Role Selection */}
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-3'>
+                <label className='block text-2xl font-medium text-[#235789] mb-3'>
                   My role is:
                 </label>
                 <div className='flex flex-wrap gap-3'>
@@ -114,8 +114,8 @@ export function ContactSection() {
                       onClick={() => setSelectedRole(role.id)}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                         selectedRole === role.id
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          ? "bg-[#235789] text-white"
+                          : "bg-gray-100 text-[#235789] hover:bg-gray-200"
                       }`}
                     >
                       {role.label}
@@ -128,7 +128,7 @@ export function ContactSection() {
               <div>
                 <label
                   htmlFor='name'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-lg font-medium text-[#235789] mb-2'
                 >
                   Your name
                 </label>
@@ -140,7 +140,7 @@ export function ContactSection() {
                   onChange={handleInputChange}
                   placeholder='Jhon Smith'
                   required
-                  className='w-full'
+                  className='w-full h-12'
                 />
               </div>
 
@@ -148,7 +148,7 @@ export function ContactSection() {
               <div>
                 <label
                   htmlFor='email'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-lg font-medium text-[#235789] mb-2'
                 >
                   Your email
                 </label>
@@ -160,7 +160,7 @@ export function ContactSection() {
                   onChange={handleInputChange}
                   placeholder='email@gmail.com'
                   required
-                  className='w-full'
+                  className='w-full h-12'
                 />
               </div>
 
@@ -168,7 +168,7 @@ export function ContactSection() {
               <div>
                 <label
                   htmlFor='message'
-                  className='block text-sm font-medium text-gray-700 mb-2'
+                  className='block text-lg font-medium text-[#235789] mb-2'
                 >
                   Your message
                 </label>
@@ -178,7 +178,7 @@ export function ContactSection() {
                   value={formData.message}
                   onChange={handleInputChange}
                   placeholder='Tell us about your project...'
-                  rows={4}
+                  rows={6}
                   required
                   className='w-full resize-none'
                 />
@@ -188,7 +188,7 @@ export function ContactSection() {
               <Button
                 type='submit'
                 disabled={isSubmitting}
-                className='w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-base font-medium'
+                className='w-full h-12 bg-[#235789] hover:bg-[#155996] text-white py-3 text-base font-medium cursor-pointer'
               >
                 {isSubmitting ? "Sending..." : "Send message"}
               </Button>

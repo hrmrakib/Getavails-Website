@@ -51,7 +51,7 @@ export function CorePlatformSection() {
 
   return (
     <section className='py-16 px-4 sm:px-6 lg:px-8 bg-gray-50'>
-      <div className='max-w-7xl mx-auto'>
+      <div className='mx-auto container'>
         {/* Header */}
         <div className='text-center mb-16'>
           <h2 className='text-3xl md:text-4xl font-bold text-[#235789] mb-4 text-balance'>
@@ -70,7 +70,7 @@ export function CorePlatformSection() {
             return (
               <div
                 key={index}
-                className='bg-white rounded-xl border border-[#1E1E1E] p-6 hover:shadow-lg transition-shadow duration-300'
+                className='bg-white rounded-xl border border-[#1E1E1E] px-6 py-10 hover:shadow-lg transition-shadow duration-300'
               >
                 <div className='flex items-center gap-3 mb-4'>
                   <div className='flex-shrink-0'>
