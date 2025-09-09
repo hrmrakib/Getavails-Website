@@ -35,7 +35,7 @@ export function HeroSection() {
           <div className='w-full space-y-8'>
             {/* Main heading */}
             <div className='space-y-4'>
-              <h1 className='text-4xl lg:text-5xl xl:text-[48px] font-bold text-[#1E1E1E] leading-tight text-balance mb-8'>
+              <h1 className='text-4xl xl:text-[48px] font-bold text-primary leading-tight text-balance mb-8'>
                 Smarter Talent Booking, All in One Place
               </h1>
               <p className='max-w-[550px] text-lg lg:text-xl text-[#6B7280] leading-relaxed text-pretty'>
@@ -101,8 +101,9 @@ export function HeroSection() {
 
               {/* Search button */}
               <Button
+                disabled={!searchQuery || !location || !dateRange}
                 onClick={handleSearch}
-                className='w-full h-12 bg-[#1E1E1E] hover:bg-gray-800 text-white rounded-3xl font-medium cursor-pointer'
+                className='w-full h-12 bg-[#1E1E1E] hover:bg-gray-800 text-white rounded-3xl font-medium cursor-pointer disabled:opacity-100 disabled:cursor-not-allowed'
               >
                 <SearchIcon className='mr-2 h-5 w-5' />
                 Search Availability

@@ -73,9 +73,9 @@ export function RoleJourneySection() {
   return (
     <section className='py-16 px-4 sm:px-6 lg:px-8 bg-white'>
       <div className='max-w-7xl mx-auto'>
-        <div className='grid lg:grid-cols-2 gap-12 items-center'>
+        <div className='flex items-center gap-12'>
           {/* Left side - Journey Accordion */}
-          <div className='space-y-4'>
+          <div className='w-1/2 space-y-4'>
             {journeys.map((journey) => {
               const Icon = journey.icon;
               const isExpanded = expandedJourney === journey.id;
@@ -126,13 +126,13 @@ export function RoleJourneySection() {
           </div>
 
           {/* Right side - Studio Image */}
-          <div className='lg:order-last'>
+          <div className='w-1/2'>
             <div className='relative rounded-2xl overflow-hidden'>
               <Image
-                src='/studio-team.png'
+                src='/agent.png'
                 alt='Music production team working in recording studio'
                 width={600}
-                height={400}
+                height={600}
                 className='w-full h-auto object-cover'
                 priority
               />

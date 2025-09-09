@@ -24,9 +24,9 @@ export function Navbar() {
   ];
 
   return (
-    <nav className='bg-white border-b border-gray-100 sticky top-0 z-50'>
+    <nav className='bg-white sticky top-0 z-50'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='flex justify-between items-center h-16'>
+        <div className='h-24 flex justify-between items-center'>
           {/* Logo */}
           <div className='flex items-center space-x-2'>
             <Image src='/logo.png' alt='Logo' width={56} height={56} />
@@ -49,13 +49,9 @@ export function Navbar() {
           <div className='hidden md:flex items-center space-x-4'>
             <Button
               variant='outline'
-              className='border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent'
+              className='border-[#235789] text-[#235789] hover:bg-gray-50 bg-transparent rounded-4xl cursor-pointer'
             >
               Login
-            </Button>
-            <Button className='bg-blue-600 hover:bg-blue-700 text-white'>
-              Get Started
-              <ArrowRight className='ml-2 h-4 w-4' />
             </Button>
           </div>
 

@@ -18,7 +18,7 @@ const features = [
     description:
       "Quickly onboard and set up a role-based profile to start using GetAvails.",
     icon: User,
-    color: "blue",
+    color: "bg-blue-800",
     buttonText: "Start Now",
     features: [
       "Role-based onboarding (Agent, Artist, Venue, Buyer)",
@@ -34,7 +34,7 @@ const features = [
     description:
       "Browse and filter through artists, venues, and available events with smart search.",
     icon: Search,
-    color: "gold",
+    color: "bg-yellow-700",
     buttonText: "Explore Listings",
     features: [
       "Role-based onboarding (Agent, Artist, Venue, Buyer)",
@@ -50,7 +50,7 @@ const features = [
     description:
       "Send offers, submit inquiries, and manage negotiations - all inside the platform.",
     icon: MessageSquare,
-    color: "red",
+    color: "bg-red-700",
     buttonText: "See How It Works",
     features: [
       "Role-based onboarding (Agent, Artist, Venue, Buyer)",
@@ -108,10 +108,10 @@ export function FeaturesSection() {
       <div className='max-w-7xl mx-auto'>
         {/* Header */}
         <div className='text-center mb-12'>
-          <h2 className='text-3xl md:text-4xl font-bold text-blue-600 mb-4 text-balance'>
+          <h2 className='text-3xl md:text-[36px] font-bold text-[#235789] mb-4 text-balance'>
             Your Talent Booking Journey, Simplified
           </h2>
-          <p className='text-gray-600 text-lg max-w-2xl mx-auto text-pretty'>
+          <p className='text-[#6B7280] text-lg max-w-xl mx-auto text-pretty'>
             Lorem ipsum dolor sit amet consectetur. Dignissim maecenas molestie
             arcu sem sit sem.
           </p>
@@ -119,56 +119,48 @@ export function FeaturesSection() {
 
         {/* Desktop Layout */}
         <div className='hidden md:grid md:grid-cols-3 gap-8'>
-          {features.map((feature) => {
-            const IconComponent = feature.icon;
-            const colors =
-              colorClasses[feature.color as keyof typeof colorClasses];
-
-            return (
-              <Card
-                key={feature.id}
-                className='border border-gray-200 rounded-2xl p-6 bg-white shadow-sm hover:shadow-md transition-shadow'
-              >
-                <CardContent className='p-0'>
-                  <div className='flex items-center gap-3 mb-4'>
-                    <div className='p-2 rounded-lg bg-gray-50'>
-                      <IconComponent className={`w-6 h-6 ${colors.icon}`} />
-                    </div>
-                    <h3 className='text-xl font-semibold text-gray-900'>
-                      {feature.title}
-                    </h3>
+          {features.map((feature) => (
+            <Card
+              key={feature.id}
+              className='border border-gray-200 rounded-2xl p-6 bg-white shadow-sm hover:shadow-md transition-shadow'
+            >
+              <CardContent className='p-0'>
+                <div className='flex items-center gap-3 mb-4'>
+                  <div className='p-2 rounded-lg bg-gray-50'>
+                    {/* <IconComponent className={`w-6 h-6 `} /> */}
                   </div>
+                  <h3 className='text-xl font-semibold text-gray-900'>
+                    {feature.title}
+                  </h3>
+                </div>
 
-                  <p className='text-gray-600 mb-6 text-pretty'>
-                    {feature.description}
-                  </p>
+                <p className='text-gray-600 mb-6 text-pretty'>
+                  {feature.description}
+                </p>
 
-                  <div className='mb-8'>
-                    <h4 className='font-medium text-gray-900 mb-3'>
-                      Top Features:
-                    </h4>
-                    <ul className='space-y-2'>
-                      {feature.features.map((item, index) => (
-                        <li
-                          key={index}
-                          className='text-sm text-gray-600 flex items-start gap-2'
-                        >
-                          <span className='w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0' />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className='mb-8'>
+                  <h4 className='font-medium text-gray-900 mb-3'>
+                    Top Features:
+                  </h4>
+                  <ul className='space-y-2'>
+                    {feature.features.map((item, index) => (
+                      <li
+                        key={index}
+                        className='text-sm text-gray-600 flex items-start gap-2'
+                      >
+                        <span className='w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0' />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-                  <Button
-                    className={`w-full ${colors.button} rounded-full py-3 font-medium`}
-                  >
-                    {feature.buttonText} →
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+                <Button className={`w-full  rounded-full py-3 font-medium`}>
+                  {feature.buttonText} →
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Mobile Carousel */}
@@ -189,9 +181,9 @@ export function FeaturesSection() {
                       <CardContent className='p-0'>
                         <div className='flex items-center gap-3 mb-4'>
                           <div className='p-2 rounded-lg bg-gray-50'>
-                            <IconComponent
+                            {/* <IconComponent
                               className={`w-6 h-6 ${colors.icon}`}
-                            />
+                            /> */}
                           </div>
                           <h3 className='text-xl font-semibold text-gray-900'>
                             {feature.title}
@@ -220,7 +212,7 @@ export function FeaturesSection() {
                         </div>
 
                         <Button
-                          className={`w-full ${colors.button} rounded-full py-3 font-medium`}
+                          className={`w-full  rounded-full py-3 font-medium`}
                         >
                           {feature.buttonText} →
                         </Button>

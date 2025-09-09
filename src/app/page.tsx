@@ -6,13 +6,15 @@ import { HeroSection } from "@/components/home/Hero";
 import CarouselCards from "@/components/home/ok";
 import { PricingSection } from "@/components/home/PricingSection";
 import { RoleSelectionSection } from "@/components/home/RoleSelectionSection";
+import { RoleJourneySection } from "@/components/how-it-works/RoleJourneySection";
 import React from "react";
 
 const HomePage = () => {
   return (
-    <div>
+    <div className='bg-white'>
       <HeroSection />
       <FeaturesSection />
+      <RoleJourneySection />
       <CarouselCards />
       <ComprehensiveFeaturesSection />
       <RoleSelectionSection />
