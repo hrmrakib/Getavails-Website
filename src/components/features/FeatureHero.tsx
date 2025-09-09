@@ -4,9 +4,9 @@ import Image from "next/image";
 
 export default function FeatureHeroSection() {
   return (
-    <section className='py-16 px-4 bg-white'>
+    <section className='py-8 lg:py-16 px-4 bg-white'>
       <div className='max-w-7xl mx-auto'>
-        <div className='grid lg:grid-cols-2 gap-12 lg:gap-24 items-center'>
+        <div className='grid lg:grid-cols-2 gap-6 lg:gap-24 items-center'>
           {/* Image */}
           <div className='order-2 lg:order-1'>
             <div className='relative aspect-[4/3] rounded-2xl overflow-hidden'>

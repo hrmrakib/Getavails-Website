@@ -98,7 +98,7 @@ export default function PlatformFeatures() {
             return (
               <div
                 key={index}
-                className='bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow duration-300'
+                className='bg-white rounded-lg border border-[#1E1E1E] p-6 hover:shadow-lg transition-shadow duration-300'
               >
                 {/* Icon */}
                 <div className='mb-4'>

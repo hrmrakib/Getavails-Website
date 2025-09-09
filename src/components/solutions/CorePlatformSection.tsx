@@ -54,10 +54,10 @@ export function CorePlatformSection() {
       <div className='max-w-7xl mx-auto'>
         {/* Header */}
         <div className='text-center mb-16'>
-          <h2 className='text-3xl md:text-4xl font-bold text-blue-600 mb-4 text-balance'>
+          <h2 className='text-3xl md:text-4xl font-bold text-[#235789] mb-4 text-balance'>
             One Core Platform. Shared Superpowers.
           </h2>
-          <p className='text-lg text-gray-600 max-w-3xl mx-auto text-pretty'>
+          <p className='text-lg text-[#6B7280] max-w-[692px] mx-auto text-pretty'>
             No matter your role, Getavails equips you with robust tools to get
             the job done - faster, smarter, and stress-free.
           </p>
@@ -70,17 +70,17 @@ export function CorePlatformSection() {
             return (
               <div
                 key={index}
-                className='bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow duration-300'
+                className='bg-white rounded-xl border border-[#1E1E1E] p-6 hover:shadow-lg transition-shadow duration-300'
               >
                 <div className='flex items-center gap-3 mb-4'>
                   <div className='flex-shrink-0'>
-                    <IconComponent className='h-6 w-6 text-blue-600' />
+                    <IconComponent className='h-6 w-6 text-[#235789]' />
                   </div>
-                  <h3 className='text-lg font-semibold text-gray-900'>
+                  <h3 className='text-lg font-semibold text-[#235789]'>
                     {feature.title}
                   </h3>
                 </div>
-                <p className='text-gray-600 leading-relaxed'>
+                <p className='text-[#6B7280] leading-relaxed'>
                   {feature.description}
                 </p>
               </div>
