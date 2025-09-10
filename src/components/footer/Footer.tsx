@@ -2,22 +2,44 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Linkedin, Twitter, Youtube } from "lucide-react";
+import Image from "next/image";
+
+const explore = [
+  { name: "Home", href: "/" },
+  { name: "Features", href: "/features" },
+  { name: "How It Works", href: "/how-it-works" },
+  { name: "Blogs", href: "/blog" },
+  { name: "Contact Us", href: "/contact" },
+];
+
+const role = [
+  { name: "Agents", href: "/agents" },
+  { name: "Artists", href: "/artists" },
+  { name: "Venues", href: "/venues" },
+  { name: "Buyers", href: "/buyers" },
+];
+
+const company = [
+  { name: "About Us", href: "/about" },
+  { name: "Terms of Use", href: "/terms" },
+  { name: "Privacy Policy", href: "/privacy" },
+];
+
+const contact = ["+1 (123) 456-7890", "support@getavails.com"];
 
 export function FooterSection() {
   return (
-    <footer className='z-50 bg-gray-900 text-white'>
+    <footer className='z-50 bg-[#1E1E1E] text-white'>
       {/* CTA Section */}
       <div className='px-4 py-16 sm:px-6 lg:px-8'>
         <div className='mx-auto max-w-4xl text-center'>
           <h2 className='text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl text-balance'>
-            Book Smarter. Tour Faster.
-            <br />
-            Getavails is Here.
+            Start booking smarter.
           </h2>
           <div className='mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center'>
             <Button
               size='lg'
-              className='bg-white text-gray-900 hover:bg-gray-100 font-medium'
+              className='bg-white text-gray-900 hover:bg-gray-100 font-medium cursor-pointer'
             >
               Get Started - It&apos;s Free
               <ArrowRight className='ml-2 h-4 w-4' />
@@ -25,7 +47,7 @@ export function FooterSection() {
             <Button
               size='lg'
               variant='outline'
-              className='border-gray-600 text-white hover:bg-gray-800 font-medium bg-transparent'
+              className='border-[#FFFFFF] text-white hover:bg-gray-100 font-medium bg-transparent cursor-pointer'
             >
               Learn how it works
             </Button>
@@ -44,46 +66,16 @@ export function FooterSection() {
             <div>
               <h3 className='text-sm font-semibold text-white mb-4'>Explore</h3>
               <ul className='space-y-3'>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    How It Works
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    Blogs
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    Contact Us
-                  </a>
-                </li>
+                {explore.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href={item.href}
+                      className='text-gray-400 hover:text-white transition-colors'
+                    >
+                      {item.name}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -91,38 +83,16 @@ export function FooterSection() {
             <div>
               <h3 className='text-sm font-semibold text-white mb-4'>By Role</h3>
               <ul className='space-y-3'>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    For Artists
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    For Venues
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    For Agents
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    For Talent Buyers
-                  </a>
-                </li>
+                {role.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href={item.href}
+                      className='text-gray-400 hover:text-white transition-colors'
+                    >
+                      {item.name}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -130,22 +100,16 @@ export function FooterSection() {
             <div>
               <h3 className='text-sm font-semibold text-white mb-4'>Company</h3>
               <ul className='space-y-3'>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    Terms & Conditions
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='#'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    Privacy
-                  </a>
-                </li>
+                {company.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href={item.href}
+                      className='text-gray-400 hover:text-white transition-colors'
+                    >
+                      {item.name}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -153,30 +117,16 @@ export function FooterSection() {
             <div>
               <h3 className='text-sm font-semibold text-white mb-4'>Contact</h3>
               <ul className='space-y-3'>
-                <li>
-                  <a
-                    href='mailto:hello@getavails.com'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    hello@getavails.com
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='mailto:help@getavails.com'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    help@getavails.com
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href='mailto:jobs@getavails.com'
-                    className='text-gray-400 hover:text-white transition-colors'
-                  >
-                    jobs@getavails.com
-                  </a>
-                </li>
+                {contact.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href={`tel:${item}`}
+                      className='text-gray-400 hover:text-white transition-colors'
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -218,9 +168,13 @@ export function FooterSection() {
 
             <div className='flex items-center gap-4'>
               <div className='flex items-center gap-2 text-sm text-gray-400'>
-                <div className='w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center'>
-                  <span className='text-white text-xs'>✓</span>
-                </div>
+                <Image
+                  src='/checked.svg'
+                  alt='Google'
+                  width={24}
+                  height={24}
+                  title='Verified by Google'
+                />
                 Google security
               </div>
               <div className='flex items-center gap-3'>
