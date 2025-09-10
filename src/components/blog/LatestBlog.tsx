@@ -129,7 +129,7 @@ export default function LatestBlog() {
   };
 
   return (
-    <div className='min-h-screen bg-white py-20'>
+    <div className='relative z-0 min-h-screen bg-white py-20'>
       <div className='container mx-auto px-4 py-8'>
         {/* Header Section */}
         <div className='text-center mb-8'>
@@ -176,22 +176,24 @@ export default function LatestBlog() {
                 >
                   {post.category}
                 </div>
-                <h2 className='text-lg font-bold text-gray-900 mb-2 line-clamp-2'>
+                <h2 className='text-xl font-semibold text-[#000000] mb-2 line-clamp-2'>
                   {post.title}
                 </h2>
-                <p className='text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2'>
+                <p className='text-[#4D4D4D] text-sm lg:text-base leading-relaxed mb-4 line-clamp-2'>
                   {post.description}
                 </p>
                 <div className='flex items-center gap-3'>
-                  <Avatar className='w-8 h-8'>
-                    <AvatarImage src='/professional-headshot.png' />
+                  <Avatar className='w-10 h-10'>
+                    <AvatarImage src='/user.png' />
                     <AvatarFallback>LM</AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className='text-sm font-medium text-gray-900'>
+                    <div className='text-sm lg:text-base font-medium text-[#000000]'>
                       {post.author}
                     </div>
-                    <div className='text-xs text-gray-500'>{post.date}</div>
+                    <div className='text-xs text-[#838383] font-medium'>
+                      {post.date}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -10,7 +10,6 @@ import { useState } from "react";
 import { X, Cloud } from "lucide-react";
 
 export default function BlogHero() {
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -39,7 +38,7 @@ export default function BlogHero() {
   };
 
   return (
-    <div className='z-0 h-[630px] bg-[url("/blog-banner.jpg")] bg-cover relative overflow-hidden'>
+    <div className='relative h-[630px] bg-[url("/blog-banner.jpg")] bg-cover overflow-hidden'>
       {/* Golden light rays background effect */}
       <div className='absolute inset-0 opacity-30'>
         <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%]'>
@@ -49,7 +48,7 @@ export default function BlogHero() {
         </div>
       </div>
 
-      <div className='relative z-10 container mx-auto px-4 py-8 md:py-16'>
+      <div className='relative container mx-auto px-4 py-8 md:py-16'>
         {/* Hero Section */}
         <div className='h-full flex flex-col items-center justify-center text-center mb-12 md:mb-20'>
           <h1 className='text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 text-balance'>
@@ -66,31 +65,21 @@ export default function BlogHero() {
             Share your Blog
           </Button>
         </div>
-
-        {/* Additional content area for selected cards */}
-        {selectedCard && (
-          <div className='mt-8 p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20'>
-            <p className='text-white text-center'>
-              You selected the {selectedCard} card. Additional content or
-              actions can be displayed here.
-            </p>
-          </div>
-        )}
       </div>
 
       {isModalOpen && (
-        <div className='z-[999] fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4'>
-          <div className='bg-white rounded-2xl w-full max-w-md mx-auto shadow-2xl'>
+        <div className='z-50 fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4'>
+          <div className='bg-white rounded-2xl w-full max-w-[640px] mx-auto shadow-2xl'>
             {/* Modal Header */}
-            <div className='flex items-center justify-between p-6 border-b border-gray-200'>
-              <h2 className='text-xl font-semibold text-gray-900'>
+            <div className='flex items-center justify-between p-6 border-b border-gray-100'>
+              <h2 className='text-2xl lg:text-[32px] font-medium text-[#222222]'>
                 Add New Blog
               </h2>
               <button
                 onClick={handleCloseModal}
                 className='p-1 hover:bg-gray-100 rounded-full transition-colors'
               >
-                <X className='w-5 h-5 text-gray-500' />
+                <X className='w-8 h-8 text-gray-500' />
               </button>
             </div>
 
@@ -98,7 +87,7 @@ export default function BlogHero() {
             <form onSubmit={handleSubmit} className='p-6 space-y-6'>
               {/* Blog Title */}
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                <label className='block text-base font-medium text-[#222222] mb-2'>
                   Blog Title
                 </label>
                 <Input
@@ -108,14 +97,14 @@ export default function BlogHero() {
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, title: e.target.value }))
                   }
-                  className='w-full'
+                  className='w-full h-14 !bg-[#F3F3F3] text-[#222222] text-lg'
                   required
                 />
               </div>
 
               {/* Blog Details */}
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                <label className='block text-base font-medium text-[#222222] mb-2'>
                   Blog Details
                 </label>
                 <Textarea
@@ -151,7 +140,7 @@ export default function BlogHero() {
                       <Button
                         type='button'
                         variant='outline'
-                        className='bg-blue-600 text-white hover:bg-blue-700 border-blue-600'
+                        className='bg-[#235789] text-white hover:bg-[#235789] border-[#235789]'
                         onClick={() =>
                           document.getElementById("file-upload")?.click()
                         }
@@ -159,7 +148,7 @@ export default function BlogHero() {
                         Select File
                       </Button>
                     </label>
-                    <p className='text-xs text-gray-500 mt-2'>
+                    <p className='text-xs text-[#333338] font-medium mt-2'>
                       Support file format: JPG, PNG, JPEG | Mobile phone photos
                     </p>
                     {formData.image && (
@@ -174,7 +163,7 @@ export default function BlogHero() {
               {/* Submit Button */}
               <Button
                 type='submit'
-                className='w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium'
+                className='w-full !h-12 bg-[#235789] hover:bg-[#235789] text-lg text-white py-3 rounded-lg font-medium'
               >
                 Submit
               </Button>

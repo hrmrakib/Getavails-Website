@@ -5,7 +5,7 @@ import React from "react";
 
 const BlogPage = () => {
   return (
-    <div>
+    <div className='relative isolate'>
       <BlogHero />
       <BlogHeroContent />
       <LatestBlog />
