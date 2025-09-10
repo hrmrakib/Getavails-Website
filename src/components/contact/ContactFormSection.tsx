@@ -15,7 +15,11 @@ const roles = [
   { id: "buyer", label: "Buyer" },
 ];
 
-export default function ContactFormSection() {
+export default function ContactFormSection({
+  haveLeft = true,
+}: {
+  haveLeft: boolean;
+}) {
   const [selectedRole, setSelectedRole] = useState("artist");
   const [formData, setFormData] = useState({
     name: "",
@@ -49,57 +53,69 @@ export default function ContactFormSection() {
   return (
     <section className='py-16 px-4 bg-gray-50'>
       <div className='container mx-auto'>
-        <div className='grid lg:grid-cols-2 gap-12 lg:gap-16 items-start'>
+        <div
+          className={`${
+            haveLeft
+              ? "grid lg:grid-cols-2 gap-12 lg:gap-16 items-start justify-center"
+              : "flex flex-col items-center justify-center"
+          }`}
+        >
           {/* Left side - Contact Info */}
-          <div className='order-2 lg:order-1 space-y-8'>
-            <div>
-              <h2 className='text-2xl lg:text-6xl font-bold text-[#235789] leading-tight'>
-                Have Questions?
-                <span className='text-[#2C73B8]'> Let’s Chat.</span>{" "}
-              </h2>
-            </div>
+          {haveLeft ? (
+            <div className='order-2 lg:order-1 space-y-8'>
+              <div>
+                <h2 className='text-2xl lg:text-6xl font-bold text-[#235789] leading-tight'>
+                  Have Questions?
+                  <span className='text-[#2C73B8]'> Let’s Chat.</span>{" "}
+                </h2>
+              </div>
 
-            <div className='space-y-6'>
-              <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
+              <div className='space-y-6'>
+                <div className='flex items-center gap-4'>
+                  <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
+                    <Mail className='w-6 h-6 text-[#235789]' />
+                  </div>
+                  <span className='text-lg text-[#235789]'>
+                    support@getavails.com
+                  </span>
+                </div>
+
+                <div className='flex items-center gap-4'>
+                  <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
+                    <Phone className='w-6 h-6 text-[#235789]' />
+                  </div>
+                  <span className='text-lg text-[#235789]'>
+                    +1 (555) 123-4567
+                  </span>
+                </div>
+
+                <div className='flex items-center gap-4'>
+                  <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
+                    <MapPin className='w-6 h-6 text-[#235789]' />
+                  </div>
+                  <span className='text-lg text-[#235789]'>
+                    Remote-first / USA HQ
+                  </span>
+                </div>
+              </div>
+
+              <div className='flex gap-4'>
+                <div className='w-12 h-12 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer'>
+                  <Linkedin className='w-6 h-6 text-[#235789]' />
+                </div>
+                <div className='w-12 h-12 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer'>
                   <Mail className='w-6 h-6 text-[#235789]' />
                 </div>
-                <span className='text-lg text-[#235789]'>
-                  support@getavails.com
-                </span>
-              </div>
-
-              <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
-                  <Phone className='w-6 h-6 text-[#235789]' />
-                </div>
-                <span className='text-lg text-[#235789]'>
-                  +1 (555) 123-4567
-                </span>
-              </div>
-
-              <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
-                  <MapPin className='w-6 h-6 text-[#235789]' />
-                </div>
-                <span className='text-lg text-[#235789]'>
-                  Remote-first / USA HQ
-                </span>
               </div>
             </div>
-
-            <div className='flex gap-4'>
-              <div className='w-12 h-12 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer'>
-                <Linkedin className='w-6 h-6 text-[#235789]' />
-              </div>
-              <div className='w-12 h-12 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer'>
-                <Mail className='w-6 h-6 text-[#235789]' />
-              </div>
-            </div>
-          </div>
+          ) : null}
 
           {/* Right side - Contact Form */}
-          <div className='order-1 lg:order-2 bg-white rounded-2xl p-8 shadow-xl border border-[#23578933]'>
+          <div
+            className={`w-full order-1 lg:order-2 bg-white rounded-2xl p-8 shadow-xl border border-[#23578933] 
+             ${haveLeft ? "" : "max-w-[630px] mx-auto"}
+            `}
+          >
             <form onSubmit={handleSubmit} className='space-y-6'>
               {/* Role Selection */}
               <div>
@@ -178,7 +194,7 @@ export default function ContactFormSection() {
                   value={formData.message}
                   onChange={handleInputChange}
                   placeholder='Tell us about your project...'
-                  rows={6}
+                  rows={9}
                   required
                   className='w-full resize-none'
                 />
