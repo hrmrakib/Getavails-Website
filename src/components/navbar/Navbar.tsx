@@ -25,8 +25,8 @@ export function Navbar() {
 
   return (
     <nav className='sticky top-0 z-50 w-full bg-[#FFFFFF] backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='h-24 flex justify-between items-center'>
+      <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='h-16 lg:h-24 flex justify-between items-center'>
           {/* Logo */}
           <div className='flex items-center space-x-2'>
             <Image src='/logo.png' alt='Logo' width={56} height={56} />

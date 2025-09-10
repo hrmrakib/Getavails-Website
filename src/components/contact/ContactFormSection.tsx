@@ -53,7 +53,7 @@ export default function ContactFormSection() {
           {/* Left side - Contact Info */}
           <div className='order-2 lg:order-1 space-y-8'>
             <div>
-              <h2 className='text-4xl lg:text-6xl font-bold text-[#235789] leading-tight'>
+              <h2 className='text-2xl lg:text-6xl font-bold text-[#235789] leading-tight'>
                 Have Questions?
                 <span className='text-[#2C73B8]'> Let’s Chat.</span>{" "}
               </h2>

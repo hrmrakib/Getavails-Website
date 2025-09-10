@@ -47,29 +47,29 @@ export function ServicesOverviewSection() {
   ];
 
   return (
-    <section className='py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto'>
+    <section className='py-16 px-4 sm:px-6 lg:px-8 container mx-auto'>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
         {services.map((service, index) => {
           const IconComponent = service.icon;
           return (
             <div
               key={index}
-              className='bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300'
+              className='bg-white border border-[#235789] rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300'
             >
-              <div className='flex items-center gap-3 mb-4'>
+              <div className='flex items-center gap-3 mb-6'>
                 <div className='w-8 h-8 text-blue-600 flex-shrink-0'>
                   <IconComponent className='w-full h-full' />
                 </div>
-                <h3 className='text-lg font-semibold text-gray-900'>
+                <h3 className='text-lg font-semibold text-[#235789]'>
                   {service.title}
                 </h3>
               </div>
 
-              <ul className='space-y-2'>
+              <ul className='space-y-4'>
                 {service.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className='flex items-start gap-2'>
-                    <div className='w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0' />
-                    <span className='text-sm text-gray-600 leading-relaxed'>
+                    <div className='w-1.5 h-1.5 bg-[#6B7280] rounded-full mt-2 flex-shrink-0' />
+                    <span className='text-sm text-[#6B7280] leading-relaxed'>
                       {feature}
                     </span>
                   </li>

@@ -1,4 +1,4 @@
-import { ContactSection } from "@/components/contact/ContactSection";
+import ContactFormSection from "@/components/contact/ContactFormSection";
 import { BlogInsightsSection } from "@/components/home/BlogInsightsSection";
 import { ComprehensiveFeaturesSection } from "@/components/home/ComprehensiveFeaturesSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
@@ -20,7 +20,7 @@ const HomePage = () => {
       <RoleSelectionSection />
       <PricingSection />
       <BlogInsightsSection />
-      <ContactSection />
+      <ContactFormSection />
     </div>
   );
 };
