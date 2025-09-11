@@ -18,7 +18,7 @@ const roles = [
 export default function ContactFormSection({
   haveLeft = true,
 }: {
-  haveLeft: boolean;
+  haveLeft?: boolean;
 }) {
   const [selectedRole, setSelectedRole] = useState("artist");
   const [formData, setFormData] = useState({
@@ -70,7 +70,7 @@ export default function ContactFormSection({
                 </h2>
               </div>
 
-              <div className='space-y-6'>
+              <div className='lg:space-y-6'>
                 <div className='flex items-center gap-4'>
                   <div className='w-12 h-12 rounded-lg flex items-center justify-center'>
                     <Mail className='w-6 h-6 text-[#235789]' />

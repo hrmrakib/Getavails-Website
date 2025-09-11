@@ -72,10 +72,10 @@ export function RoleJourneySection() {
 
   return (
     <section className='py-16 px-4 sm:px-6 lg:px-8 bg-white'>
-      <div className='max-w-7xl mx-auto'>
-        <div className='flex items-center gap-12'>
+      <div className='container mx-auto'>
+        <div className='flex flex-col lg:flex-row items-center gap-12'>
           {/* Left side - Journey Accordion */}
-          <div className='w-1/2 space-y-4'>
+          <div className='w-full lg:w-1/2 space-y-4'>
             {journeys.map((journey) => {
               const Icon = journey.icon;
               const isExpanded = expandedJourney === journey.id;
@@ -90,15 +90,15 @@ export function RoleJourneySection() {
                     className='w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors'
                   >
                     <div className='flex items-center gap-3'>
-                      <Icon className='h-6 w-6 text-blue-600' />
-                      <h3 className='text-lg font-semibold text-gray-900'>
+                      <Icon className='h-6 w-6 text-[#235789]' />
+                      <h3 className='text-lg font-semibold text-[#235789]'>
                         {journey.title}
                       </h3>
                     </div>
                     {isExpanded ? (
-                      <ChevronUp className='h-5 w-5 text-gray-500' />
+                      <ChevronUp className='h-5 w-5 text-[#6B7280]' />
                     ) : (
-                      <ChevronDown className='h-5 w-5 text-gray-500' />
+                      <ChevronDown className='h-5 w-5 text-[#6B7280]' />
                     )}
                   </button>
 
@@ -107,14 +107,14 @@ export function RoleJourneySection() {
                       <ul className='space-y-3 mb-6'>
                         {journey.details.map((detail, index) => (
                           <li key={index} className='flex items-start gap-2'>
-                            <div className='w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0' />
-                            <span className='text-gray-600'>{detail}</span>
+                            <div className='w-1.5 h-1.5 bg-[#6B7280] rounded-full mt-2 flex-shrink-0' />
+                            <span className='text-[#6B7280]'>{detail}</span>
                           </li>
                         ))}
                       </ul>
                       <Button
                         variant='outline'
-                        className='text-blue-600 border-blue-600 hover:bg-blue-50 bg-transparent'
+                        className='text-[#235789] border-[#235789] hover:bg-blue-50 bg-transparent'
                       >
                         {journey.buttonText}
                       </Button>
@@ -126,7 +126,7 @@ export function RoleJourneySection() {
           </div>
 
           {/* Right side - Studio Image */}
-          <div className='w-1/2'>
+          <div className='w-full lg:w-1/2'>
             <div className='relative rounded-2xl overflow-hidden'>
               <Image
                 src='/agent.png'

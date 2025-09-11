@@ -1,102 +1,210 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow, Pagination } from "swiper/modules";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
 import Image from "next/image";
 import Link from "next/link";
 
-const blogPosts = [
+interface InsightCard {
+  id: number;
+  image: string;
+  title: string;
+  description: string;
+}
+
+const insights: InsightCard[] = [
   {
     id: 1,
+    image:
+      "https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=800",
     title: "How Agents Can Streamline Their Artist Booking Workflow",
     description:
       "Learn how Getavails helps agents manage multiple artists, track offers, and close more bookings with less back-and-forth.",
-    image: "/blog-warehouse.png",
-    slug: "streamline-artist-booking-workflow",
   },
   {
     id: 2,
-    title: "How Agents Can Streamline Their Artist Booking Workflow",
+    image:
+      "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=800",
+    title: "Digital Marketing Strategies for Musicians",
     description:
-      "Learn how Getavails helps agents manage multiple artists, track offers, and close more bookings with less back-and-forth.",
-    image: "/blog-concert.png",
-    slug: "streamline-artist-booking-workflow-2",
+      "Discover effective digital marketing techniques to help your artists reach wider audiences and build stronger fan engagement.",
   },
   {
     id: 3,
-    title: "How Agents Can Streamline Their Artist Booking Workflow",
+    image:
+      "https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800",
+    title: "Building Long-Term Artist Relationships",
     description:
-      "Learn how Getavails helps agents manage multiple artists, track offers, and close more bookings with less back-and-forth.",
-    image: "/blog-person.png",
-    slug: "streamline-artist-booking-workflow-3",
+      "Essential tips for agents on fostering lasting partnerships with artists and creating mutually beneficial collaborations.",
+  },
+  {
+    id: 4,
+    image:
+      "https://images.pexels.com/photos/164938/pexels-photo-164938.jpeg?auto=compress&cs=tinysrgb&w=800",
+    title: "Venue Partnership Best Practices",
+    description:
+      "Learn how to build strong relationships with venues and negotiate better deals for your artists and clients.",
+  },
+  {
+    id: 5,
+    image:
+      "https://images.pexels.com/photos/1047442/pexels-photo-1047442.jpeg?auto=compress&cs=tinysrgb&w=800",
+    title: "Event Production Management",
+    description:
+      "Master the art of coordinating successful events from initial planning through post-event follow-up and analysis.",
   },
 ];
 
-export function BlogInsightsSection() {
+export default function BlogInsightsSection() {
   return (
-    <section className='bg-gray-900 py-16 md:py-24'>
-      <div className='container mx-auto px-4'>
-        {/* Header */}
-        <div className='text-center mb-12 md:mb-16'>
-          <h2 className='text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 text-balance'>
+    <div className='bg-gray-900 min-h-screen py-16'>
+      <div className='max-w-7xl mx-auto px-6'>
+        {/* Header Section */}
+        <div className='text-center mb-16'>
+          <h1 className='text-4xl md:text-5xl font-bold text-white mb-4'>
             Insights from the Stage & Studio
-          </h2>
-          <p className='text-gray-400 text-lg max-w-2xl mx-auto text-balance'>
-            Lorem ipsum dolor sit amet consectetur. Dignissim maecenas molestie
-            arcu sem sit sem.
+          </h1>
+          <p className='text-gray-400 text-lg'>
+            Artists, Agents & Insights — All in One Place.
           </p>
         </div>
 
-        {/* Blog Cards */}
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
-          {blogPosts.map((post) => (
-            <div
-              key={post.id}
-              className='group relative overflow-hidden rounded-2xl bg-gray-800 hover:transform hover:scale-105 transition-all duration-300'
-            >
-              {/* Background Image */}
-              <div className='relative h-80 md:h-96'>
-                <Image
-                  src={post.image || "/placeholder.svg"}
-                  alt={post.title}
-                  fill
-                  className='object-cover transition-transform duration-300 group-hover:scale-110'
-                />
-                {/* Gradient Overlay */}
-                <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent' />
-              </div>
+        {/* Swiper Carousel */}
+        <div className='max-w-6xl mx-auto h-[600px] mb-6 lg:mb-12'>
+          <Swiper
+            effect='coverflow'
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView='auto'
+            coverflowEffect={{
+              rotate: 50,
+              stretch: 0,
+              depth: 100,
+              modifier: 1,
+              slideShadows: true,
+            }}
+            pagination={{
+              clickable: true,
+              bulletClass: "swiper-pagination-bullet custom-bullet",
+              bulletActiveClass:
+                "swiper-pagination-bullet-active custom-bullet-active",
+            }}
+            modules={[EffectCoverflow, Pagination]}
+            className='insights-swiper'
+          >
+            {insights.map((insight) => (
+              <SwiperSlide key={insight.id} className='insight-slide'>
+                <div className='relative w-full h-full rounded-2xl overflow-hidden group cursor-pointer'>
+                  <Image
+                    width={800}
+                    height={600}
+                    src={insight.image}
+                    alt={insight.title}
+                    className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105'
+                  />
 
-              {/* Content */}
-              <div className='absolute bottom-0 left-0 right-0 p-6'>
-                <h3 className='text-white text-xl font-semibold mb-3 text-balance'>
-                  {post.title}
-                </h3>
-                <p className='text-gray-300 text-sm mb-4 line-clamp-3'>
-                  {post.description}
-                </p>
+                  {/* Gradient Overlay */}
+                  <div className='absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent'></div>
 
-                {/* Read More Button */}
-                <Button
-                  variant='outline'
-                  className='w-full bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-sm'
-                  asChild
-                >
-                  <Link href={`/blog/${post.slug}`}>Read More</Link>
-                </Button>
-              </div>
-            </div>
-          ))}
+                  {/* Content */}
+                  <div className='absolute bottom-0 left-0 right-0 p-8'>
+                    <h3 className='text-white text-xl font-bold mb-3 leading-tight'>
+                      {insight.title}
+                    </h3>
+                    <p className='text-gray-300 text-sm mb-6 leading-relaxed'>
+                      {insight.description}
+                    </p>
+                    <button className='w-full flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full hover:bg-white/20 transition-all duration-300 text-sm font-medium'>
+                      Read More
+                      <svg
+                        className='ml-2 w-4 h-4'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M9 5l7 7-7 7'
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
 
         {/* View All Link */}
         <div className='text-center'>
           <Link
             href='/blog'
-            className='text-white hover:text-gray-300 transition-colors duration-200 text-lg font-medium underline underline-offset-4 hover:underline-offset-8'
+            className='inline-flex items-center text-white hover:text-gray-300 transition-colors duration-300 text-lg font-medium group'
           >
             View All Blog Posts
+            <svg
+              className='ml-2 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M17 8l4 4m0 0l-4 4m4-4H3'
+              />
+            </svg>
           </Link>
         </div>
       </div>
-    </section>
+
+      {/* Custom Styles */}
+      <style jsx global>{`
+        .insights-swiper {
+          width: 100%;
+          height: 100%;
+          padding: 20px 0 50px 0;
+        }
+
+        .insight-slide {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 350px !important;
+          height: 500px;
+        }
+
+        .custom-bullet {
+          background: rgba(255, 255, 255, 0.3) !important;
+          width: 12px !important;
+          height: 12px !important;
+          margin: 0 6px !important;
+          opacity: 1 !important;
+          transition: all 0.3s ease !important;
+        }
+
+        .custom-bullet-active {
+          background: white !important;
+          transform: scale(1.3) !important;
+        }
+
+        .swiper-pagination {
+          bottom: 10px !important;
+        }
+
+        .swiper-slide-shadow-left,
+        .swiper-slide-shadow-right {
+          background-image: none !important;
+        }
+      `}</style>
+    </div>
   );
 }

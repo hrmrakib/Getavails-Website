@@ -14,7 +14,13 @@ export function PricingSection() {
       description:
         "For individuals who want to launch a simple portfolio or landing page.",
       price: { monthly: 0, annual: 0 },
-      features: ["Fully responsive Webflow template"],
+      features: [
+        "Fully responsive Webflow template",
+        "1 portfolio page",
+        "Basic SEO setup",
+        "Email support",
+        "Lifetime free updates",
+      ],
       buttonText: "Try now",
       buttonVariant: "default" as const,
       theme: "dark",
@@ -26,7 +32,13 @@ export function PricingSection() {
       description:
         "For teams who want to build stylish websites fast with Webflow.",
       price: { monthly: 299, annual: 199 },
-      features: ["Includes Figma + Webflow files"],
+      features: [
+        "Includes Figma + Webflow files",
+        "Up to 10 project templates",
+        "Custom domain support",
+        "Priority email support",
+        "Monthly design updates",
+      ],
       buttonText: "Subscribe now",
       buttonVariant: "default" as const,
       theme: "blue",
@@ -39,7 +51,13 @@ export function PricingSection() {
       description:
         "For companies who need advanced features and top-tier support.",
       price: { monthly: 699, annual: 499 },
-      features: ["Access to all template collections"],
+      features: [
+        "Access to all template collections",
+        "Unlimited projects",
+        "Advanced SEO tools",
+        "24/7 dedicated support",
+        "Weekly new template drops",
+      ],
       buttonText: "Subscribe now",
       buttonVariant: "default" as const,
       theme: "dark",
@@ -50,36 +68,35 @@ export function PricingSection() {
 
   return (
     <section className='py-16 px-4 bg-gray-50'>
-      <div className='max-w-7xl mx-auto'>
+      <div className='container mx-auto'>
         {/* Header */}
         <div className='text-center mb-12'>
-          <h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-balance'>
+          <h2 className='text-3xl md:text-4xl font-medium text-[#235789] mb-4 text-balance'>
             Free to Start. Powerful When You Upgrade.
           </h2>
-          <p className='text-gray-600 text-lg max-w-2xl mx-auto text-pretty'>
-            Lorem ipsum dolor sit amet consectetur. Dignissim maecenas molestie
-            arcu sem sit sem.
+          <p className='text-[#6B7280] text-lg max-w-[510px] mx-auto text-pretty'>
+            Choose a plan that fits your role — Agent, Venue, Artist, or Buyer.
           </p>
         </div>
 
         {/* Toggle */}
-        <div className='flex justify-center mb-12'>
-          <div className='bg-white rounded-full p-1 shadow-sm border'>
+        <div className='flex justify-center mb-12 lg:mb-20'>
+          <div className='bg-[#235789B2] rounded-full p-1 shadow-sm border'>
             <button
               onClick={() => setIsAnnual(false)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`px-6 py-2 rounded-full text-base font-medium transition-all ${
                 !isAnnual
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "bg-white text-[#170F49] font-medium shadow-sm"
+                  : "text-[#FFFFFF]"
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setIsAnnual(true)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`px-6 py-2 rounded-full text-base font-medium transition-all ${
                 isAnnual
-                  ? "bg-blue-600 text-white shadow-sm"
+                  ? "bg-white text-[#170F49] font-medium shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -89,7 +106,7 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Cards */}
-        <div className='grid md:grid-cols-3 gap-8 max-w-5xl mx-auto'>
+        <div className='grid md:grid-cols-3 gap-8 container mx-auto'>
           {plans.map((plan, index) => {
             const Icon = plan.icon;
             const currentPrice = isAnnual
@@ -100,16 +117,16 @@ export function PricingSection() {
             return (
               <div
                 key={plan.name}
-                className={`relative rounded-2xl p-8 ${
+                className={`max-w-[420px] mx-auto relative rounded-2xl p-8 ${
                   plan.theme === "blue"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-900 text-white"
+                    ? "bg-[#235789] text-white"
+                    : "bg-[#1E1E1EE5] text-white"
                 } ${isMiddleCard ? "transform md:scale-105 md:-mt-4" : ""}`}
               >
                 {/* Popular Badge */}
                 {plan.popular && (
                   <div className='absolute -top-4 left-1/2 transform -translate-x-1/2'>
-                    <div className='bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium shadow-lg'>
+                    <div className='bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium shadow-lg shadow-gray-200'>
                       Most popular
                     </div>
                   </div>
@@ -126,16 +143,16 @@ export function PricingSection() {
 
                 {/* Icon */}
                 <div className='mb-6'>
-                  <div className='w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center'>
+                  <div className='w-12 h-12 bg-[#514F6E40] border-[#6F6C8F] rounded-lg flex items-center justify-center'>
                     <Icon className='w-6 h-6' />
                   </div>
                 </div>
 
                 {/* Plan Name */}
-                <h3 className='text-xl font-semibold mb-2'>{plan.name}</h3>
+                <h3 className='text-xl lg:text-2xl font-semibold mb-2'>{plan.name}</h3>
 
                 {/* Description */}
-                <p className='text-white/80 mb-8 text-sm leading-relaxed'>
+                <p className='text-white/80 mb-8 text-lg leading-relaxed'>
                   {plan.description}
                 </p>
 
@@ -160,7 +177,7 @@ export function PricingSection() {
                   {plan.features.map((feature, featureIndex) => (
                     <div
                       key={featureIndex}
-                      className='flex items-center text-sm text-white/90'
+                      className='flex items-center text-base lg:text-lg text-[#FFFFFFCC]'
                     >
                       <Check className='w-4 h-4 mr-3 flex-shrink-0' />
                       {feature}
@@ -170,10 +187,10 @@ export function PricingSection() {
 
                 {/* CTA Button */}
                 <Button
-                  className={`w-full ${
+                  className={`w-full h-[44px] font-medium text-lg ${
                     plan.theme === "blue"
                       ? "bg-white text-blue-600 hover:bg-gray-100"
-                      : "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-[#235789] text-white hover:bg-blue-700"
                   }`}
                   size='lg'
                 >
@@ -183,7 +200,7 @@ export function PricingSection() {
                 {/* Money Back Guarantee */}
                 {plan.name !== "Personal" && (
                   <div className='flex items-center justify-center mt-4 text-sm text-white/80'>
-                    <DollarSign className='w-4 h-4 mr-2' />
+                    <DollarSign className='w-4 h-4 mr-2 bg-white rounded-full text-black' />
                     30-day money back guarantee
                   </div>
                 )}
