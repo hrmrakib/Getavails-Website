@@ -5,10 +5,10 @@ import Image from "next/image";
 export default function FeatureHeroSection() {
   return (
     <section className='py-8 lg:py-16 px-4 bg-white'>
-      <div className='max-w-7xl mx-auto'>
-        <div className='grid lg:grid-cols-2 gap-6 lg:gap-24 items-center'>
+      <div className='container mx-auto'>
+        <div className='grid lg:grid-cols-2 gap-6 lg:gap-24'>
           {/* Image */}
-          <div className='order-2 lg:order-1'>
+          <div className=''>
             <div className='relative aspect-[4/3] rounded-2xl overflow-hidden'>
               <Image
                 src='/feature-hero.png'
@@ -21,7 +21,7 @@ export default function FeatureHeroSection() {
           </div>
 
           {/* Content */}
-          <div className='order-1 lg:order-2 space-y-8'>
+          <div className='space-y-8'>
             <div className='space-y-4'>
               <h2 className='text-4xl lg:text-5xl font-medium text-[#235789] leading-tight'>
                 <span>Powerful Features Built</span>
@@ -39,7 +39,7 @@ export default function FeatureHeroSection() {
             {/* Feature Item */}
             <div className='space-y-4'>
               <div className=''>
-                <div className="flex items-start mb-3">
+                <div className='flex items-start mb-3'>
                   <div className='w-2 h-2 bg-[#235789] rounded-full mt-3 flex-shrink-0 mr-3'></div>
                   <h3 className='text-xl font-semibold text-[#235789]'>
                     Search Availabilities
