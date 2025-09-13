@@ -5,9 +5,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -22,6 +24,18 @@ export function Navbar() {
     { name: "Blog", href: "/blog" },
     { name: "Contact Us", href: "/contact" },
   ];
+
+  if (
+    pathname === "/signup" ||
+    pathname === "/signin" ||
+    pathname === "/forget-password" ||
+    pathname === "/verify-password" ||
+    pathname === "/verify-otp" ||
+    pathname === "/reset-password" ||
+    pathname.split("/")[1] === "dashboard"
+  ) {
+    return null;
+  }
 
   return (
     <nav className='sticky top-0 z-50 w-full bg-[#FFFFFF] backdrop-blur supports-[backdrop-filter]:bg-background/60'>
@@ -47,12 +61,23 @@ export function Navbar() {
 
           {/* Desktop Buttons */}
           <div className='hidden md:flex items-center space-x-4'>
-            <Button
-              variant='outline'
-              className='border-[#235789] text-[#235789] hover:bg-gray-50 bg-transparent rounded-4xl cursor-pointer'
-            >
-              Login
-            </Button>
+            {false ? (
+              <Button
+                variant='outline'
+                className='border-[#235789] text-[#235789] hover:bg-gray-50 bg-transparent rounded-4xl cursor-pointer'
+              >
+                Login
+              </Button>
+            ) : (
+              <div>
+                <Link
+                  href='/dashboard'
+                  className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl'
+                >
+                  Go Dashboard <ArrowRight size={18} />
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
