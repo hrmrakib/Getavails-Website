@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Linkedin, Twitter, Youtube } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const explore = [
   { name: "Home", href: "/" },
@@ -28,6 +29,20 @@ const company = [
 const contact = ["+1 (123) 456-7890", "support@getavails.com"];
 
 export function FooterSection() {
+  const pathname = usePathname();
+
+  if (
+    pathname === "/signup" ||
+    pathname === "/signin" ||
+    pathname === "/forget-password" ||
+    pathname === "/verify-password" ||
+    pathname === "/verify-otp" ||
+    pathname === "/reset-password" ||
+    pathname.split("/")[1] === "dashboard"
+  ) {
+    return null;
+  }
+
   return (
     <footer className='z-50 bg-[#1E1E1E] text-white'>
       {/* CTA Section */}

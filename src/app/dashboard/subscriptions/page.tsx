@@ -7,7 +7,7 @@ import Link from "next/link";
 import {
   SubscriptionCard,
   type Subscription,
-} from "@/components/subscriptions/SubscriptionCard";
+} from "@/components/dashboard/subscriptions/SubscriptionCard";
 
 const initialSubscriptions: Subscription[] = [
   {
@@ -88,7 +88,7 @@ export default function SubscriptionsPage() {
         </div>
 
         <div className='text-center'>
-          <Link href='/subscriptions/add-subscription'>
+          <Link href='/dashboard/subscriptions/add-subscription'>
             <Button
               size='lg'
               className='bg-[#235789] hover:bg-[#2379c9] text-white px-8 py-3 rounded-full cursor-pointer'

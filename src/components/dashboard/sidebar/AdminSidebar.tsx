@@ -23,10 +23,10 @@ const AdminSidebar = () => {
     <>
       <SidebarMenu className='px-6 space-y-2'>
         <NavItem
-          href='/'
+          href='/dashboard'
           icon={LayoutDashboard}
           label='Overview'
-          active={pathname === "/"}
+          active={pathname === "/dashboard"}
         />
 
         <ExpandableNavItem
@@ -35,62 +35,68 @@ const AdminSidebar = () => {
           isOpen={isUserManagementOpen}
           onToggle={toggleUserManagement}
           active={
-            pathname === "/user-management" ||
-            pathname.startsWith("/user-management") ||
-            pathname === "/agent" ||
-            pathname === "/artists" ||
-            pathname === "/venue"
+            pathname === "/dashboard/user-management" ||
+            pathname.startsWith("/dashboard/user-management") ||
+            pathname === "/dashboard/agent" ||
+            pathname === "/dashboard/artists" ||
+            pathname === "/dashboard/venue"
           }
         >
           <SubNavItem
-            href='/agent'
+            href='/dashboard/agent'
             label='Agent'
-            active={pathname === "/agent"}
+            active={pathname === "/dashboard/agent"}
           />
           <SubNavItem
-            href='/artists'
+            href='/dashboard/artists'
             label='Artists'
-            active={pathname === "/artists"}
+            active={pathname === "/dashboard/artists"}
           />
           <SubNavItem
-            href='/venue'
+            href='/dashboard/venue'
             label='Venue'
-            active={pathname === "/venue"}
+            active={pathname === "/dashboard/venue"}
           />
         </ExpandableNavItem>
 
         <NavItem
-          href='/earnings'
+          href='/dashboard/earnings'
           icon={BanknoteArrowUp}
           label='Earnings'
-          active={pathname === "/earnings" || pathname.startsWith("/earnings/")}
+          active={
+            pathname === "/dashboard/earnings" ||
+            pathname.startsWith("/dashboard/earnings/")
+          }
         />
 
         <NavItem
-          href='/subscriptions'
+          href='/dashboard/subscriptions'
           icon={Medal}
           label='Subscriptions'
           active={
-            pathname === "/subscriptions" ||
-            pathname.startsWith("/subscriptions/")
+            pathname === "/dashboard/subscriptions" ||
+            pathname.startsWith("/dashboard/subscriptions/")
           }
         />
 
         <NavItem
-          href='/blog-management'
+          href='/dashboard/blog-management'
           icon={FolderKanban}
           label='Blog Management'
           active={
-            pathname === "/blog-management" ||
-            pathname.startsWith("/blog-management/")
+            pathname === "/dashboard/blog-management" ||
+            pathname.startsWith("/dashboard/blog-management/")
           }
         />
 
         <NavItem
-          href='/support'
+          href='/dashboard/support'
           icon={Headset}
           label='Support'
-          active={pathname === "/support" || pathname.startsWith("/support/")}
+          active={
+            pathname === "/dashboard/support" ||
+            pathname.startsWith("/dashboard/support/")
+          }
         />
       </SidebarMenu>
     </>

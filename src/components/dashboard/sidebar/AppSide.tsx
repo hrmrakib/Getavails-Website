@@ -25,6 +25,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { NavItem } from "./CommonItem";
 import AdminSidebar from "./AdminSidebar";
+import AgentSidebar from "./AgentSidebar";
+import VenueSidebar from "./VenueSidebar";
+import ArtistSidebar from "./ArtistSidebar";
+import BuyerSidebar from "./BuyerSidebar";
 
 export default function DashboardSidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -33,11 +37,7 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname === "/") {
-      setSidebarView("admin");
-    } else {
-      setSidebarView(pathname.split("/")[1]);
-    }
+    setSidebarView(pathname.split("/")[2]);
   }, [pathname]);
 
   const handleLogout = async () => {
@@ -55,6 +55,9 @@ export default function DashboardSidebar() {
   ) {
     return null;
   }
+
+  console.log(pathname);
+  console.log(sidebarView);
 
   return (
     <>
@@ -74,15 +77,12 @@ export default function DashboardSidebar() {
               />
             </Link>
 
-            {sidebarView !== "agent" &&
-              sidebarView !== "venue" &&
-              sidebarView !== "artist" &&
-              sidebarView !== "buyer" && <AdminSidebar />}
+            {sidebarView !== "agent" && <AdminSidebar />}
 
-            {sidebarView === "agent" && <AdminSidebar />}
-            {sidebarView === "venue" && <AdminSidebar />}
-            {sidebarView === "artist" && <AdminSidebar />}
-            {sidebarView === "buyer" && <AdminSidebar />}
+            {sidebarView === "agent" && <AgentSidebar />}
+            {sidebarView === "venue" && <VenueSidebar />}
+            {sidebarView === "artist" && <ArtistSidebar />}
+            {sidebarView === "buyer" && <BuyerSidebar />}
           </SidebarContent>
 
           <SidebarFooter className='p-6'>
@@ -90,11 +90,12 @@ export default function DashboardSidebar() {
               Settings
             </div>
             <NavItem
-              href='/settings'
+              href='/dashboard/settings'
               icon={Settings}
               label='Settings'
               active={
-                pathname === "/settings" || pathname.startsWith("/settings/")
+                pathname === "/dashboard/settings" ||
+                pathname.startsWith("/dashboard/settings/")
               }
             />
             <button

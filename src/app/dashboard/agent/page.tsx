@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Check, X, TrendingUp } from "lucide-react";
-import AgentRevenueChart from "@/components/chart/AgentRevenueChart";
-import EventChart from "@/components/chart/EventChart";
+import AgentRevenueChart from "@/components/dashboard/chart/AgentRevenueChart";
+import EventChart from "@/components/dashboard/chart/EventChart";
 
 // Sample artist join requests data
 const initialArtistRequests = [

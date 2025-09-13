@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { SidebarMenu } from "../ui/sidebar";
+import { SidebarMenu } from "@/components/ui/sidebar";
 import { ExpandableNavItem, NavItem, SubNavItem } from "./CommonItem";
 import { LayoutDashboard, Users, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
