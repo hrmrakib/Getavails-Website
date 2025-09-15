@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
@@ -12,7 +12,12 @@ const Header = () => {
     role: "Admin",
     image: "/admin.png",
   });
+  const [headerTitle, setHeaderTitle] = useState("Dashboard");
   const pathname = usePathname();
+
+  useEffect(() => {
+    setHeaderTitle(pathname.split("/")[1].split("-").join(" "));
+  }, [pathname]);
 
   if (
     pathname === "/signup" ||
@@ -24,14 +29,16 @@ const Header = () => {
   ) {
     return null;
   }
+
+  console.log(pathname.split("/")[1].split("-").join(" "));
+
   return (
     <div className='bg-white mb-6'>
       <div className='max-w-8xl mx-auto'>
         <div className='flex items-center justify-between py-2'>
           <div>
             <h1 className='text-2xl lg:text-4xl font-bold text-[#222222] capitalize'>
-              {pathname.split("/")[1].split("-").join(" ")}
-              {pathname === "/" && "Dashboard"}
+              {headerTitle}
             </h1>
           </div>
           <div className='flex items-center gap-4'>
