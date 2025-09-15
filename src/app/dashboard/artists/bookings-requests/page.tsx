@@ -11,7 +11,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Search, MessageCircle, Trash2, Eye } from "lucide-react";
+import { Search, Trash2, Eye, Users } from "lucide-react";
+import Image from "next/image";
 
 interface BookingRequest {
   id: string;
@@ -494,7 +495,7 @@ export default function BookingRequestsPage() {
         <SheetContent className='w-full sm:max-w-md'>
           <SheetHeader>
             <div className='flex items-center justify-between'>
-              <SheetTitle>Booking Details</SheetTitle>
+              <SheetTitle></SheetTitle>
               <Button
                 variant='ghost'
                 size='icon'
@@ -506,12 +507,37 @@ export default function BookingRequestsPage() {
           {selectedBooking && (
             <div className='mt-6 space-y-6 px-8'>
               {/* Buyer Information */}
-              <div className='bg-transparent shadow-md rounded-lg p-4'>
-                <h3 className='font-medium text-center text-[#222222] mb-3'>
-                  Buyer Information
-                </h3>
+              <div className='bg-transparent rounded-lg p-4'>
+                <h2 className='font-medium text-center text-2xl lg:text-[32px] text-[#222222] mb-3'>
+                  Summer Beats Fest
+                </h2>
+                <p className='text-[#1E1E1E] text-center '>
+                  Date & Time: {selectedBooking.date}
+                </p>
+
+                <div className='my-4'>
+                  <h2 className='text-xl text-[#1E1E1E] font-medium text-center mb-4'>
+                    Sunset Arena
+                  </h2>
+                  <div className='flex items-center justify-center gap-2 text-sm'>
+                    <Users className='h-4 w-4' />
+                    <span>Capicity: </span>
+                    <span>1200+ </span>
+                  </div>
+                </div>
+
+                <div>
+                  <Image
+                    src={"/location-map.png"}
+                    alt={selectedBooking.artistName}
+                    width={600}
+                    height={600}
+                    className='w-full h-full object-cover rounded-md'
+                  />
+                </div>
+
                 <div className='flex flex-col items-center justify-center gap-3 mb-3'>
-                  <Avatar className='h-12 w-12'>
+                  <Avatar className='h-16 w-16'>
                     <AvatarImage
                       src={selectedBooking.buyerAvatar || "/placeholder.svg"}
                     />
@@ -534,48 +560,18 @@ export default function BookingRequestsPage() {
                 </div>
               </div>
 
-              {/* Artist Information */}
-              <div className='bg-gray-50 rounded-lg p-4'>
-                <h3 className='font-medium mb-3 text-center text-[#222222]'>
-                  Artist Information
-                </h3>
-                <div className='flex flex-col items-center justify-center gap-3 mb-3'>
-                  <Avatar className='h-12 w-12'>
-                    <AvatarImage
-                      src={selectedBooking.artistAvatar || "/client.png"}
-                    />
-                    <AvatarFallback>
-                      {selectedBooking.artistName
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className='font-medium text-[#1E1E1E]'>
-                      {selectedBooking.artistName}
-                    </p>
-                    <p className='text-sm text-[#6B7280]'>
-                      {selectedBooking.artistSpecialty}
-                    </p>
-                  </div>
-                </div>
-                <div className='space-y-1 text-center text-sm text-[#6B7280]'>
-                  <p>📍 Location: {selectedBooking.artistLocation}</p>
-                  <p>💰 Rate: {selectedBooking.artistRate}</p>
-                </div>
-              </div>
-
               {/* Actions */}
               <div className='space-y-3'>
-                <Button className='w-full bg-transparent' variant='outline'>
-                  <MessageCircle className='h-4 w-4 mr-2' />
+                <Button
+                  className='w-full h-11 bg-[#DEEBF7] text-[#235789]'
+                  variant='outline'
+                >
                   Message Artist
                 </Button>
 
                 <div className='flex gap-3'>
                   <Button
-                    className='flex-1 bg-blue-600 hover:bg-blue-700'
+                    className='flex-1 h-11 bg-[#235789] hover:bg-[#235789]'
                     onClick={() =>
                       handleStatusChange(
                         bookings.findIndex((b) => b === selectedBooking),
@@ -587,7 +583,7 @@ export default function BookingRequestsPage() {
                   </Button>
                   <Button
                     variant='outline'
-                    className='flex-1 text-red-600 border-red-200 hover:bg-red-50 bg-transparent'
+                    className='flex-1 h-11 text-[#E00101] border-[#E00101] hover:bg-[#e00101] hover:text-white bg-transparent'
                     onClick={() =>
                       handleStatusChange(
                         bookings.findIndex((b) => b === selectedBooking),

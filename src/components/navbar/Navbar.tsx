@@ -42,9 +42,9 @@ export function Navbar() {
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='h-16 lg:h-24 flex justify-between items-center'>
           {/* Logo */}
-          <div className='flex items-center space-x-2'>
+          <Link href='/' className='flex items-center space-x-2'>
             <Image src='/logo.png' alt='Logo' width={56} height={56} />
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className='hidden md:flex items-center space-x-8'>

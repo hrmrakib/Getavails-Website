@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -11,7 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Search, MessageCircle, Trash2, Eye, MapPin } from "lucide-react";
+import { Search, Trash2, Eye, MapPin } from "lucide-react";
 
 interface BookingRequest {
   id: string;
@@ -325,16 +326,6 @@ export default function BookingRequestsPage() {
       booking.buyerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.artistName.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleStatusChange = (
-    bookingIndex: number,
-    newStatus: "Confirmed" | "Cancelled"
-  ) => {
-    const updatedBookings = [...bookings];
-    updatedBookings[bookingIndex].status = newStatus;
-    setBookings(updatedBookings);
-    setIsDrawerOpen(false);
-  };
 
   const handleViewDetails = (booking: BookingRequest) => {
     setSelectedBooking(booking);

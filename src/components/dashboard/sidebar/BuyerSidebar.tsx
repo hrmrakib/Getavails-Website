@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 const BuyerSidebar = () => {
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(true);
   const pathname = usePathname();
-  
+
   const toggleUserManagement = () => {
     setIsUserManagementOpen(!isUserManagementOpen);
   };
@@ -18,7 +18,7 @@ const BuyerSidebar = () => {
     <>
       <SidebarMenu className='px-6 space-y-2'>
         <NavItem
-          href='/'
+          href='/dashboard/buyer'
           icon={LayoutDashboard}
           label='Overview'
           active={pathname === "/"}
@@ -26,66 +26,56 @@ const BuyerSidebar = () => {
 
         <ExpandableNavItem
           icon={Users}
-          label='User Management'
+          label='Talent Hub'
           isOpen={isUserManagementOpen}
           onToggle={toggleUserManagement}
           active={
-            pathname === "/user-management" ||
+            pathname === "/dashboard/buyer/talent-hub" ||
             pathname.startsWith("/user-management") ||
-            pathname === "/agent" ||
             pathname === "/artists" ||
             pathname === "/venue"
           }
         >
           <SubNavItem
-            href='/agent'
-            label='Agent'
-            active={pathname === "/agent"}
-          />
-          <SubNavItem
-            href='/artists'
+            href='/dashboard/buyer/talent-hub/artists'
             label='Artists'
-            active={pathname === "/artists"}
+            active={pathname === "/dashboard/buyer/talent-hub/artists"}
           />
           <SubNavItem
-            href='/venue'
+            href='/dashboard/buyer/talent-hub/venue'
             label='Venue'
-            active={pathname === "/venue"}
+            active={pathname === "/dashboard/buyer/talent-hub/venue"}
           />
         </ExpandableNavItem>
 
         <NavItem
-          href='/earnings'
+          href='/dashboard/buyer/bookings-requests'
           icon={Settings}
-          label='Earnings'
-          active={pathname === "/earnings" || pathname.startsWith("/earnings/")}
-        />
-
-        <NavItem
-          href='/subscriptions'
-          icon={Settings}
-          label='Subscriptions'
+          label='Bookings Requests'
           active={
-            pathname === "/subscriptions" ||
-            pathname.startsWith("/subscriptions/")
+            pathname === "/dashboard/buyer/bookings-requests" ||
+            pathname.startsWith("/dashboard/buyer/bookings-requests/")
           }
         />
 
         <NavItem
-          href='/blog-management'
+          href='/dashboard/buyer/upcoming-events'
           icon={Settings}
-          label='Blog Management'
+          label='Upcoming Events'
           active={
-            pathname === "/blog-management" ||
-            pathname.startsWith("/blog-management/")
+            pathname === "/dashboard/buyer/upcoming-events" ||
+            pathname.startsWith("/dashboard/buyer/upcoming-events/")
           }
         />
 
         <NavItem
-          href='/support'
+          href='/dashboard/buyer/message'
           icon={Settings}
-          label='Support'
-          active={pathname === "/support" || pathname.startsWith("/support/")}
+          label='Message'
+          active={
+            pathname === "/dashboard/buyer/message" ||
+            pathname.startsWith("/dashboard/buyer/message/")
+          }
         />
       </SidebarMenu>
     </>
