@@ -1,78 +1,48 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { SidebarMenu } from "@/components/ui/sidebar";
-import { ExpandableNavItem, NavItem, SubNavItem } from "./CommonItem";
-import { LayoutDashboard, Users, Settings } from "lucide-react";
+import { NavItem } from "./CommonItem";
+import { LayoutDashboard, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const ArtistSidebar = () => {
-  const [isUserManagementOpen, setIsUserManagementOpen] = useState(true);
   const pathname = usePathname();
-  const toggleUserManagement = () => {
-    setIsUserManagementOpen(!isUserManagementOpen);
-  };
+
   return (
     <>
       <SidebarMenu className='px-6 space-y-2'>
         <NavItem
-          href='/'
+          href='/dashboard/artists'
           icon={LayoutDashboard}
           label='Overview'
-          active={pathname === "/"}
-        />
-
-        <ExpandableNavItem
-          icon={Users}
-          label='User Management'
-          isOpen={isUserManagementOpen}
-          onToggle={toggleUserManagement}
-          active={
-            pathname === "/user-management" ||
-            pathname.startsWith("/user-management") ||
-            pathname === "/agent" ||
-            pathname === "/artists" ||
-            pathname === "/venue"
-          }
-        >
-          <SubNavItem
-            href='/agent'
-            label='Agent'
-            active={pathname === "/agent"}
-          />
-          <SubNavItem
-            href='/artists'
-            label='Artists'
-            active={pathname === "/artists"}
-          />
-          <SubNavItem
-            href='/venue'
-            label='Venue'
-            active={pathname === "/venue"}
-          />
-        </ExpandableNavItem>
-
-        <NavItem
-          href='/earnings'
-          icon={Settings}
-          label='Earnings'
-          active={pathname === "/earnings" || pathname.startsWith("/earnings/")}
+          active={pathname === "/dashboard/artists"}
         />
 
         <NavItem
-          href='/subscriptions'
+          href='/dashboard/artists/availability-calendar'
           icon={Settings}
-          label='Subscriptions'
+          label='Availability Calendar'
           active={
-            pathname === "/subscriptions" ||
-            pathname.startsWith("/subscriptions/")
+            pathname === "/earnings" ||
+            pathname.startsWith("/dashboard/artists/availability-calendar/")
           }
         />
 
         <NavItem
-          href='/blog-management'
+          href='/dashboard/artists/find-agent'
           icon={Settings}
-          label='Blog Management'
+          label='Find an Agent'
+          active={
+            pathname === "//dashboard/artists/find-agent" ||
+            pathname.startsWith("/dashboard/artists/find-agent/")
+          }
+        />
+
+        <NavItem
+          href='/dashboard/artists/bookings-requests'
+          icon={Settings}
+          label='Bookings Requests'
           active={
             pathname === "/blog-management" ||
             pathname.startsWith("/blog-management/")
@@ -80,10 +50,13 @@ const ArtistSidebar = () => {
         />
 
         <NavItem
-          href='/support'
+          href='/dashboard/artists/message'
           icon={Settings}
-          label='Support'
-          active={pathname === "/support" || pathname.startsWith("/support/")}
+          label='Message'
+          active={
+            pathname === "/dashboard/artists/message" ||
+            pathname.startsWith("/dashboard/artists/message/")
+          }
         />
       </SidebarMenu>
     </>
