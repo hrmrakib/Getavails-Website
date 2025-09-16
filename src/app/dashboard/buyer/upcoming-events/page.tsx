@@ -13,8 +13,9 @@ import {
   DrawerTrigger,
   DrawerClose,
 } from "@/components/ui/drawer";
-import { X, Check, Menu, Search } from "lucide-react";
+import { X, Check, Menu, Search, Users, Ticket, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 interface Booking {
   eventName: string;
@@ -168,57 +169,13 @@ export default function UpcomingEvents() {
   };
 
   const SidebarContent = () => (
-    <Card className='border border-gray-200 bg-white'>
+    <Card className='bg-white !border-none !shadow-none'>
       <CardContent className='p-6'>
-        <div className='mb-6 flex flex-col items-center justify-center'>
-          <h3 className='text-lg font-semibold text-[#1E1E1E] mb-4'>
-            DJ Nova Live
-          </h3>
-
-          <div className='space-y-3 text-base text-center'>
-            <div className='flex items-center justify-center gap-2'>
-              <span className='text-[#1E1E1E]'>•</span>
-              <div>
-                <span className='font-medium text-[#1E1E1E]'>Date & Time:</span>{" "}
-                <span className='text-[#1E1E1E]'>Aug 25, 9:00 PM</span>
-              </div>
-            </div>
-
-            <div className='flex items-center justify-center gap-2'>
-              <span className='text-[#1E1E1E]'>•</span>
-              <div>
-                <span className='font-medium text-[#1E1E1E]'>
-                  Artist / Agent:
-                </span>{" "}
-                <span className='text-[#1E1E1E]'>
-                  DJ Nova (via TalentX Agency)
-                </span>
-              </div>
-            </div>
-
-            <div className='flex items-center justify-center gap-2'>
-              <span className='text-[#1E1E1E]'>•</span>
-              <div className='flex items-center gap-2'>
-                <span className='font-medium text-[#1E1E1E]'>Status:</span>
-                <div className='flex items-center gap-1'>
-                  <Check className='h-4 w-4 text-green-600' />
-                  <span className='text-[#1E1E1E]'>Confirmed</span>
-                </div>
-              </div>
-            </div>
-
-            <div className='flex items-center justify-center gap-2'>
-              <span className='text-[#1E1E1E]'>•</span>
-              <div>
-                <span className='font-medium text-[#1E1E1E]'>Revenue:</span>{" "}
-                <span className='text-[#1E1E1E]'>$12,400</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className='border-t border-gray-100 pt-6'>
+        <div className='border border-gray-200 rounded-3xl shadow-md pt-6 mb-8'>
           <div className='flex flex-col items-center text-center'>
+            <h2 className='text-lg font-semibold text-[#1E1E1E] mb-4'>
+              Artist Information
+            </h2>
             <Avatar className='h-20 w-20 mb-4'>
               <AvatarImage
                 src={contactInfo.avatar || "/placeholder.svg"}
@@ -237,22 +194,58 @@ export default function UpcomingEvents() {
                 Contact: {contactInfo.phone}, Email: {contactInfo.email}
               </p>
             </div>
+          </div>
+        </div>
 
-            <Button
-              className='w-full h-11 bg-[#DEEBF7] text-[#235789]'
-              variant='secondary'
-              onClick={handleMessageBuyer}
-            >
-              Message Buyer
-            </Button>
+        <div className='mb-6 flex flex-col items-center justify-center'>
+          <h3 className='text-2xl font-medium text-[#1E1E1E] mb-4'>
+            Sunset Arena
+          </h3>
 
-            <Button
-              variant='outline'
-              className='w-full h-11 mt-4 border-[#C1292E] text-[#C1292E] hover:bg-red-50 bg-transparent'
-              onClick={() => handleDelete("sidebar")}
-            >
-              Delete
-            </Button>
+          <div className='space-y-1.5 text-base text-center'>
+            <div className='flex items-center justify-center gap-2'>
+              <Users className='h-4 w-4 text-[#1E1E1E]' />
+              <div>
+                <span className='text-[#1E1E1E]'>Capacity:</span>{" "}
+                <span className='text-[#1E1E1E]'> 1200+</span>
+              </div>
+            </div>
+
+            <div className='flex items-center justify-center gap-2'>
+              <Ticket className='h-4 w-4 text-[#1E1E1E]' />
+              <div>
+                <span className='text-[#1E1E1E]'>Price/rate:</span>{" "}
+                <span className='text-[#1E1E1E]'>$2,500</span>
+              </div>
+            </div>
+
+            <div className='flex items-center justify-center gap-2'>
+              <div className='flex flex-wrap items-center justify-center gap-2'>
+                <span className='text-[#1E1E1E]'>Phone: +1 212-555-0193,</span>
+                <span className='text-[#1E1E1E]'>
+                  Email: aurora.dj@email.com
+                </span>
+              </div>
+            </div>
+
+            <div className='flex items-center justify-center gap-2'>
+              <MapPin className='h-4 w-4 text-[#1E1E1E]' />
+              <div>
+                <span className='text-[#1E1E1E]'>Location:</span>{" "}
+                <span className='text-[#1E1E1E]'>New York, USA</span>
+              </div>
+            </div>
+
+            <div>
+              <Image
+                src={"/location-map.png"}
+                alt={"Venue Location Map"}
+                width={500}
+                height={500}
+                className='w-full h-full object-cover rounded-md'
+              />
+            </div>
+            <p className='text-sm text-[#222429] mt-4'>View Location</p>
           </div>
         </div>
       </CardContent>
@@ -263,10 +256,10 @@ export default function UpcomingEvents() {
     <div className='min-h-screen bg-transparent'>
       <div className='container mx-auto'>
         <div className='mb-6 flex items-center justify-between'>
-          {/* Artist Lists Header */}
-          <div className='flex items-center justify-between  mb-6'>
-            <h2 className='text-lg font-semibold text-[#1C1C1C] mb-4'>
-              Venue lists
+          {/* Venue Upcoming Events Header */}
+          <div className='w-full flex items-center justify-between'>
+            <h2 className='text-lg lg:text-2xl font-semibold text-[#1C1C1C]'>
+              Upcoming event lists
             </h2>
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
@@ -279,7 +272,7 @@ export default function UpcomingEvents() {
             </div>
           </div>
 
-          <div className='flex items-center gap-2 lg:hidden'>
+          <div className='flex items-center gap-2 lg:hidden shadow-2xl'>
             <Drawer
               open={isDrawerOpen}
               onOpenChange={setIsDrawerOpen}
@@ -315,7 +308,7 @@ export default function UpcomingEvents() {
                   key={event.eventName}
                   className='overflow-hidden border border-gray-200 bg-white'
                 >
-                  <CardContent className='p-6'>
+                  <CardContent className='px-6'>
                     <h3 className='mb-4 text-xl font-semibold text-[#1E1E1E]'>
                       {event.eventName}
                     </h3>
@@ -375,7 +368,7 @@ export default function UpcomingEvents() {
                     <div className='mt-6 space-y-2'>
                       <Button
                         variant='secondary'
-                        className='w-full h-[35px] bg-[#DFEBF7] text-[#235789] hover:bg-blue-100'
+                        className='w-full h-[38px] bg-[#DFEBF7] text-[#235789] hover:bg-blue-100'
                         onClick={() => handleViewDetails(event)}
                       >
                         View Details

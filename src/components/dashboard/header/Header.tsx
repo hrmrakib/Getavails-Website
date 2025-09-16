@@ -30,7 +30,7 @@ const Header = () => {
     return null;
   }
 
-  console.log(pathname.split("/")[1].split("-").join(" "));
+  console.log(pathname.split("/")[1]);
 
   return (
     <div className='bg-white mb-6'>

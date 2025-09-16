@@ -64,7 +64,7 @@ const BuyerSidebar = () => {
           label='Upcoming Events'
           active={
             pathname === "/dashboard/buyer/upcoming-events" ||
-            pathname.startsWith("/dashboard/buyer/upcoming-events/")
+            pathname.startsWith("/dashboard/buyer/upcoming-events")
           }
         />
 

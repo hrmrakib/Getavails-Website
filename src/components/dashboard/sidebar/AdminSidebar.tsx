@@ -19,6 +19,9 @@ const AdminSidebar = () => {
   const toggleUserManagement = () => {
     setIsUserManagementOpen(!isUserManagementOpen);
   };
+
+  console.log(pathname);
+
   return (
     <>
       <SidebarMenu className='px-6 space-y-2'>
@@ -26,7 +29,7 @@ const AdminSidebar = () => {
           href='/dashboard'
           icon={LayoutDashboard}
           label='Overview'
-          active={pathname === "/dashboard"}
+          active={pathname === "/dashboard" || pathname === "/dashboard"}
         />
 
         <ExpandableNavItem
@@ -64,8 +67,9 @@ const AdminSidebar = () => {
           icon={BanknoteArrowUp}
           label='Earnings'
           active={
-            pathname === "/dashboard/earnings" ||
-            pathname.startsWith("/dashboard/earnings/")
+            true
+            // pathname === "/dashboard/earnings" ||
+            // pathname.startsWith("/dashboard/earnings/")
           }
         />
 
