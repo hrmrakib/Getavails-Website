@@ -17,13 +17,11 @@ import { X, Check, Menu, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface Booking {
-  id: string;
   eventName: string;
-  dateTime: string;
-  artist: string;
-  agency: string;
-  status: "confirmed" | "pending" | "cancelled";
-  revenue: number;
+  venueName: string;
+  location: string;
+  date: string;
+  totalPrice: string;
 }
 
 interface Contact {
@@ -34,60 +32,111 @@ interface Contact {
   avatar: string;
 }
 
-const mockBookings: Booking[] = [
+const upcomingEvents: Booking[] = [
   {
-    id: "1",
     eventName: "DJ Nova Live",
-    dateTime: "Aug 25, 9:00 PM",
-    artist: "DJ Nova",
-    agency: "TalentX Agency",
-    status: "confirmed",
-    revenue: 15400,
+    venueName: "Electric Hall",
+    location: "New York, USA",
+    date: "Aug 25",
+    totalPrice: "$12,400",
   },
   {
-    id: "2",
-    eventName: "DJ Nova Live",
-    dateTime: "Aug 25, 9:00 PM",
-    artist: "DJ Nova",
-    agency: "TalentX Agency",
-    status: "confirmed",
-    revenue: 12400,
+    eventName: "Rock Fusion Night",
+    venueName: "Sunset Arena",
+    location: "Los Angeles, USA",
+    date: "Sep 3",
+    totalPrice: "$18,900",
   },
   {
-    id: "3",
-    eventName: "DJ Nova Live",
-    dateTime: "Aug 25, 9:00 PM",
-    artist: "DJ Nova",
-    agency: "TalentX Agency",
-    status: "confirmed",
-    revenue: 12400,
+    eventName: "Symphony Classics",
+    venueName: "Grand Theatre",
+    location: "Chicago, USA",
+    date: "Oct 12",
+    totalPrice: "$9,750",
   },
   {
-    id: "4",
-    eventName: "DJ Nova Live",
-    dateTime: "Aug 25, 9:00 PM",
-    artist: "DJ Nova",
-    agency: "TalentX Agency",
-    status: "confirmed",
-    revenue: 12400,
+    eventName: "Hip-Hop Vibes",
+    venueName: "Metro Dome",
+    location: "Houston, USA",
+    date: "Nov 5",
+    totalPrice: "$15,200",
   },
   {
-    id: "5",
-    eventName: "DJ Nova Live",
-    dateTime: "Aug 25, 9:00 PM",
-    artist: "DJ Nova",
-    agency: "TalentX Agency",
-    status: "confirmed",
-    revenue: 12400,
+    eventName: "Indie Nights",
+    venueName: "Luna Club",
+    location: "San Francisco, USA",
+    date: "Sep 20",
+    totalPrice: "$7,600",
   },
   {
-    id: "6",
-    eventName: "DJ Nova Live",
-    dateTime: "Aug 25, 9:00 PM",
-    artist: "DJ Nova",
-    agency: "TalentX Agency",
-    status: "confirmed",
-    revenue: 12400,
+    eventName: "Jazz Evening",
+    venueName: "Blue Note Hall",
+    location: "New Orleans, USA",
+    date: "Oct 7",
+    totalPrice: "$5,800",
+  },
+  {
+    eventName: "Pop Sensation Tour",
+    venueName: "Galaxy Stadium",
+    location: "Miami, USA",
+    date: "Dec 15",
+    totalPrice: "$22,000",
+  },
+  {
+    eventName: "Classical Harmony",
+    venueName: "Royal Concert Hall",
+    location: "Boston, USA",
+    date: "Aug 30",
+    totalPrice: "$11,450",
+  },
+  {
+    eventName: "EDM Blast",
+    venueName: "Pulse Arena",
+    location: "Las Vegas, USA",
+    date: "Sep 14",
+    totalPrice: "$19,800",
+  },
+  {
+    eventName: "Country Roads Festival",
+    venueName: "Oakwood Park",
+    location: "Nashville, USA",
+    date: "Oct 21",
+    totalPrice: "$13,600",
+  },
+  {
+    eventName: "Latin Nights",
+    venueName: "Havana Club",
+    location: "Miami, USA",
+    date: "Nov 9",
+    totalPrice: "$10,250",
+  },
+  {
+    eventName: "Metal Madness",
+    venueName: "Iron Arena",
+    location: "Detroit, USA",
+    date: "Sep 28",
+    totalPrice: "$16,900",
+  },
+  {
+    eventName: "R&B Grooves",
+    venueName: "Soul Theatre",
+    location: "Atlanta, USA",
+    date: "Dec 2",
+    totalPrice: "$8,700",
+  },
+  {
+    eventName: "Festival of Lights",
+    venueName: "Central Park",
+    location: "New York, USA",
+    date: "Dec 31",
+    totalPrice: "$25,500",
+  },
+  {
+    eventName: "Acoustic Sessions",
+    venueName: "Harmony Hall",
+    location: "Seattle, USA",
+    date: "Oct 18",
+    totalPrice: "$6,300",
   },
 ];
 
@@ -99,14 +148,14 @@ const contactInfo: Contact = {
   avatar: "/client.png",
 };
 
-export default function ConfirmBooking() {
-  const [bookings, setBookings] = useState<Booking[]>(mockBookings);
+export default function UpcomingEvents() {
+  const [events, setEvents] = useState<Booking[]>(upcomingEvents);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleDelete = (bookingId: string) => {
-    setBookings(bookings.filter((booking) => booking.id !== bookingId));
+    // setBookings(bookings.filter((booking) => booking.id !== bookingId));
   };
 
   const handleViewDetails = (booking: Booking) => {
@@ -122,21 +171,9 @@ export default function ConfirmBooking() {
     <Card className='border border-gray-200 bg-white'>
       <CardContent className='p-6'>
         <div className='mb-6 flex flex-col items-center justify-center'>
-          {/* Artist Lists Header */}
-          <div className='flex items-center justify-between  mb-6'>
-            <h2 className='text-lg font-semibold text-[#1C1C1C] mb-4'>
-              Venue lists
-            </h2>
-            <div className='relative'>
-              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
-              <Input
-                placeholder='Search for artist...'
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className='pl-10 max-w-md lg: rounded-md border-gray-200 focus:border-blue-500 focus:ring-blue-500'
-              />
-            </div>
-          </div>
+          <h3 className='text-lg font-semibold text-[#1E1E1E] mb-4'>
+            DJ Nova Live
+          </h3>
 
           <div className='space-y-3 text-base text-center'>
             <div className='flex items-center justify-center gap-2'>
@@ -223,12 +260,24 @@ export default function ConfirmBooking() {
   );
 
   return (
-    <div className='min-h-screen bg-transparent p-4 lg:p-6'>
+    <div className='min-h-screen bg-transparent'>
       <div className='container mx-auto'>
         <div className='mb-6 flex items-center justify-between'>
-          <h1 className='text-2xl font-bold text-[#1E1E1E] lg:text-3xl'>
-            Confirm Booking
-          </h1>
+          {/* Artist Lists Header */}
+          <div className='flex items-center justify-between  mb-6'>
+            <h2 className='text-lg font-semibold text-[#1C1C1C] mb-4'>
+              Venue lists
+            </h2>
+            <div className='relative'>
+              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+              <Input
+                placeholder='Search for artist...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className='pl-10 max-w-md lg: rounded-md border border-gray-200 focus:border-blue-500 focus:ring-blue-500'
+              />
+            </div>
+          </div>
 
           <div className='flex items-center gap-2 lg:hidden'>
             <Drawer
@@ -260,15 +309,15 @@ export default function ConfirmBooking() {
 
         <div className='flex flex-col gap-6 lg:flex-row'>
           <div className='flex-1'>
-            <div className='grid gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3'>
-              {bookings.map((booking) => (
+            <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+              {events.map((event) => (
                 <Card
-                  key={booking.id}
+                  key={event.eventName}
                   className='overflow-hidden border border-gray-200 bg-white'
                 >
                   <CardContent className='p-6'>
                     <h3 className='mb-4 text-xl font-semibold text-[#1E1E1E]'>
-                      {booking.eventName}
+                      {event.eventName}
                     </h3>
 
                     <div className='space-y-3 text-sm'>
@@ -276,22 +325,10 @@ export default function ConfirmBooking() {
                         <span className='text-[#1E1E1E]'>•</span>
                         <div>
                           <span className='font-medium text-[#1E1E1E]'>
-                            Date & Time:
+                            Venue:
                           </span>{" "}
                           <span className='text-[#1E1E1E]'>
-                            {booking.dateTime}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className='flex items-start gap-2'>
-                        <span className='text-[#1E1E1E]'>•</span>
-                        <div>
-                          <span className='font-medium text-[#1E1E1E]'>
-                            Artist / Agent:
-                          </span>{" "}
-                          <span className='text-[#1E1E1E]'>
-                            {booking.artist} (via {booking.agency})
+                            {event.venueName}
                           </span>
                         </div>
                       </div>
@@ -300,12 +337,11 @@ export default function ConfirmBooking() {
                         <span className='text-[#1E1E1E]'>•</span>
                         <div className='flex items-center gap-2'>
                           <span className='font-medium text-[#1E1E1E]'>
-                            Status:
+                            Location:
                           </span>
                           <div className='flex items-center gap-1'>
-                            <span>✅ </span>
                             <span className='text-[#1E1E1E] capitalize'>
-                              {booking.status}
+                              {event.location}
                             </span>
                           </div>
                         </div>
@@ -315,10 +351,22 @@ export default function ConfirmBooking() {
                         <span className='text-[#1E1E1E]'>•</span>
                         <div>
                           <span className='font-medium text-[#1E1E1E]'>
-                            Revenue:
+                            Date:
                           </span>{" "}
                           <span className='text-[#1E1E1E]'>
-                            ${booking.revenue.toLocaleString()}
+                            {event.date.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className='flex items-start gap-2'>
+                        <span className='text-[#1E1E1E]'>•</span>
+                        <div>
+                          <span className='font-medium text-[#1E1E1E]'>
+                            Total Spend:
+                          </span>{" "}
+                          <span className='text-[#1E1E1E]'>
+                            {event.totalPrice}
                           </span>
                         </div>
                       </div>
@@ -328,16 +376,9 @@ export default function ConfirmBooking() {
                       <Button
                         variant='secondary'
                         className='w-full h-[35px] bg-[#DFEBF7] text-[#235789] hover:bg-blue-100'
-                        onClick={() => handleViewDetails(booking)}
+                        onClick={() => handleViewDetails(event)}
                       >
                         View Details
-                      </Button>
-                      <Button
-                        variant='outline'
-                        className='w-full border-[#C1292E] text-[#C1292E] hover:bg-red-50 bg-transparent'
-                        onClick={() => handleDelete(booking.id)}
-                      >
-                        Delete
                       </Button>
                     </div>
                   </CardContent>
