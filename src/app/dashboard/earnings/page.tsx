@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Info, Eye, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Search, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
+
 import { Label } from "@/components/ui/label";
 
 // Mock data matching the design
@@ -55,15 +55,6 @@ export default function UserListPage() {
   const handleActionClick = (user: (typeof mockUsers)[0]) => {
     setSelectedUser(user);
     setActionModalOpen(true);
-  };
-
-  const handleToggleChange = (
-    field: "disableAccess" | "deleteAccount",
-    value: boolean
-  ) => {
-    if (selectedUser) {
-      setSelectedUser({ ...selectedUser, [field]: value });
-    }
   };
 
   // Generate page numbers for pagination
@@ -201,7 +192,7 @@ export default function UserListPage() {
 
           {/* Mobile Cards */}
           <div className='md:hidden'>
-            <div className='bg-orange-400 px-4 py-3'>
+            <div className='bg-[#235789] px-4 py-3'>
               <h2 className='text-sm font-medium text-white'>User List</h2>
             </div>
             <div className='divide-y divide-gray-200'>
@@ -314,9 +305,7 @@ export default function UserListPage() {
                 size='sm'
                 className='h-5 w-5 p-0'
                 onClick={() => setActionModalOpen(false)}
-              >
-                <X className='h-4 w-4' />
-              </Button>
+              ></Button>
             </DialogHeader>
             {selectedUser && (
               <div className='space-y-4'>

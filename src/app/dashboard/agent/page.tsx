@@ -98,11 +98,11 @@ export default function DashboardPage() {
   const artistData = getArtistData();
 
   return (
-    <div className='min-h-screen bg-gray-50 p-4 md:p-6'>
+    <div className='min-h-screen bg-transparent p-4 md:p-6'>
       {/* Main Grid */}
       <div className='grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8'>
         <div className='lg:col-span-4'>
-          <div className='flex gap-6 mb-8'>
+          <div className='flex flex-wrap gap-6 mb-8'>
             {/* Revenue Card */}
             <Card className='flex-1 border-none shadow-sm'>
               <CardHeader className='pb-3'>

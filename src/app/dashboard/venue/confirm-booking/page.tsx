@@ -238,7 +238,7 @@ export default function ConfirmBooking() {
             >
               <DrawerTrigger asChild>
                 <Button variant='ghost' size='icon'>
-                  <Menu className='h-5 w-5' />
+                  {/* <Menu className='h-5 w-5' /> */}
                 </Button>
               </DrawerTrigger>
               <DrawerContent className='w-80 sm:w-96'>

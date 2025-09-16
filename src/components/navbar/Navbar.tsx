@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,7 +70,16 @@ export function Navbar() {
                 Login
               </Button>
             ) : (
-              <div>
+              <div className='flex items-center gap-4'>
+                <Avatar className="w-10 h-10">
+                  <AvatarImage
+                    src='/placeholder.png'
+                    width={48}
+                    height={48}
+                    alt='@'
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
                 <Link
                   href='/dashboard'
                   className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl'

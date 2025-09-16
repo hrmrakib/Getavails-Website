@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User, Rocket, Crown, Check, Shield } from "lucide-react";
+import Link from "next/link";
 
 export interface Subscription {
   id: string;
@@ -94,16 +95,20 @@ export function SubscriptionCard({
       )}
 
       <div className='space-y-6'>
-        <Button
-          variant='secondary'
-          className='w-full bg-gradient-to-t from-[#235789CC] to-[#2C73B899] hover:bg-blue-500/30 text-white border border-[#aac1d6] shadow-2xl cursor-pointer'
-          onClick={() => onEdit(subscription.id)}
+        <Link
+          href={`/dashboard/subscriptions/edit-subscriptions/${subscription.id}`}
         >
-          Edit Plan
-        </Button>
+          <Button
+            variant='secondary'
+            className='w-full bg-gradient-to-t from-[#235789CC] to-[#2C73B899] hover:bg-blue-500/30 text-white border border-[#aac1d6] shadow-2xl cursor-pointer'
+            onClick={() => onEdit(subscription.id)}
+          >
+            Edit Plan
+          </Button>
+        </Link>
         <Button
           variant='outline'
-          className='w-full bg-gradient-to-t from-[#235789CC] to-[#2C73B899] hover:bg-blue-500/30 text-red-300 hover:text-red-300 border-2 !border-red-400/50 shadow-2xl cursor-pointer'
+          className='w-full bg-gradient-to-t from-[#235789CC] to-[#2C73B899] hover:bg-blue-500/30 text-red-300 hover:text-red-300 border-2 !border-red-400/50 shadow-2xl cursor-pointer mt-6'
           onClick={() => onDelete(subscription.id)}
         >
           Delete Plan

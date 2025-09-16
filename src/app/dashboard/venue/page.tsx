@@ -34,11 +34,11 @@ export default function DashboardPage() {
   const bookingsData = getBookingsData();
 
   return (
-    <div className='min-h-screen bg-gray-50 p-4 md:p-6'>
+    <div className='min-h-screen bg-transparent p-4 md:p-6'>
       {/* Main Grid */}
       <div className=' gap-6 mb-8'>
         <div className='lg:col-span-4'>
-          <div className='lg:max-w-[80%] flex gap-6 mb-8'>
+          <div className='lg:max-w-[80%] flex flex-wrap gap-6 mb-8'>
             {/* Revenue Card */}
             <Card className='flex-1 border-none shadow-sm'>
               <CardHeader className='pb-3'>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Info, Eye, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Search, Info, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

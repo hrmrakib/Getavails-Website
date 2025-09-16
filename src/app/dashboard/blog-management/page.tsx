@@ -22,6 +22,7 @@ import {
 import { MoreVertical, Edit, Trash2, Plus, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface BlogPost {
   id: string;
@@ -137,11 +138,8 @@ export default function BlogPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleEdit = (postId: string) => {
-    console.log("Edit post:", postId);
-    // Implement edit functionality here
-  };
 
   const handleDeleteClick = (postId: string) => {
     setPostToDelete(postId);
@@ -167,7 +165,7 @@ export default function BlogPage() {
         {/* Header */}
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8'>
           <div></div>
-          <Link href='/blog-management/add-new-blog'>
+          <Link href='/dashboard/blog-management/add-new-blog'>
             <Button className='flex items-center gap-2 bg-[#235789]'>
               <Plus className='h-4 w-4' />
               Add New Blog
@@ -219,7 +217,7 @@ export default function BlogPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align='end' className='w-40'>
                         <DropdownMenuItem
-                          onClick={() => handleEdit(post.id)}
+                          onClick={() => router.push("/dashboard/blog-management/edit-blog/" + post.id)}
                           className='flex items-center gap-2 cursor-pointer'
                         >
                           <Edit className='h-4 w-4' />
