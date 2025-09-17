@@ -11,7 +11,7 @@ const statistics = [
 
 export function TestimonialsSection() {
   return (
-    <section className='py-16 lg:py-28 px-4 bg-gray-50'>
+    <section className='py-16 lg:py-28 px-4 bg-transparent'>
       <div className='container mx-auto'>
         {/* Header */}
         <div className='text-center mb-12 lg:mb-24'>

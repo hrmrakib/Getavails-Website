@@ -3,7 +3,13 @@
 import React from "react";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import { NavItem } from "./CommonItem";
-import { LayoutDashboard, Settings } from "lucide-react";
+import {
+  BookAlert,
+  BookCheck,
+  CalendarDays,
+  LayoutDashboard,
+  MessageCircleMore,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const VenueSidebar = () => {
@@ -21,7 +27,7 @@ const VenueSidebar = () => {
 
         <NavItem
           href='/dashboard/venue/availability-calendar'
-          icon={Settings}
+          icon={CalendarDays}
           label='Availability Calendar'
           active={
             pathname === "/dashboard/venue/availability-calendar" ||
@@ -31,7 +37,7 @@ const VenueSidebar = () => {
 
         <NavItem
           href='/dashboard/venue/bookings-requests'
-          icon={Settings}
+          icon={BookAlert}
           label='Bookings Requests'
           active={
             pathname === "/dashboard/venue/subscriptions" ||
@@ -41,7 +47,7 @@ const VenueSidebar = () => {
 
         <NavItem
           href='/dashboard/venue/confirm-booking'
-          icon={Settings}
+          icon={BookCheck}
           label='Confirm Booking'
           active={
             pathname === "/dashboard/venue/confirm-booking" ||
@@ -51,7 +57,7 @@ const VenueSidebar = () => {
 
         <NavItem
           href='/dashboard/venue/message'
-          icon={Settings}
+          icon={MessageCircleMore}
           label='Message'
           active={
             pathname === "/dashboard/venue/message" ||

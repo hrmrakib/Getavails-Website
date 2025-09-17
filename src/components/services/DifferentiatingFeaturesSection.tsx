@@ -92,7 +92,7 @@ const features = [
 
 export function DifferentiatingFeaturesSection() {
   return (
-    <section className='py-16 px-4 bg-gray-50'>
+    <section className='py-16 px-4 bg-transparent'>
       <div className='container mx-auto'>
         {/* Header */}
         <div className='text-center mb-12'>

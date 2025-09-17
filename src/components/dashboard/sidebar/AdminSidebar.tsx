@@ -42,7 +42,8 @@ const AdminSidebar = () => {
             pathname.startsWith("/dashboard/user-management") ||
             pathname === "/dashboard/agent" ||
             pathname === "/dashboard/artists" ||
-            pathname === "/dashboard/venue"
+            pathname === "/dashboard/venue" ||
+            pathname === "/dashboard/buyer"
           }
         >
           <SubNavItem
@@ -50,15 +51,23 @@ const AdminSidebar = () => {
             label='Agent'
             active={pathname === "/dashboard/agent"}
           />
+
           <SubNavItem
             href='/dashboard/artists'
             label='Artists'
             active={pathname === "/dashboard/artists"}
           />
+
           <SubNavItem
             href='/dashboard/venue'
             label='Venue'
             active={pathname === "/dashboard/venue"}
+          />
+
+          <SubNavItem
+            href='/dashboard/buyer'
+            label='Buyer'
+            active={pathname === "/dashboard/buyer"}
           />
         </ExpandableNavItem>
 
@@ -67,9 +76,8 @@ const AdminSidebar = () => {
           icon={BanknoteArrowUp}
           label='Earnings'
           active={
-            true
-            // pathname === "/dashboard/earnings" ||
-            // pathname.startsWith("/dashboard/earnings/")
+            pathname === "/dashboard/earnings" ||
+            pathname.startsWith("/dashboard/earnings/")
           }
         />
 

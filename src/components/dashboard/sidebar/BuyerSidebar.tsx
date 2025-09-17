@@ -3,7 +3,13 @@
 import React, { useState } from "react";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import { ExpandableNavItem, NavItem, SubNavItem } from "./CommonItem";
-import { LayoutDashboard, Users, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  BookAlert,
+  CalendarArrowUp,
+  MessageCircleMore,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const BuyerSidebar = () => {
@@ -50,7 +56,7 @@ const BuyerSidebar = () => {
 
         <NavItem
           href='/dashboard/buyer/bookings-requests'
-          icon={Settings}
+          icon={BookAlert}
           label='Bookings Requests'
           active={
             pathname === "/dashboard/buyer/bookings-requests" ||
@@ -60,7 +66,7 @@ const BuyerSidebar = () => {
 
         <NavItem
           href='/dashboard/buyer/upcoming-events'
-          icon={Settings}
+          icon={CalendarArrowUp}
           label='Upcoming Events'
           active={
             pathname === "/dashboard/buyer/upcoming-events" ||
@@ -70,7 +76,7 @@ const BuyerSidebar = () => {
 
         <NavItem
           href='/dashboard/buyer/message'
-          icon={Settings}
+          icon={MessageCircleMore}
           label='Message'
           active={
             pathname === "/dashboard/buyer/message" ||

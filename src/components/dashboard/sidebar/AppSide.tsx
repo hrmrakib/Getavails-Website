@@ -138,7 +138,7 @@ export default function DashboardSidebar() {
                 Logout
               </span>
             </button>
-          </SidebarFooter>
+          </SidebarFooter> 
         </Sidebar>
 
         <AlertDialog

@@ -50,7 +50,7 @@ export function CorePlatformSection() {
   ];
 
   return (
-    <section className='py-16 px-4 sm:px-6 lg:px-8 bg-gray-50'>
+    <section className='py-16 px-4 sm:px-6 lg:px-8 bg-transparent'>
       <div className='mx-auto container'>
         {/* Header */}
         <div className='text-center mb-16'>

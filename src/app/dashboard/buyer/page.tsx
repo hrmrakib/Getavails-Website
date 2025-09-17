@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PencilOff, TrendingUp } from "lucide-react";
 import AgentRevenueChart from "@/components/dashboard/chart/AgentRevenueChart";
 import EventChart from "@/components/dashboard/chart/EventChart";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const [revenueView, setRevenueView] = useState<"total" | "yearly">("total");
@@ -43,12 +44,14 @@ export default function DashboardPage() {
           </h2>
           <div className='flex items-center justify-center gap-6'>
             <Button className='px-6 h-11'>Book Now</Button>
-            <Button
-              variant='outline'
-              className='bg-transparent h-11 border border-[#1E1E1E]'
-            >
-              Find Venues
-            </Button>
+            <Link href='/dashboard/buyer/talent-hub/venue'>
+              <Button
+                variant='outline'
+                className='bg-transparent h-11 border border-[#1E1E1E]'
+              >
+                Find Venues
+              </Button>
+            </Link>
           </div>
         </div>
 

@@ -3,7 +3,13 @@
 import React from "react";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import { NavItem } from "./CommonItem";
-import { LayoutDashboard, Settings } from "lucide-react";
+import {
+  CalendarDays,
+  LayoutDashboard,
+  MessageCircleMore,
+  SearchCheck,
+  TicketPercent,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const ArtistSidebar = () => {
@@ -21,7 +27,7 @@ const ArtistSidebar = () => {
 
         <NavItem
           href='/dashboard/artists/availability-calendar'
-          icon={Settings}
+          icon={CalendarDays}
           label='Availability Calendar'
           active={
             pathname === "/earnings" ||
@@ -31,7 +37,7 @@ const ArtistSidebar = () => {
 
         <NavItem
           href='/dashboard/artists/find-agent'
-          icon={Settings}
+          icon={SearchCheck}
           label='Find an Agent'
           active={
             pathname === "//dashboard/artists/find-agent" ||
@@ -41,7 +47,7 @@ const ArtistSidebar = () => {
 
         <NavItem
           href='/dashboard/artists/bookings-requests'
-          icon={Settings}
+          icon={TicketPercent}
           label='Bookings Requests'
           active={
             pathname === "/blog-management" ||
@@ -51,7 +57,7 @@ const ArtistSidebar = () => {
 
         <NavItem
           href='/dashboard/artists/message'
-          icon={Settings}
+          icon={MessageCircleMore}
           label='Message'
           active={
             pathname === "/dashboard/artists/message" ||

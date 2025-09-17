@@ -199,6 +199,7 @@ export default function PaymentStatics() {
                   <span className='text-sm text-gray-600'>Last Month</span>
                 </div>
               </div>
+
               {/* Period Selector */}
               <div className='flex bg-gray-100 rounded-lg p-1'>
                 {periods.map((period) => (
@@ -219,7 +220,7 @@ export default function PaymentStatics() {
               </div>
             </div>
           </div>
-          <div>
+          <div className='min-w-full'>
             <LineChart data={chartData} selectedPeriod={selectedPeriod} />
           </div>
         </CardContent>

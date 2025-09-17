@@ -257,7 +257,7 @@ export default function AdministratorsPage() {
   };
 
   return (
-    <div className='bg-gray-50 min-h-screen pt-5'>
+    <div className='bg-transparent min-h-screen pt-5'>
       <div className='w-full'>
         {/* Header */}
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 px-6'>

@@ -9,7 +9,6 @@ import {
   MessageCircleMore,
   NotebookPen,
   Palette,
-  Settings,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
