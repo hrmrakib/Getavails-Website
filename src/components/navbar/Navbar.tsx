@@ -170,6 +170,15 @@ export function Navbar() {
                   {item.name}
                 </Link>
               ))}
+
+              <div>
+                <Link
+                  href='/dashboard'
+                  className='w-2/3 bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl'
+                >
+                  Go Dashboard <ArrowRight size={18} />
+                </Link>
+              </div>
             </div>
 
             {/* Action Buttons */}

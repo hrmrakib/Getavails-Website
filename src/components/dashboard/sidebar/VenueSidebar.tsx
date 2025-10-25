@@ -17,7 +17,7 @@ const VenueSidebar = () => {
 
   return (
     <>
-      <SidebarMenu className='px-6 space-y-2'>
+      <SidebarMenu className='px-4 space-y-2'>
         <NavItem
           href='/dashboard/venue'
           icon={LayoutDashboard}

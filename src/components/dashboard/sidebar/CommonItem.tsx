@@ -70,7 +70,7 @@ export function ExpandableNavItem({
           <button
             onClick={onToggle}
             className={cn(
-              "flex items-center gap-3 px-4 !py-5 transition-colors rounded-full font-medium relative w-full",
+              "flex items-center gap-3 px-4 !py-5 transition-colors rounded-full font-medium relative w-full cursor-pointer",
               active
                 ? "bg-sidebar-link-bg text-sidebar-active-color"
                 : "text-sidebar-color hover:bg-sidebar-link-bg hover:text-sidebar-color"
@@ -82,7 +82,7 @@ export function ExpandableNavItem({
                 active ? "text-sidebarActiveColor" : ""
               }`}
             >
-              {label}
+              {label} 
             </span>
             {isOpen ? (
               <ChevronDown size={16} className='transition-transform' />
