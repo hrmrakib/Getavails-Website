@@ -25,7 +25,7 @@ export function NavItem({
           className={cn(
             "flex items-center gap-3 px-4 !py-5 transition-colors rounded-full font-medium relative",
             active
-              ? "bg-sidebar-link-bg text-sidebar-active-color"
+              ? "bg-sidebar-link-bg text-sidebar-link-active-color"
               : "text-sidebar-color hover:bg-sidebar-link-bg hover:text-sidebar-color"
           )}
         >
@@ -79,10 +79,10 @@ export function ExpandableNavItem({
             <Icon size={18} />
             <span
               className={`text-lg text-nowrap flex-1 text-left ${
-                active ? "text-sidebarActiveColor" : ""
+                active ? "text-sidebar-active-color" : ""
               }`}
             >
-              {label} 
+              {label}
             </span>
             {isOpen ? (
               <ChevronDown size={16} className='transition-transform' />

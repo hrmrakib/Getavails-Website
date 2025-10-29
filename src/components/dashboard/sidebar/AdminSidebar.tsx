@@ -47,6 +47,11 @@ const AdminSidebar = () => {
           }
         >
           <SubNavItem
+            href='/dashboard/user'
+            label='User'
+            active={pathname === "/dashboard/user"}
+          />
+          <SubNavItem
             href='/dashboard/agent'
             label='Agent'
             active={pathname === "/dashboard/agent"}

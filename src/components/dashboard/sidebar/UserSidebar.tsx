@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-const BuyerSidebar = () => {
+const UserSidebar = () => {
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(true);
   const pathname = usePathname();
 
@@ -88,4 +88,4 @@ const BuyerSidebar = () => {
   );
 };
 
-export default BuyerSidebar;
+export default UserSidebar;

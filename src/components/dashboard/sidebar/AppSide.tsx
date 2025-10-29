@@ -28,7 +28,7 @@ import AdminSidebar from "./AdminSidebar";
 import AgentSidebar from "./AgentSidebar";
 import VenueSidebar from "./VenueSidebar";
 import ArtistSidebar from "./ArtistSidebar";
-import BuyerSidebar from "./BuyerSidebar";
+import UserSidebar from "./UserSidebar";
 
 export default function DashboardSidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -77,14 +77,16 @@ export default function DashboardSidebar() {
               />
             </Link>
 
-            {sidebarView !== "agent" && sidebarView !== "venue" && sidebarView !== "artists" && sidebarView !== "buyer" && (
-              <AdminSidebar />
-            )}
+            {sidebarView !== "agent" &&
+              sidebarView !== "venue" &&
+              sidebarView !== "artists" &&
+              sidebarView !== "user" && <AdminSidebar />}
 
             {sidebarView === "agent" && <AgentSidebar />}
             {sidebarView === "venue" && <VenueSidebar />}
             {sidebarView === "artists" && <ArtistSidebar />}
-            {sidebarView === "buyer" && <BuyerSidebar />}
+            {/* {sidebarView === "buyer" && <BuyerSidebar />} */}
+            {sidebarView === "user" && <UserSidebar />}
           </SidebarContent>
 
           <SidebarFooter className='p-6'>
@@ -138,7 +140,7 @@ export default function DashboardSidebar() {
                 Logout
               </span>
             </button>
-          </SidebarFooter> 
+          </SidebarFooter>
         </Sidebar>
 
         <AlertDialog
