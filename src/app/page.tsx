@@ -3,6 +3,7 @@ import { AIAssistantInterface } from "@/components/home/AIAssistance";
 import BlogInsightsSection from "@/components/home/BlogInsightsSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { HeroSection } from "@/components/home/Hero";
+import JoinEvent from "@/components/home/JoinEvent";
 import { PricingSection } from "@/components/home/PricingSection";
 import { RoleJourneySection } from "@/components/how-it-works/RoleJourneySection";
 import { TestimonialsSection } from "@/components/services/TestimonialsSection";
@@ -12,6 +13,7 @@ const HomePage = () => {
   return (
     <div className='bg-white'>
       <HeroSection />
+      <JoinEvent />
       <FeaturesSection />
       <RoleJourneySection />
       <PricingSection />
