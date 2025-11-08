@@ -10,13 +10,14 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function SignUpFormForAgent() {
+export default function SignUpFormForArtist() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [fullName, setFullName] = useState("");
+  const [artistName, setArtistName] = useState("");
   const [email, setEmail] = useState("");
+  const [artistCategory, setArtistCategory] = useState("");
+  const [venueCapacity, setVenueCapacity] = useState("");
   const [location, setLocation] = useState("");
-  const [experience, setExperience] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +44,7 @@ export default function SignUpFormForAgent() {
     // Simulate sign up process
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log("Sign up attempt:", { fullName, email, password });
+    console.log("Sign up attempt:", { artistName, email, password });
     setIsLoading(false);
   };
 
@@ -93,7 +94,7 @@ export default function SignUpFormForAgent() {
             {/* Header */}
             <div className='space-y-2'>
               <h1 className='text-2xl font-bold text-foreground'>
-                Start Your Journey as an Agent.
+                Start Your Journey as an Artist.
               </h1>
               <p className='text-muted-foreground text-sm'>
                 Join as an agent and simplify artist management with our
@@ -103,20 +104,20 @@ export default function SignUpFormForAgent() {
 
             {/* Sign Up Form */}
             <form onSubmit={handleSubmit} className='space-y-4'>
-              {/* Full Name / Business Name Field */}
+              {/* Artist Name / Brand Name Field */}
               <div className='space-y-2'>
                 <Label
-                  htmlFor='fullName'
+                  htmlFor='artistName'
                   className='text-sm font-medium text-muted-foreground'
                 >
-                  Full Name / Business Name
+                  Artist / Brand Name
                 </Label>
                 <Input
-                  id='fullName'
+                  id='artistName'
                   type='text'
-                  placeholder='Enter Full Name / Business Name'
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder='Enter your artist / brand name'
+                  value={artistName}
+                  onChange={(e) => setArtistName(e.target.value)}
                   required
                   className='h-12'
                 />
@@ -141,6 +142,44 @@ export default function SignUpFormForAgent() {
                 />
               </div>
 
+              {/* Category of Artist Field */}
+              <div className='space-y-2'>
+                <Label
+                  htmlFor='artistCategory'
+                  className='text-sm font-medium text-muted-foreground'
+                >
+                  Category of Artist
+                </Label>
+                <Input
+                  id='artistCategory'
+                  type='text'
+                  placeholder='Enter type of your venue'
+                  value={artistCategory}
+                  onChange={(e) => setArtistCategory(e.target.value)}
+                  required
+                  className='h-12'
+                />
+              </div>
+
+              {/* Venue Capacity Field */}
+              <div className='space-y-2'>
+                <Label
+                  htmlFor='capacity'
+                  className='text-sm font-medium text-muted-foreground'
+                >
+                  Venue Capacity
+                </Label>
+                <Input
+                  id='capacity'
+                  type='text'
+                  placeholder='Enter Venue Capacity'
+                  value={venueCapacity}
+                  onChange={(e) => setVenueCapacity(e.target.value)}
+                  required
+                  className='h-12'
+                />
+              </div>
+
               {/* Location / Address Field */}
               <div className='space-y-2'>
                 <Label
@@ -155,25 +194,6 @@ export default function SignUpFormForAgent() {
                   placeholder='Enter Your Location / Address'
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  required
-                  className='h-12'
-                />
-              </div>
-
-              {/* Experience Field */}
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='experience'
-                  className='text-sm font-medium text-muted-foreground'
-                >
-                  Experience
-                </Label>
-                <Input
-                  id='experience'
-                  type='number'
-                  placeholder='Enter Your Experience Duration'
-                  value={experience}
-                  onChange={(e) => setExperience(e.target.value)}
                   required
                   className='h-12'
                 />
@@ -262,22 +282,6 @@ export default function SignUpFormForAgent() {
               >
                 {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
-
-              {/* Google Sign Up */}
-              {/* <Button
-                type='button'
-                variant='outline'
-                className='w-full h-12 bg-[#1E1E1E] text-white  border-[#1E1E1E]'
-                onClick={handleGoogleSignUp}
-              >
-                <Image
-                  src='/google.png'
-                  alt='Google Logo'
-                  width={20}
-                  height={20}
-                />
-                Sign-up with Google
-              </Button> */}
 
               {/* Sign In Link */}
               <div className='text-center'>

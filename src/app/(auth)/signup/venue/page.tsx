@@ -10,7 +10,7 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function SignUpForm() {
+export default function SignUpFormForVenue() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [venueName, setVenueName] = useState("");

@@ -76,7 +76,7 @@ export default function SignUpPage() {
 
     setTimeout(() => {
       router.push(`/signup/${role}`);
-    }, 2000);
+    }, 1500);
   };
 
   return (

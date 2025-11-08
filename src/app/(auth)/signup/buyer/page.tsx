@@ -16,7 +16,7 @@ export default function SignUpFormForAgent() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("");
-  const [experience, setExperience] = useState("");
+  const [lookingFor, setLookingFor] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +93,7 @@ export default function SignUpFormForAgent() {
             {/* Header */}
             <div className='space-y-2'>
               <h1 className='text-2xl font-bold text-foreground'>
-                Start Your Journey as an Agent.
+                Start Your Journey as an Buyer.
               </h1>
               <p className='text-muted-foreground text-sm'>
                 Join as an agent and simplify artist management with our
@@ -109,12 +109,12 @@ export default function SignUpFormForAgent() {
                   htmlFor='fullName'
                   className='text-sm font-medium text-muted-foreground'
                 >
-                  Full Name / Business Name
+                  Full Name
                 </Label>
                 <Input
                   id='fullName'
                   type='text'
-                  placeholder='Enter Full Name / Business Name'
+                  placeholder='Enter Full Name '
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -141,39 +141,20 @@ export default function SignUpFormForAgent() {
                 />
               </div>
 
-              {/* Location / Address Field */}
+              {/* What's You're Looking For?  Field */}
               <div className='space-y-2'>
                 <Label
-                  htmlFor='location'
+                  htmlFor='lookingFor'
                   className='text-sm font-medium text-muted-foreground'
                 >
-                  Location / Address
+                  What&apos;s You&apos;re Looking For?
                 </Label>
                 <Input
-                  id='location'
+                  id='lookingFor'
                   type='text'
-                  placeholder='Enter Your Location / Address'
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  required
-                  className='h-12'
-                />
-              </div>
-
-              {/* Experience Field */}
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='experience'
-                  className='text-sm font-medium text-muted-foreground'
-                >
-                  Experience
-                </Label>
-                <Input
-                  id='experience'
-                  type='number'
-                  placeholder='Enter Your Experience Duration'
-                  value={experience}
-                  onChange={(e) => setExperience(e.target.value)}
+                  placeholder="Enter What's You're Looking For "
+                  value={lookingFor}
+                  onChange={(e) => setLookingFor(e.target.value)}
                   required
                   className='h-12'
                 />
@@ -262,22 +243,6 @@ export default function SignUpFormForAgent() {
               >
                 {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
-
-              {/* Google Sign Up */}
-              {/* <Button
-                type='button'
-                variant='outline'
-                className='w-full h-12 bg-[#1E1E1E] text-white  border-[#1E1E1E]'
-                onClick={handleGoogleSignUp}
-              >
-                <Image
-                  src='/google.png'
-                  alt='Google Logo'
-                  width={20}
-                  height={20}
-                />
-                Sign-up with Google
-              </Button> */}
 
               {/* Sign In Link */}
               <div className='text-center'>
