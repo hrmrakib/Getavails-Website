@@ -13,10 +13,11 @@ import Image from "next/image";
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [fullName, setFullName] = useState("");
+  const [venueName, setVenueName] = useState("");
   const [email, setEmail] = useState("");
+  const [venueType, setVenueType] = useState("");
+  const [venueCapacity, setVenueCapacity] = useState("");
   const [location, setLocation] = useState("");
-  const [experience, setExperience] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +44,7 @@ export default function SignUpForm() {
     // Simulate sign up process
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log("Sign up attempt:", { fullName, email, password });
+    console.log("Sign up attempt:", { venueName, email, password });
     setIsLoading(false);
   };
 
@@ -93,7 +94,7 @@ export default function SignUpForm() {
             {/* Header */}
             <div className='space-y-2'>
               <h1 className='text-2xl font-bold text-foreground'>
-                Start Your Journey as an Agent.
+                Start Your Journey as an Venue.
               </h1>
               <p className='text-muted-foreground text-sm'>
                 Join as an agent and simplify artist management with our
@@ -106,17 +107,17 @@ export default function SignUpForm() {
               {/* Full Name / Business Name Field */}
               <div className='space-y-2'>
                 <Label
-                  htmlFor='fullName'
+                  htmlFor='venueName'
                   className='text-sm font-medium text-muted-foreground'
                 >
-                  Full Name / Business Name
+                  Venue Name
                 </Label>
                 <Input
-                  id='fullName'
+                  id='venueName'
                   type='text'
-                  placeholder='Enter Full Name / Business Name'
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder='Enter your venue name'
+                  value={venueName}
+                  onChange={(e) => setVenueName(e.target.value)}
                   required
                   className='h-12'
                 />
@@ -141,6 +142,44 @@ export default function SignUpForm() {
                 />
               </div>
 
+              {/* Type of Venue Field */}
+              <div className='space-y-2'>
+                <Label
+                  htmlFor='venueType'
+                  className='text-sm font-medium text-muted-foreground'
+                >
+                  Type of Venue
+                </Label>
+                <Input
+                  id='venueType'
+                  type='text'
+                  placeholder='Enter type of your venue'
+                  value={venueType}
+                  onChange={(e) => setVenueType(e.target.value)}
+                  required
+                  className='h-12'
+                />
+              </div>
+
+              {/* Venue Capacity Field */}
+              <div className='space-y-2'>
+                <Label
+                  htmlFor='capacity'
+                  className='text-sm font-medium text-muted-foreground'
+                >
+                  Venue Capacity
+                </Label>
+                <Input
+                  id='capacity'
+                  type='text'
+                  placeholder='Enter Venue Capacity'
+                  value={venueCapacity}
+                  onChange={(e) => setVenueCapacity(e.target.value)}
+                  required
+                  className='h-12'
+                />
+              </div>
+
               {/* Location / Address Field */}
               <div className='space-y-2'>
                 <Label
@@ -155,25 +194,6 @@ export default function SignUpForm() {
                   placeholder='Enter Your Location / Address'
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  required
-                  className='h-12'
-                />
-              </div>
-
-              {/* Experience Field */}
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='experience'
-                  className='text-sm font-medium text-muted-foreground'
-                >
-                  Experience
-                </Label>
-                <Input
-                  id='experience'
-                  type='number'
-                  placeholder='Enter Your Experience Duration'
-                  value={experience}
-                  onChange={(e) => setExperience(e.target.value)}
                   required
                   className='h-12'
                 />
@@ -262,22 +282,6 @@ export default function SignUpForm() {
               >
                 {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
-
-              {/* Google Sign Up */}
-              {/* <Button
-                type='button'
-                variant='outline'
-                className='w-full h-12 bg-[#1E1E1E] text-white  border-[#1E1E1E]'
-                onClick={handleGoogleSignUp}
-              >
-                <Image
-                  src='/google.png'
-                  alt='Google Logo'
-                  width={20}
-                  height={20}
-                />
-                Sign-up with Google
-              </Button> */}
 
               {/* Sign In Link */}
               <div className='text-center'>
