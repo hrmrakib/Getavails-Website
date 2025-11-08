@@ -117,13 +117,12 @@ export function LoginForm() {
               Remember me
             </Label>
           </div>
-          <Button
-            type='button'
-            variant='link'
+          <Link
+            href='/forgot-password'
             className='text-sm text-blue-600 hover:text-blue-700 p-0 h-auto'
           >
             Forgot password?
-          </Button>
+          </Link>
         </div>
 
         {/* Login Button */}
