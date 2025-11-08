@@ -7,16 +7,21 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, RotateCw } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useVerifyOtpMutation } from "@/redux/features/auth/authAPI";
 
 export default function SignUpFormForAgent() {
   const [isLoading, setIsLoading] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [verifyOtpMutation] = useVerifyOtpMutation();
+  const router = useRouter();
+
+  console.log(router);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -214,7 +219,7 @@ export default function SignUpFormForAgent() {
               <Button
                 type='submit'
                 className='w-full h-12 bg-[#235789] hover:bg-[#1b68af] text-white font-medium'
-                disabled={isLoading || !!passwordError}
+                disabled={isLoading}
               >
                 {isLoading ? "Resetting..." : "Reset Password"}
               </Button>

@@ -10,6 +10,8 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAgentRegisterMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SignUpFormForAgent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,11 +20,13 @@ export default function SignUpFormForAgent() {
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("");
   const [experience, setExperience] = useState("");
+  const [hourlyRate, setHourlyRate] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [agentRegisterMutation] = useAgentRegisterMutation();
+  const router = useRouter();
 
   const validatePasswords = () => {
     if (password && confirmPassword && password !== confirmPassword) {
@@ -42,18 +46,24 @@ export default function SignUpFormForAgent() {
 
     try {
       setIsLoading(true);
+
       const data = {
-        password: "123456",
-        email: "agent3@gmail.com",
-        name: "Agent",
-        location: "Bangladesh",
-        experience: "1 years",
-        price: "$12 hours",
+        password: password,
+        email: email,
+        name: fullName,
+        location: location,
+        experience: experience,
+        price: hourlyRate,
       };
 
-      const res = await agentRegisterMutation(data);
+      const res = await agentRegisterMutation(data).unwrap();
 
       console.log(res);
+
+      if (res?.success) {
+        toast.success("Agent registered successfully.");
+        router.push(`/verify-otp?email=${email}`);
+      }
     } catch (error) {
       console.error("Error signing up:", error);
     } finally {
@@ -188,6 +198,25 @@ export default function SignUpFormForAgent() {
                   placeholder='Enter Your Experience Duration'
                   value={experience}
                   onChange={(e) => setExperience(e.target.value)}
+                  required
+                  className='h-12'
+                />
+              </div>
+
+              {/* Hourly Rate Field */}
+              <div className='space-y-2'>
+                <Label
+                  htmlFor='hourlyRate'
+                  className='text-sm font-medium text-muted-foreground'
+                >
+                  Hourly Rate
+                </Label>
+                <Input
+                  id='hourlyRate'
+                  type='number'
+                  placeholder='Enter Your Hourly Rate'
+                  value={hourlyRate}
+                  onChange={(e) => setHourlyRate(e.target.value)}
                   required
                   className='h-12'
                 />
