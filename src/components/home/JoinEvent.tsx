@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  MapPin,
-  Ticket,
-} from "lucide-react";
+import { ChevronRight, Calendar, MapPin, Ticket } from "lucide-react";
 import Image from "next/image";
 
 interface Event {
@@ -77,7 +71,6 @@ const EVENTS: Event[] = [
 
 export default function JoinEvent() {
   const [events, setEvents] = useState<Event[]>(EVENTS);
-  const [scrollPosition, setScrollPosition] = useState(0);
 
   const toggleBooking = (id: number) => {
     setEvents(
@@ -85,23 +78,6 @@ export default function JoinEvent() {
         event.id === id ? { ...event, booked: !event.booked } : event
       )
     );
-  };
-
-  const scroll = (direction: "left" | "right") => {
-    const container = document.getElementById("events-container");
-    if (!container) return;
-
-    const scrollAmount = 350;
-    const newPosition =
-      direction === "left"
-        ? scrollPosition - scrollAmount
-        : scrollPosition + scrollAmount;
-
-    container.scrollTo({
-      left: newPosition,
-      behavior: "smooth",
-    });
-    setScrollPosition(newPosition);
   };
 
   return (

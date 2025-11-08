@@ -81,7 +81,7 @@ export default function AddSubscriptionPage() {
     };
 
     console.log("New subscription:", newSubscription);
-    router.push("/subscriptions");
+    router.push("/dashboard/subscriptions");
   };
 
   return (
@@ -89,7 +89,7 @@ export default function AddSubscriptionPage() {
       <div className='max-w-2xl mx-auto'>
         <div className='mb-8'>
           <Link
-            href='/subscriptions'
+            href='/dashboard/subscriptions'
             className='inline-flex items-center gap-2 text-[#000000] font-medium hover:text-gray-900 mb-4'
           >
             <ArrowLeft className='w-4 h-4' />

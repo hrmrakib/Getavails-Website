@@ -38,41 +38,41 @@ const AdminSidebar = () => {
           isOpen={isUserManagementOpen}
           onToggle={toggleUserManagement}
           active={
-            pathname === "/dashboard/user-management" ||
-            pathname.startsWith("/dashboard/user-management") ||
-            pathname === "/dashboard/agent" ||
-            pathname === "/dashboard/artists" ||
-            pathname === "/dashboard/venue" ||
-            pathname === "/dashboard/buyer"
+            pathname === "/dashboard/user-list" ||
+            pathname.startsWith("/dashboard/user-list/") ||
+            pathname === "/dashboard/agent-list" ||
+            pathname === "/dashboard/artist-list" ||
+            pathname === "/dashboard/venue-list" ||
+            pathname === "/dashboard/buyer-list"
           }
         >
           <SubNavItem
-            href='/dashboard/user'
+            href='/dashboard/user-list'
             label='User'
-            active={pathname === "/dashboard/user"}
+            active={pathname === "/dashboard/user-list"}
           />
           <SubNavItem
-            href='/dashboard/agent'
+            href='/dashboard/agent-list'
             label='Agent'
-            active={pathname === "/dashboard/agent"}
+            active={pathname === "/dashboard/agent-list"}
           />
 
           <SubNavItem
-            href='/dashboard/artists'
+            href='/dashboard/artist-list'
             label='Artists'
-            active={pathname === "/dashboard/artists"}
+            active={pathname === "/dashboard/artist-list"}
           />
 
           <SubNavItem
-            href='/dashboard/venue'
+            href='/dashboard/venue-list'
             label='Venue'
-            active={pathname === "/dashboard/venue"}
+            active={pathname === "/dashboard/venue-list"}
           />
 
           <SubNavItem
-            href='/dashboard/buyer'
-            label='Buyer'
-            active={pathname === "/dashboard/buyer"}
+            href='/dashboard/organizer-list'
+            label='Organizer'
+            active={pathname === "/dashboard/organizer-list"}
           />
         </ExpandableNavItem>
 
