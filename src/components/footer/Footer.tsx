@@ -33,12 +33,17 @@ export function FooterSection() {
 
   if (
     pathname === "/signup" ||
-    pathname === "/signin" ||
+    pathname === "/login" ||
     pathname === "/forget-password" ||
     pathname === "/verify-password" ||
     pathname === "/verify-otp" ||
     pathname === "/reset-password" ||
-    pathname.split("/")[1] === "dashboard"
+    pathname.split("/")[1] === "dashboard" ||
+    pathname === "/signup/agent" ||
+    pathname === "/signup/artist" ||
+    pathname === "/signup/venue" ||
+    pathname === "/signup/buyer" ||
+    pathname === "/signup/organizer"
   ) {
     return null;
   }

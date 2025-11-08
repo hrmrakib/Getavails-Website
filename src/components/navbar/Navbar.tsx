@@ -28,12 +28,17 @@ export function Navbar() {
 
   if (
     pathname === "/signup" ||
-    pathname === "/signin" ||
+    pathname === "/login" ||
     pathname === "/forget-password" ||
     pathname === "/verify-password" ||
     pathname === "/verify-otp" ||
     pathname === "/reset-password" ||
-    pathname.split("/")[1] === "dashboard"
+    pathname.split("/")[1] === "dashboard" ||
+    pathname === "/signup/agent" ||
+    pathname === "/signup/artist" ||
+    pathname === "/signup/venue" ||
+    pathname === "/signup/buyer" ||
+    pathname === "/signup/organizer"
   ) {
     return null;
   }
@@ -63,13 +68,13 @@ export function Navbar() {
 
             {/* Desktop Buttons */}
             <div className='hidden md:flex items-center space-x-4'>
-              {false ? (
-                <Button
-                  variant='outline'
-                  className='border-[#235789] text-[#235789] hover:bg-gray-50 bg-transparent rounded-4xl cursor-pointer'
+              {true ? (
+                <Link
+                  href='/login'
+                  className='border-[#235789] text-[#235789] font-medium border-2 px-6 py-1.5 hover:bg-gray-50 bg-transparent rounded-4xl cursor-pointer'
                 >
                   Login
-                </Button>
+                </Link>
               ) : (
                 <div className='flex items-center gap-4'>
                   <Avatar className='w-10 h-10'>

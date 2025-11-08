@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -166,13 +167,12 @@ export function LoginForm() {
         <div className='text-center'>
           <span className='text-sm text-muted-foreground'>
             Don&apos;t have an account?{" "}
-            <Button
-              type='button'
-              variant='link'
+            <Link
+              href='/signup'
               className='text-sm text-blue-600 hover:text-blue-700 p-0 h-auto font-medium'
             >
               Sign up now
-            </Button>
+            </Link>
           </span>
         </div>
       </form>
