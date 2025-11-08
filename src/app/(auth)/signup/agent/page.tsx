@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useAgentRegisterMutation } from "@/redux/features/auth/authAPI";
 
 export default function SignUpFormForAgent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,7 @@ export default function SignUpFormForAgent() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [agentRegisterMutation] = useAgentRegisterMutation();
 
   const validatePasswords = () => {
     if (password && confirmPassword && password !== confirmPassword) {
@@ -38,13 +40,25 @@ export default function SignUpFormForAgent() {
       return;
     }
 
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
+      const data = {
+        password: "123456",
+        email: "agent3@gmail.com",
+        name: "Agent",
+        location: "Bangladesh",
+        experience: "1 years",
+        price: "$12 hours",
+      };
 
-    // Simulate sign up process
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      const res = await agentRegisterMutation(data);
 
-    console.log("Sign up attempt:", { fullName, email, password });
-    setIsLoading(false);
+      console.log(res);
+    } catch (error) {
+      console.error("Error signing up:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePasswordChange = (value: string) => {

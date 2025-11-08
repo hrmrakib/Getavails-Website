@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/navbar/Navbar";
 import { FooterSection } from "@/components/footer/Footer";
 import { Toaster } from "sonner";
+import Providers from "@/redux/features/Providers";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,10 +38,12 @@ export default function RootLayout({
           fontFamily: "Inter, sans-serif",
         }}
       >
-        <Toaster position='top-center' />
-        <Navbar />
-        {children}
-        <FooterSection />
+        <Providers>
+          <Toaster position='top-center' />
+          <Navbar />
+          {children}
+          <FooterSection />
+        </Providers>
       </body>
     </html>
   );
