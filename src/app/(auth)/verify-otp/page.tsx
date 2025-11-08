@@ -2,64 +2,143 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Eye, EyeOff } from "lucide-react";
+import { CheckCircle, RotateCw } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function SignUpFormForAgent() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [location, setLocation] = useState("");
-  const [experience, setExperience] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [canResend, setCanResend] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const validatePasswords = () => {
-    if (password && confirmPassword && password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return false;
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setCanResend(true);
+      return;
     }
-    setPasswordError("");
-    return true;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft]);
+
+  const handleOTPChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+    setError("");
+
+    // Auto-focus to next input
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
 
-    if (!validatePasswords()) {
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text");
+    const digits = pastedData.replace(/\D/g, "").split("").slice(0, 6);
+
+    if (digits.length > 0) {
+      const newOtp = ["", "", "", "", "", ""];
+      digits.forEach((digit, index) => {
+        newOtp[index] = digit;
+      });
+      setOtp(newOtp);
+
+      if (digits.length === 6) {
+        inputRefs.current[5]?.focus();
+      } else {
+        inputRefs.current[digits.length]?.focus();
+      }
+    }
+  };
+
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const otpCode = otp.join("");
+
+    if (otpCode.length !== 6) {
+      setError("Please enter all 6 digits");
       return;
     }
 
     setIsLoading(true);
+    setError("");
 
-    // Simulate sign up process
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Simulate API call - replace with actual verification
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    console.log("Sign up attempt:", { fullName, email, password });
-    setIsLoading(false);
-  };
-
-  const handlePasswordChange = (value: string) => {
-    setPassword(value);
-    if (confirmPassword) {
-      setPasswordError(
-        value !== confirmPassword ? "Passwords do not match" : ""
-      );
+      // Mock validation - OTP must be 6 matching digits for demo
+      if (otpCode === "123456") {
+        setSuccess(true);
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
+      } else {
+        setError("Invalid OTP. Please try again.");
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+      }
+    } catch (err) {
+      setError("Verification failed. Please try again." + err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleConfirmPasswordChange = (value: string) => {
-    setConfirmPassword(value);
-    setPasswordError(password !== value ? "Passwords do not match" : "");
+  const handleResend = async () => {
+    setTimeLeft(60);
+    setCanResend(false);
+    setError("");
+    setOtp(["", "", "", "", "", ""]);
+    inputRefs.current[0]?.focus();
+
+    try {
+      // Simulate resend API call
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      console.log("OTP resent successfully");
+    } catch (err) {
+      setError("Failed to resend OTP. Please try again." + err);
+    }
   };
+
+  if (success) {
+    return (
+      <div className='flex flex-col items-center justify-center space-y-4 py-12 px-4'>
+        <div className='w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center animate-pulse'>
+          <CheckCircle className='w-8 h-8 text-primary' />
+        </div>
+        <div className='text-center space-y-2'>
+          <h2 className='text-2xl font-bold text-foreground'>Verified!</h2>
+          <p className='text-muted-foreground'>
+            Your account has been verified successfully.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen flex'>
@@ -93,88 +172,42 @@ export default function SignUpFormForAgent() {
             {/* Header */}
             <div className='space-y-2'>
               <h1 className='text-2xl font-bold text-foreground'>
-                Create New Password
+                Verify Your Account
               </h1>
               <p className='text-muted-foreground text-sm'>
-                Your password must be 8-10 character long.
+                Please enter the 6-digit verification code we sent to your
+                registered to process securely.
               </p>
             </div>
 
             {/* Sign Up Form */}
-            <form onSubmit={handleSubmit} className='space-y-4'>
-              {/* Password Field */}
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='password'
-                  className='text-sm font-medium text-muted-foreground'
-                >
-                  Password
-                </Label>
-                <div className='relative'>
-                  <Input
-                    id='password'
-                    type={showPassword ? "text" : "password"}
-                    placeholder='Enter password'
-                    value={password}
-                    onChange={(e) => handlePasswordChange(e.target.value)}
-                    required
-                    className='h-12 pr-10'
-                  />
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    size='sm'
-                    className='absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent'
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className='h-4 w-4 text-muted-foreground' />
-                    ) : (
-                      <Eye className='h-4 w-4 text-muted-foreground' />
-                    )}
-                  </Button>
+            <form onSubmit={handleVerify} className='space-y-4'>
+              {/* OTP Input Fields */}
+              <div className='space-y-3'>
+                <label className='sr-only'>OTP Code</label>
+                <div className='flex gap-2 sm:gap-5 justify-center'>
+                  {otp.map((digit, index) => (
+                    <input
+                      key={index}
+                      ref={(el) => {
+                        inputRefs.current[index] = el;
+                      }}
+                      type='text'
+                      inputMode='numeric'
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOTPChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(index, e)}
+                      onPaste={handlePaste}
+                      disabled={isLoading}
+                      className='w-12 h-12 sm:w-14 sm:h-14 text-center text-lg sm:text-xl font-bold rounded-xl border-2 border-[#B1B1B1] bg-background text-foreground placeholder-muted-foreground transition-colors focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed'
+                      aria-label={`OTP digit ${index + 1}`}
+                    />
+                  ))}
                 </div>
-              </div>
-
-              {/* Confirm Password Field */}
-              <div className='space-y-2.5'>
-                <Label
-                  htmlFor='confirmPassword'
-                  className='text-sm font-medium text-muted-foreground'
-                >
-                  Confirm Password
-                </Label>
-                <div className='relative'>
-                  <Input
-                    id='confirmPassword'
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder='Confirm Your Password'
-                    value={confirmPassword}
-                    onChange={(e) =>
-                      handleConfirmPasswordChange(e.target.value)
-                    }
-                    required
-                    className={`h-12 pr-10 ${
-                      passwordError ? "border-red-500" : ""
-                    }`}
-                  />
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    size='sm'
-                    className='absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent'
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className='h-4 w-4 text-muted-foreground' />
-                    ) : (
-                      <Eye className='h-4 w-4 text-muted-foreground' />
-                    )}
-                  </Button>
-                </div>
-                {passwordError && (
-                  <p className='text-sm text-red-500'>{passwordError}</p>
-                )}
+                <p className='text-xs text-[#0ca867] text-center'>
+                  Paste your code or type each digit
+                </p>
               </div>
 
               {/* Create Account Button */}
@@ -186,17 +219,19 @@ export default function SignUpFormForAgent() {
                 {isLoading ? "Resetting..." : "Reset Password"}
               </Button>
 
-              {/* Sign In Link */}
-              <div className='text-center'>
-                <span className='text-sm text-muted-foreground'>
-                  Already have an account?{" "}
-                  <Link
-                    href='/login'
-                    className='text-sm text-blue-600 hover:text-blue-700 p-0 h-auto font-medium'
-                  >
-                    Sign In
-                  </Link>
+              {/* Resend Section */}
+              <div className='border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-sm'>
+                <span className='text-muted-foreground'>
+                  Didn&apos;t receive the code?
                 </span>
+                <button
+                  onClick={handleResend}
+                  disabled={!canResend || isLoading}
+                  className='flex items-center gap-2 text-primary font-semibold hover:text-primary/80 transition-colors disabled:text-muted-foreground disabled:cursor-not-allowed'
+                >
+                  <RotateCw className='w-4 h-4' />
+                  {canResend ? "Resend OTP" : `Resend in ${timeLeft}s`}
+                </button>
               </div>
             </form>
           </div>
