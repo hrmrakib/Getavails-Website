@@ -10,7 +10,7 @@ export default function LoginPage() {
           style={{
             backgroundImage: "url('/login.png')",
           }}
-        />
+        /> 
         <div className='absolute inset-0 bg-black/20' />
       </div>
 
