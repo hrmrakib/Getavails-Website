@@ -55,7 +55,6 @@ export default function SignUpFormForArtist() {
       price: price,
     };
 
-    // Simulate sign up process
     try {
       const res = await artistRegisterMutation(data).unwrap();
       console.log(res);

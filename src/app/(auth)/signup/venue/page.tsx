@@ -9,6 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useVenueRegisterMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SignUpFormForVenue() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +25,8 @@ export default function SignUpFormForVenue() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [venueRegisterMutation] = useVenueRegisterMutation();
+  const router = useRouter();
 
   const validatePasswords = () => {
     if (password && confirmPassword && password !== confirmPassword) {
@@ -41,11 +46,28 @@ export default function SignUpFormForVenue() {
 
     setIsLoading(true);
 
-    // Simulate sign up process
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const data = {
+      password: password,
+      email: email,
+      name: venueName,
+      location: location,
+      capacity: venueCapacity,
+      venue_type: venueType,
+    };
 
-    console.log("Sign up attempt:", { venueName, email, password });
-    setIsLoading(false);
+    try {
+      const res = await venueRegisterMutation(data).unwrap();
+      console.log(res);
+
+      if (res?.success) {
+        toast.success("Venue registered successfully.");
+        router.push(`/verify-otp?email=${email}`);
+      }
+    } catch (error) {
+      console.error("Error signing up:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePasswordChange = (value: string) => {
@@ -171,7 +193,7 @@ export default function SignUpFormForVenue() {
                 </Label>
                 <Input
                   id='capacity'
-                  type='text'
+                  type='number'
                   placeholder='Enter Venue Capacity'
                   value={venueCapacity}
                   onChange={(e) => setVenueCapacity(e.target.value)}
