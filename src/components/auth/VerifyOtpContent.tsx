@@ -8,7 +8,10 @@ import { CheckCircle, RotateCw } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useVerifyOtpMutation } from "@/redux/features/auth/authAPI";
+import {
+  useVerifyForgetPasswordOtpMutation,
+  useVerifyOtpMutation,
+} from "@/redux/features/auth/authAPI";
 
 export default function VerifyOtpContent() {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,9 +22,12 @@ export default function VerifyOtpContent() {
   const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [verifyOtpMutation] = useVerifyOtpMutation();
+  const [verifyForgetPasswordOtpMutation] =
+    useVerifyForgetPasswordOtpMutation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
+  const type = searchParams.get("type");
 
   console.log(email);
 
@@ -94,21 +100,40 @@ export default function VerifyOtpContent() {
     setError("");
 
     try {
-      // Simulate API call - replace with actual verification
-      const res = await verifyOtpMutation({ email, otp: otpCode }).unwrap();
+      if (type === "forgot-password") {
+        const res = await verifyForgetPasswordOtpMutation({
+          email,
+          otp: otpCode,
+        }).unwrap();
 
-      console.log(otpCode);
-      console.log(res);
-
-      if (res?.success) {
-        setSuccess(true);
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
+        if (res?.success) {
+          localStorage.setItem(
+            "reset_token",
+            JSON.stringify(res?.data?.reset_token)
+          );
+          setSuccess(true);
+          setTimeout(() => {
+            router.push("/reset-password");
+          }, 1500);
+        } else {
+          setError("Invalid OTP. Please try again.");
+          setOtp(["", "", "", "", "", ""]);
+          inputRefs.current[0]?.focus();
+        }
+        return;
       } else {
-        setError("Invalid OTP. Please try again.");
-        setOtp(["", "", "", "", "", ""]);
-        inputRefs.current[0]?.focus();
+        const res = await verifyOtpMutation({ email, otp: otpCode }).unwrap();
+
+        if (res?.success) {
+          setSuccess(true);
+          setTimeout(() => {
+            router.push("/login");
+          }, 1500);
+        } else {
+          setError("Invalid OTP. Please try again.");
+          setOtp(["", "", "", "", "", ""]);
+          inputRefs.current[0]?.focus();
+        }
       }
     } catch (err) {
       setError("Verification failed. Please try again." + err);

@@ -9,18 +9,19 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useResetPasswordMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
 
 export default function SignUpFormForAgent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [location, setLocation] = useState("");
-  const [experience, setExperience] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [resetPasswordMutation] = useResetPasswordMutation();
+  const router = useRouter();
 
   const validatePasswords = () => {
     if (password && confirmPassword && password !== confirmPassword) {
@@ -40,11 +41,18 @@ export default function SignUpFormForAgent() {
 
     setIsLoading(true);
 
-    // Simulate sign up process
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const res = await resetPasswordMutation({ password }).unwrap();
 
-    console.log("Sign up attempt:", { fullName, email, password });
-    setIsLoading(false);
+      if (res?.success) {
+        toast.success("Password reset successfully.");
+        router.push(`/login`);
+      }
+    } catch (error) {
+      console.error("Error signing up:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePasswordChange = (value: string) => {

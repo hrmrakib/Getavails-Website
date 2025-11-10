@@ -76,7 +76,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
     forgotPassword: builder.mutation({
       query: (body) => ({
-        url: "api/auth/forget-password/",
+        url: "/auth/forgot-password",
         method: "POST",
         body,
       }),
@@ -84,9 +84,9 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
     resetPassword: builder.mutation({
       query: (body) => ({
-        url: "api/auth/reset-password/",
+        url: "/auth/reset-password",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("reset_token")}`,
         },
         method: "POST",
         body,
@@ -95,7 +95,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
     verifyForgetPasswordOtp: builder.mutation({
       query: (body) => ({
-        url: "api/auth/verify/pass/otp/",
+        url: "/auth/forgot-password/otp-verify",
         method: "POST",
         body,
       }),

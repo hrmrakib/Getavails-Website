@@ -8,21 +8,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Image from "next/image";
+import { useForgotPasswordMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SignUpFormForAgent() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [forgotPasswordMutation] = useForgotPasswordMutation();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setIsLoading(true);
 
-    // Simulate sign up process
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    console.log("Sign up attempt:", { email });
-    setIsLoading(false);
+    try {
+      const res = await forgotPasswordMutation({ email }).unwrap();
+      console.log(res);
+      if (res?.success) {
+        toast.success("Verification OTP sent successfully.");
+        router.push(`/verify-otp?email=${email}&type=forgot-password`);
+      }
+    } catch (error) {
+      console.error("Error signing up:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
