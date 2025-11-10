@@ -8,11 +8,24 @@ import {
   Mic,
   Building,
   Handshake,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 const journeys = [
+  {
+    id: "buyer",
+    title: "Talent Buyer Journey:",
+    icon: Handshake,
+    details: [
+      "Search artists by genre, location, and budget",
+      "Compare availability and pricing options",
+      "Streamline booking and contract processes",
+      "Manage multiple events and relationships",
+    ],
+    buttonText: "Join as Talent Buyer",
+  },
   {
     id: "agent",
     title: "Agent Journey:",
@@ -50,16 +63,16 @@ const journeys = [
     buttonText: "Join as Venue",
   },
   {
-    id: "buyer",
-    title: "Talent Buyer Journey:",
-    icon: Handshake,
+    id: "organizer",
+    title: "Organizer Journey:",
+    icon: Building2,
     details: [
-      "Search artists by genre, location, and budget",
-      "Compare availability and pricing options",
-      "Streamline booking and contract processes",
-      "Manage multiple events and relationships",
+      "List your venue with detailed specifications",
+      "Browse and book available artists",
+      "Manage event calendars and logistics",
+      "Handle contracts and payment processing",
     ],
-    buttonText: "Join as Talent Buyer",
+    buttonText: "Join as Organizer",
   },
 ];
 

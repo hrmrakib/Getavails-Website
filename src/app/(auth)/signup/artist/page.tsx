@@ -60,7 +60,7 @@ export default function SignUpFormForArtist() {
       console.log(res);
 
       if (res?.success) {
-        toast.success("Artist registered successfully.");
+        toast.success("Verification OTP sent successfully.");
         router.push(`/verify-otp?email=${email}`);
       }
     } catch (error) {

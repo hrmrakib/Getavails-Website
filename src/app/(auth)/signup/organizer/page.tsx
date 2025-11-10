@@ -9,11 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useBuyerRegisterMutation } from "@/redux/features/auth/authAPI";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useOrganizerRegisterMutation } from "@/redux/features/auth/authAPI";
 
-export default function SignUpFormForAgent() {
+export default function OrganizerPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -23,7 +23,7 @@ export default function SignUpFormForAgent() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const [buyerRegisterMutation] = useBuyerRegisterMutation();
+  const [organizerRegisterMutation] = useOrganizerRegisterMutation();
   const router = useRouter();
 
   const validatePasswords = () => {
@@ -44,12 +44,22 @@ export default function SignUpFormForAgent() {
 
     setIsLoading(true);
 
-    const data = {};
+    const data = {
+      name: fullName,
+      email: email,
+      password: password,
+      location: location,
+      genre: lookingFor,
+    };
 
     try {
-      const res = await buyerRegisterMutation(data).unwrap();
-      toast.success("Verification OTP sent successfully.");
-      router.push(`/verify-otp?email=${email}`);
+      const res = await organizerRegisterMutation(data).unwrap();
+      console.log(res);
+
+      if (res?.success) {
+        toast.success("Verification OTP sent successfully.");
+        router.push(`/verify-otp?email=${email}`);
+      }
     } catch (error) {
       console.error("Error signing up:", error);
     } finally {
@@ -103,7 +113,7 @@ export default function SignUpFormForAgent() {
             {/* Header */}
             <div className='space-y-2'>
               <h1 className='text-2xl font-bold text-foreground'>
-                Start Your Journey as an Buyer.
+                Start Your Journey as an Organizer.
               </h1>
               <p className='text-muted-foreground text-sm'>
                 Join as an agent and simplify artist management with our
@@ -119,12 +129,12 @@ export default function SignUpFormForAgent() {
                   htmlFor='fullName'
                   className='text-sm font-medium text-muted-foreground'
                 >
-                  Full Name
+                  Organizer&apos;s Name
                 </Label>
                 <Input
                   id='fullName'
                   type='text'
-                  placeholder='Enter Full Name '
+                  placeholder="Enter organizer's name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
@@ -157,12 +167,12 @@ export default function SignUpFormForAgent() {
                   htmlFor='lookingFor'
                   className='text-sm font-medium text-muted-foreground'
                 >
-                  What&apos;s You&apos;re Looking For?
+                  Category
                 </Label>
                 <Input
                   id='lookingFor'
                   type='text'
-                  placeholder="Enter What's You're Looking For "
+                  placeholder="Enter organizer's category"
                   value={lookingFor}
                   onChange={(e) => setLookingFor(e.target.value)}
                   required
