@@ -5,12 +5,18 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
+import { Skeleton } from "../ui/skeleton";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: profile, isLoading } = useGetProfileQuery("");
+
+  console.log(profile?.data);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -43,6 +49,25 @@ export function Navbar() {
     return null;
   }
 
+  const handleRedirect = (role: string) => {
+    console.log(role)
+    if (role === "user") {
+      router.push("/dashboard/user");
+    }
+    if (role === "artist") {
+      router.push("/dashboard/artist");
+    }
+    if (role === "venue") {
+      router.push("/dashboard/venue");
+    }
+    if (role === "organizer") {
+      router.push("/dashboard/organizer");
+    }
+    if (role === "agent") {
+      router.push("/dashboard/agent");
+    }
+  };
+
   return (
     <>
       <nav className='sticky top-0 z-50 w-full bg-[#FFFFFF] backdrop-blur supports-[backdrop-filter]:bg-background/60'>
@@ -68,30 +93,42 @@ export function Navbar() {
 
             {/* Desktop Buttons */}
             <div className='hidden md:flex items-center space-x-4'>
-              {true ? (
-                <Link
-                  href='/login'
-                  className='border-[#235789] text-[#235789] font-medium border-2 px-6 py-1.5 hover:bg-gray-50 bg-transparent rounded-4xl cursor-pointer'
-                >
-                  Login
-                </Link>
+              {!profile?.data && isLoading ? (
+                <>
+                  {isLoading ? (
+                    <div className='flex items-center gap-6'>
+                      <Skeleton className='w-10 h-10 rounded-full bg-gray-300' />
+                      <Skeleton className='w-40 h-10 rounded-full bg-gray-300' />
+                    </div>
+                  ) : (
+                    <Link
+                      href='/login'
+                      className='border-[#235789] text-[#235789] font-medium border-2 px-6 py-1.5 hover:bg-gray-50 bg-transparent rounded-4xl cursor-pointer'
+                    >
+                      Login
+                    </Link>
+                  )}
+                </>
               ) : (
                 <div className='flex items-center gap-4'>
-                  <Avatar className='w-10 h-10'>
+                  <Avatar className='w-10 h-10' title={profile?.data?.name}>
                     <AvatarImage
-                      src='/placeholder.png'
+                      src={
+                        process.env.NEXT_PUBLIC_IMAGE_URL +
+                          profile?.data?.avatar || "/placeholder.png"
+                      }
                       width={48}
                       height={48}
                       alt='@'
                     />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
-                  <Link
-                    href='/dashboard'
-                    className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl'
+                  <button
+                    onClick={() => handleRedirect(profile?.data?.role)}
+                    className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl cursor-pointer'
                   >
                     Go Dashboard <ArrowRight size={18} />
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>

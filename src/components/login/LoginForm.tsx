@@ -29,10 +29,14 @@ export function LoginForm() {
 
     try {
       const res = await loginMutation({ email, password }).unwrap();
+
       console.log(res);
 
       if (res?.success) {
         toast("✅ Login successful");
+        localStorage.setItem("access_token", res?.data?.access_token);
+        localStorage.setItem("refresh_token", res?.data?.refresh_token);
+
         if (rememberMe) {
           localStorage.setItem("email", email);
           localStorage.setItem("password", password);
