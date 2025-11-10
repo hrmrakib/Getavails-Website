@@ -9,6 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useArtistRegisterMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SignUpFormForArtist() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,12 +19,14 @@ export default function SignUpFormForArtist() {
   const [artistName, setArtistName] = useState("");
   const [email, setEmail] = useState("");
   const [artistCategory, setArtistCategory] = useState("");
-  const [venueCapacity, setVenueCapacity] = useState("");
+  const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [artistRegisterMutation] = useArtistRegisterMutation();
+  const router = useRouter();
 
   const validatePasswords = () => {
     if (password && confirmPassword && password !== confirmPassword) {
@@ -41,11 +46,29 @@ export default function SignUpFormForArtist() {
 
     setIsLoading(true);
 
-    // Simulate sign up process
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const data = {
+      name: artistName,
+      email: email,
+      password: password,
+      genre: artistCategory,
+      location: location,
+      price: price,
+    };
 
-    console.log("Sign up attempt:", { artistName, email, password });
-    setIsLoading(false);
+    // Simulate sign up process
+    try {
+      const res = await artistRegisterMutation(data).unwrap();
+      console.log(res);
+
+      if (res?.success) {
+        toast.success("Artist registered successfully.");
+        router.push(`/verify-otp?email=${email}`);
+      }
+    } catch (error) {
+      console.error("Error signing up:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePasswordChange = (value: string) => {
@@ -164,17 +187,17 @@ export default function SignUpFormForArtist() {
               {/* Venue Capacity Field */}
               <div className='space-y-2'>
                 <Label
-                  htmlFor='capacity'
+                  htmlFor='price'
                   className='text-sm font-medium text-muted-foreground'
                 >
-                  Venue Capacity
+                  Price
                 </Label>
                 <Input
-                  id='capacity'
-                  type='text'
-                  placeholder='Enter Venue Capacity'
-                  value={venueCapacity}
-                  onChange={(e) => setVenueCapacity(e.target.value)}
+                  id='price'
+                  type='number'
+                  placeholder='Enter your price rang per event'
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                   required
                   className='h-12'
                 />

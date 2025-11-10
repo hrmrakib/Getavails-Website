@@ -18,6 +18,14 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
       }),
     }),
 
+    artistRegister: builder.mutation({
+      query: (data) => ({
+        url: "/auth/artist-register",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
     verifyOtp: builder.mutation({
       query: (body) => ({
         url: "/auth/account-verify",
@@ -74,6 +82,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 export const {
   useLoginMutation,
   useAgentRegisterMutation,
+  useArtistRegisterMutation,
   useVerifyOtpMutation,
   useSendOtpMutation,
   useResendOtpMutation,
