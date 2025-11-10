@@ -29,8 +29,6 @@ export default function VerifyOtpContent() {
   const email = searchParams.get("email");
   const type = searchParams.get("type");
 
-  console.log(email);
-
   useEffect(() => {
     if (timeLeft <= 0) {
       setCanResend(true);
@@ -100,8 +98,10 @@ export default function VerifyOtpContent() {
     setError("");
 
     try {
+      let res;
+
       if (type === "forgot-password") {
-        const res = await verifyForgetPasswordOtpMutation({
+        res = await verifyForgetPasswordOtpMutation({
           email,
           otp: otpCode,
         }).unwrap();
@@ -114,20 +114,21 @@ export default function VerifyOtpContent() {
           setSuccess(true);
           setTimeout(() => {
             router.push("/reset-password");
+            setSuccess(false);
           }, 1500);
         } else {
           setError("Invalid OTP. Please try again.");
           setOtp(["", "", "", "", "", ""]);
           inputRefs.current[0]?.focus();
         }
-        return;
       } else {
-        const res = await verifyOtpMutation({ email, otp: otpCode }).unwrap();
+        res = await verifyOtpMutation({ email, otp: otpCode }).unwrap();
 
         if (res?.success) {
           setSuccess(true);
           setTimeout(() => {
             router.push("/login");
+            setSuccess(false);
           }, 1500);
         } else {
           setError("Invalid OTP. Please try again.");
@@ -136,7 +137,8 @@ export default function VerifyOtpContent() {
         }
       }
     } catch (err) {
-      setError("Verification failed. Please try again." + err);
+      setError("Verification failed. Please try again.");
+      console.error("Error during OTP verification:", err);
     } finally {
       setIsLoading(false);
     }
@@ -160,7 +162,7 @@ export default function VerifyOtpContent() {
 
   if (success) {
     return (
-      <div className='flex flex-col items-center justify-center space-y-4 py-12 px-4'>
+      <div className='min-h-screen flex flex-col items-center justify-center space-y-4 py-12 px-4'>
         <div className='w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center animate-pulse'>
           <CheckCircle className='w-8 h-8 text-primary' />
         </div>

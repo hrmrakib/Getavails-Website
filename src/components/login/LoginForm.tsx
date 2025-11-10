@@ -43,7 +43,16 @@ export function LoginForm() {
         router.push("/");
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      if (error && typeof error === "object" && "data" in error) {
+        const err = error as { data?: { message?: string } };
+        if (err.data?.message) {
+          toast.error(err.data.message);
+        } else {
+          toast.error("Something went wrong");
+        }
+      } else {
+        toast.error("Unknown error occurred");
+      }
     } finally {
       setIsLoading(false);
     }
