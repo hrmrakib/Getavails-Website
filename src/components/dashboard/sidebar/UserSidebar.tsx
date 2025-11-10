@@ -23,66 +23,76 @@ const UserSidebar = () => {
   return (
     <>
       <SidebarMenu className='px-4 space-y-2'>
-        <NavItem
-          href='/dashboard/buyer'
+        {/* <NavItem
+          href='/dashboard/user'
           icon={LayoutDashboard}
           label='Overview'
           active={pathname === "/"}
-        />
+        /> */}
 
-        <ExpandableNavItem
+        {/* <ExpandableNavItem
           icon={Users}
           label='Talent Hub'
           isOpen={isUserManagementOpen}
           onToggle={toggleUserManagement}
           active={
-            pathname === "/dashboard/buyer/talent-hub" ||
+            pathname === "/dashboard/user/talent-hub" ||
             pathname.startsWith("/user-management") ||
             pathname === "/artists" ||
             pathname === "/venue"
           }
         >
           <SubNavItem
-            href='/dashboard/buyer/talent-hub/artists'
+            href='/dashboard/user/talent-hub/artists'
             label='Artists'
-            active={pathname === "/dashboard/buyer/talent-hub/artists"}
+            active={pathname === "/dashboard/user/talent-hub/artists"}
           />
           <SubNavItem
-            href='/dashboard/buyer/talent-hub/venue'
+            href='/dashboard/user/talent-hub/venue'
             label='Venue'
-            active={pathname === "/dashboard/buyer/talent-hub/venue"}
+            active={pathname === "/dashboard/user/talent-hub/venue"}
           />
-        </ExpandableNavItem>
+        </ExpandableNavItem> */}
 
-        <NavItem
-          href='/dashboard/buyer/bookings-requests'
+        {/* <NavItem
+          href='/dashboard/user/bookings-requests'
           icon={BookAlert}
           label='Bookings Requests'
           active={
-            pathname === "/dashboard/buyer/bookings-requests" ||
-            pathname.startsWith("/dashboard/buyer/bookings-requests/")
+            pathname === "/dashboard/user/bookings-requests" ||
+            pathname.startsWith("/dashboard/user/bookings-requests/")
+          }
+        /> */}
+
+        <NavItem
+          href='/dashboard/user/event-list'
+          icon={CalendarArrowUp}
+          label='Event List'
+          active={
+            pathname === "/dashboard/user/event-list" ||
+            pathname.startsWith("/dashboard/user/event-list/")
           }
         />
 
         <NavItem
-          href='/dashboard/buyer/upcoming-events'
+          href='/dashboard/user/upcoming-events'
           icon={CalendarArrowUp}
           label='Upcoming Events'
           active={
-            pathname === "/dashboard/buyer/upcoming-events" ||
-            pathname.startsWith("/dashboard/buyer/upcoming-events")
+            pathname === "/dashboard/user/upcoming-events" ||
+            pathname.startsWith("/dashboard/user/upcoming-events")
           }
         />
 
-        <NavItem
-          href='/dashboard/buyer/message'
+        {/* <NavItem
+          href='/dashboard/user/message'
           icon={MessageCircleMore}
           label='Message'
           active={
-            pathname === "/dashboard/buyer/message" ||
-            pathname.startsWith("/dashboard/buyer/message/")
+            pathname === "/dashboard/user/message" ||
+            pathname.startsWith("/dashboard/user/message/")
           }
-        />
+        /> */}
       </SidebarMenu>
     </>
   );
