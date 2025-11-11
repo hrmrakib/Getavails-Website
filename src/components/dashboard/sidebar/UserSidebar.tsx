@@ -69,7 +69,7 @@ const UserSidebar = () => {
           icon={CalendarArrowUp}
           label='Event List'
           active={
-            pathname === "/dashboard/user/event-list" ||
+            pathname === "/dashboard/user/event-list" ||  pathname === "/dashboard/user" ||
             pathname.startsWith("/dashboard/user/event-list/")
           }
         />

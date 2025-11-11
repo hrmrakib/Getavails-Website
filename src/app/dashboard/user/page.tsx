@@ -1,223 +1,247 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
+import { ArrowRight, Loader2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PencilOff, TrendingUp } from "lucide-react";
-import AgentRevenueChart from "@/components/dashboard/chart/AgentRevenueChart";
-import EventChart from "@/components/dashboard/chart/EventChart";
-import Link from "next/link";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  useGetEventListQuery,
+  useTicketPurchaseMutation,
+} from "@/redux/features/user/userAPI";
+import { useState } from "react";
 
-export default function DashboardPage() {
-  const [revenueView, setRevenueView] = useState<"total" | "yearly">("total");
-  const [bookingsView, setBookingsView] = useState<"total" | "yearly">(
-    "yearly"
-  );
+interface IEvent {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  published_at: string;
+  status: "PUBLISHED" | "DRAFT" | "ARCHIVED" | string;
+  title: string;
+  description: string;
+  images: string[];
+  location: string;
+  ticket_price: number;
+  start_date: string;
+  end_date: string;
+  artist_names: string[];
+  organizer_id: string;
+  capacity: number;
+  available_capacity: number;
+  can_buy_tickets: boolean;
+  organizer: {
+    name: string;
+    avatar: string;
+  };
+}
 
-  // Function to get data based on view type
-  const getRevenueData = () => {
-    if (revenueView === "total") {
-      return { value: "$16,249", change: "+11.02%" };
-    } else {
-      return { value: "$142,890", change: "+8.24%" };
+export default function Home() {
+  const { data: eventList } = useGetEventListQuery({});
+  const [open, setOpen] = useState(false);
+  const [ticketQuantity, setTicketQuantity] = useState<number>(1);
+  const [ticketPurchaseMutation, { isLoading }] = useTicketPurchaseMutation();
+
+  const formatDate = (date: string) => {
+    const eventDate = new Date(date);
+    return new Intl.DateTimeFormat("en-GB", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }).format(eventDate);
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10); // Convert string to number
+    if (!isNaN(value)) {
+      setTicketQuantity(value); // Only set valid numbers
     }
   };
 
-  const getBookingsData = () => {
-    if (bookingsView === "total") {
-      return { value: "18,742", change: "+9.15%" };
-    } else {
-      return { value: "16,249", change: "+11.02%" };
+  const handleTicketPurchase = async (eventId: number | string) => {
+    const data = {
+      event_id: eventId,
+      quantity: ticketQuantity,
+    };
+
+    console.log(data);
+
+    try {
+      const res = await ticketPurchaseMutation(data).unwrap();
+      console.log("res => ", res?.data?.url);
+
+      if (res?.data?.data?.url) {
+        window.location.href = res?.data?.url;
+      } else {
+        alert("Failed to initiate payment. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error signing up:", error);
+      alert("Failed to sign up. Please try again.");
     }
   };
-
-  const revenueData = getRevenueData();
-  const bookingsData = getBookingsData();
 
   return (
-    <div className='min-h-screen bg-transparent'>
-      {/* Main Grid */}
-      <div className='mb-8'>
-        <div className='bg-[#E7F0F9] lg:h-[220px] p-6 rounded-2xl flex flex-col items-center justify-center mb-6 lg:mb-10'>
-          <h2 className='text-2xl font-medium mb-4'>
-            Hi Alex, ready to book your next act?
-          </h2>
-          <div className='flex items-center justify-center gap-6'>
-            <Button className='px-6 h-11'>Book Now</Button>
-            <Link href='/dashboard/buyer/talent-hub/venue'>
-              <Button
-                variant='outline'
-                className='bg-transparent h-11 border border-[#1E1E1E]'
-              >
-                Find Venues
-              </Button>
-            </Link>
-          </div>
-        </div>
+    <main className='min-h-screen bg-background py-8 px-4 md:px-6 lg:px-8'>
+      <div className='container mx-auto'>
+        <h1 className='text-3xl md:text-4xl font-bold text-foreground mb-12'>
+          Live Concert Events
+        </h1>
 
-        <div className='flex gap-6 mb-8'>
-          {/* Total Artist Management Card */}
-          <Card className='flex-1 border-none shadow-sm'>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-base font-medium text-[#1E1E1E] flex items-center gap-3'>
-                <svg
-                  width='15'
-                  height='20'
-                  viewBox='0 0 15 20'
-                  fill='none'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    d='M7.5 0C8.35248 0 9.17005 0.332706 9.77284 0.924926C10.3756 1.51715 10.7143 2.32037 10.7143 3.15789V9.47368C10.7143 10.3112 10.3756 11.1144 9.77284 11.7067C9.17005 12.2989 8.35248 12.6316 7.5 12.6316C6.64752 12.6316 5.82995 12.2989 5.22716 11.7067C4.62436 11.1144 4.28571 10.3112 4.28571 9.47368V3.15789C4.28571 2.32037 4.62436 1.51715 5.22716 0.924926C5.82995 0.332706 6.64752 0 7.5 0ZM15 9.47368C15 13.1895 12.2036 16.2526 8.57143 16.7684V20H6.42857V16.7684C2.79643 16.2526 0 13.1895 0 9.47368H2.14286C2.14286 10.8696 2.70727 12.2083 3.71193 13.1953C4.71659 14.1823 6.0792 14.7368 7.5 14.7368C8.9208 14.7368 10.2834 14.1823 11.2881 13.1953C12.2927 12.2083 12.8571 10.8696 12.8571 9.47368H15Z'
-                    fill='#1E1E1E'
-                  />
-                </svg>
-                <span>Upcoming Event</span>
-              </CardTitle>
-              <ul
-                role='list'
-                className='mt-2 p-1 list-disc list-inside marker:text-slate-800 space-y-1'
-              >
-                <li>Aug 25 · BlueNote Jazz Club, NY</li>
-                <li>Sep 02 · The Roxy, LA</li>
-              </ul>
-            </CardHeader>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          {eventList?.data?.map((event: IEvent) => (
+            <div
+              key={event?.id}
+              className='flex flex-col h-full bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300'
+            >
+              {/* Header Badge and DateTime */}
+              <div className='p-4 pb-2'>
+                <div className='inline-block bg-[#E9EEF3] text-[#000000CC] px-3 py-1.5 rounded-sm text-sm font-medium mb-2'>
+                  Live Concert
+                </div>
+                <p className='text-muted-foreground text-sm'>
+                  {formatDate(event?.start_date) +
+                    " - " +
+                    formatDate(event?.end_date)}
+                </p>
+              </div>
 
-            <CardContent>
-              <Button className='w-full bg-[#DFEBF7] hover:bg-[#DFEBF7] text-[#235789]'>
-                View All Bookings
-              </Button>
-            </CardContent>
-          </Card>
+              {/* Event Image */}
+              <div className='relative w-full h-48 rounded-md'>
+                <Image
+                  src={process.env.NEXT_PUBLIC_IMAGE_URL + event?.images[0]}
+                  alt={event.title}
+                  fill
+                  className='object-cover rounded-md px-5'
+                />
+              </div>
 
-          {/* Total Artist Management Card */}
-          <Card className='flex-1 border-none shadow-sm'>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-base font-medium text-[#1E1E1E] flex items-center gap-3'>
-                <PencilOff />
-                <span>Total Bookings</span>
-              </CardTitle>
-              <ul
-                role='list'
-                className='mt-2 p-1 list-disc list-inside marker:text-slate-800 space-y-1'
-              >
-                <li>1x Festival · $4,000</li>
-                <li>2x Club Events · $1,500–$2,200</li>
-                <li>2x Club Events · $1,500–$2,200</li>
-              </ul>
-            </CardHeader>
-          </Card>
-          {/* Revenue Card */}
-          <Card className='flex-1 border-none shadow-sm'>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-base font-medium text-[#1E1E1E]'>
-                Revenue
-              </CardTitle>
-              <div className='flex gap-1 mt-2 bg-gray-100 p-1 rounded-full'>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className={`flex-1 h-8 px-3 text-xs transition-all rounded-full ${
-                    revenueView === "total"
-                      ? "bg-[#235789] text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setRevenueView("total")}
-                >
-                  Total
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className={`flex-1 h-8 px-3 text-xs transition-all rounded-full ${
-                    revenueView === "yearly"
-                      ? "bg-[#235789] text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setRevenueView("yearly")}
-                >
-                  Yearly
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className='text-3xl font-bold'>{revenueData.value}</div>
-              <div className='flex items-center gap-1 text-sm text-green-600 mt-1'>
-                <TrendingUp className='h-3 w-3' />
-                {revenueData.change}
-              </div>
-            </CardContent>
-          </Card>
+              {/* Content */}
+              <div className='flex-1 flex flex-col p-4'>
+                {/* Title and Price */}
+                <div className='flex items-start justify-between gap-2 mb-2'>
+                  <h2 className='text-lg font-bold text-foreground flex-1'>
+                    {event.title}
+                  </h2>
+                </div>
 
-          {/* Total Bookings Card */}
-          <Card className='flex-1 border-none shadow-sm'>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-base font-medium text-[#1E1E1E]'>
-                Total Bookings (2024)
-              </CardTitle>
-              <div className='flex gap-1 mt-2 bg-gray-100 p-1 rounded-full'>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className={`flex-1 h-8 px-3 text-xs transition-all rounded-full ${
-                    bookingsView === "total"
-                      ? "bg-[#235789] text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setBookingsView("total")}
-                >
-                  Total
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className={`flex-1 h-8 px-3 text-xs transition-all rounded-full ${
-                    bookingsView === "yearly"
-                      ? "bg-[#235789] text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setBookingsView("yearly")}
-                >
-                  Yearly
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className='text-3xl font-bold'>{bookingsData.value}</div>
-              <div className='flex items-center gap-1 text-sm text-green-600 mt-1'>
-                <TrendingUp className='h-3 w-3' />
-                {bookingsData.change}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                {/* Description */}
+                <p className='text-muted-foreground text-sm mb-4 flex-1'>
+                  {event?.description}
+                </p>
 
-        {/* Revenue Over Time Chart */}
-        <Card className='!border-none'>
-          <CardHeader>
-            <CardTitle className='text-lg font-semibold'>
-              Revenue Over Time
-            </CardTitle>
-            <div className='flex items-center gap-4 text-sm'>
-              <div className='flex items-center gap-2'>
-                <div className='w-3 h-3 bg-black rounded-full'></div>
-                <span>This year</span>
-              </div>
-              <div className='flex items-center gap-2'>
-                <div className='w-3 h-3 bg-blue-300 rounded-full'></div>
-                <span>Last year</span>
+                {/* Location */}
+                <div className='flex items-center justify-between gap-2 mb-4'>
+                  <div className='flex items-center gap-2'>
+                    <MapPin className='w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5' />
+                    <span className='text-sm text-muted-foreground'>
+                      {event.location}
+                    </span>
+                  </div>
+                  <p className='text-[#235789] font-semibold text-sm whitespace-nowrap'>
+                    $ {event?.ticket_price}
+                  </p>
+                </div>
+
+                {/* Artist */}
+                <div className='mb-6'>
+                  <p className='text-sm font-semibold text-foreground mb-1'>
+                    Artist
+                  </p>
+                  <p className='text-sm text-muted-foreground'>
+                    {event?.artist_names?.join(", ")}
+                  </p>
+                </div>
+
+                {/* Button */}
+                <div className='mt-auto'>
+                  {event?.can_buy_tickets ? (
+                    <Button
+                      onClick={() => setOpen(true)}
+                      className='w-full justify-center bg-[#E9EEF3] text-[#000000CC] hover:bg-[#E9EEF3] hover:text-[#000000CC]'
+                      variant='default'
+                    >
+                      Buy Ticket Now
+                      <ArrowRight className='w-4 h-4 ml-2' />
+                    </Button>
+                  ) : (
+                    <Button
+                      disabled
+                      variant='outline'
+                      className='w-full justify-center bg-[#E9EEF3] text-[#000000CC] hover:bg-[#E9EEF3] hover:text-[#000000CC]'
+                    >
+                      Already Purchased
+                    </Button>
+                  )}
+                </div>
+
+                {/* Dialog Content */}
+                <Dialog open={open} onOpenChange={setOpen}>
+                  <DialogContent className='sm:max-w-[425px]'>
+                    <DialogHeader>
+                      <DialogTitle>Live Concert</DialogTitle>
+                      <DialogDescription>
+                        {formatDate(event?.start_date) +
+                          " - " +
+                          formatDate(event?.end_date)}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className='grid gap-4'>
+                      <div className='grid gap-3'>
+                        <Label htmlFor='quantity'>
+                          Your Ticket Quantity for Purchase{" "}
+                          <span className='text-red-600'>*</span>
+                        </Label>
+                        <Input
+                          id='quantity'
+                          type='number'
+                          name='quantity'
+                          min={1}
+                          max={event?.capacity}
+                          defaultValue={1}
+                          value={ticketQuantity}
+                          onChange={handleQuantityChange}
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant='outline'>Cancel</Button>
+                      </DialogClose>
+                      <Button
+                        type='submit'
+                        disabled={
+                          Math.floor(ticketQuantity) > event?.capacity ||
+                          Math.floor(ticketQuantity) < 1
+                        }
+                        className='disabled:bg-[#E9EEF3] disabled:text-[#000000CC] disabled:cursor-not-allowed'
+                        onClick={() => handleTicketPurchase(event?.id)}
+                      >
+                        Pay Now{" "}
+                        {isLoading && (
+                          <Loader2 className='w-4 h-4 ml-2 animate-spin' />
+                        )}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className='!border-none'>
-            <div className='h-80 w-full'>
-              <AgentRevenueChart />
-            </div>
-          </CardContent>
-        </Card>
+          ))}
+        </div>
       </div>
-
-      <EventChart />
-    </div>
+    </main>
   );
 }
