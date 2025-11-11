@@ -13,6 +13,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Search, Trash2, Eye, MapPin } from "lucide-react";
+import { RequestsTable } from "@/components/dashboard/artist/RequestsTable";
+import { AgentsTable } from "@/components/dashboard/artist/AgentsTable";
+import { useGetArtistsQuery } from "@/redux/features/artist/artistAPI";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BookingRequest {
   id: string;
@@ -29,303 +33,32 @@ interface BookingRequest {
   status: "Open" | "Confirmed" | "Cancelled" | "Full";
 }
 
-const mockBookings: BookingRequest[] = [
-  {
-    id: "SL-001",
-    buyerName: "John Lees",
-    buyerAvatar: "/client.png",
-    buyerContact: "(212) 658-3916",
-    buyerEmail: "john.lees@email.com",
-    artistName: "Kate Morrison",
-    artistAvatar: "/client.png",
-    artistLocation: "Buenos Aires, Argentina",
-    artistRate: "$600 per event",
-    artistSpecialty: "Jazz Guitarist",
-    date: "25-06-2025",
-    status: "Open",
-  },
-  {
-    id: "SL-002",
-    buyerName: "Ayesha Rahman",
-    buyerAvatar: "/client.png",
-    buyerContact: "(646) 421-7788",
-    buyerEmail: "ayesha.rahman@email.com",
-    artistName: "Diego Álvarez",
-    artistAvatar: "/client.png",
-    artistLocation: "Madrid, Spain",
-    artistRate: "$1,200 per event",
-    artistSpecialty: "Flamenco Guitarist",
-    date: "02-07-2025",
-    status: "Confirmed",
-  },
-  {
-    id: "SL-003",
-    buyerName: "Michael Turner",
-    buyerAvatar: "/client.png",
-    buyerContact: "(415) 903-1120",
-    buyerEmail: "michael.turner@email.com",
-    artistName: "Luna Chen",
-    artistAvatar: "/client.png",
-    artistLocation: "Taipei, Taiwan",
-    artistRate: "$900 per event",
-    artistSpecialty: "Pop Vocalist",
-    date: "15-07-2025",
-    status: "Full",
-  },
-  {
-    id: "SL-004",
-    buyerName: "Fatima Noor",
-    buyerAvatar: "/client.png",
-    buyerContact: "(718) 204-5567",
-    buyerEmail: "fatima.noor@email.com",
-    artistName: "Arjun Mehta",
-    artistAvatar: "/client.png",
-    artistLocation: "Mumbai, India",
-    artistRate: "$1,500 per event",
-    artistSpecialty: "Bollywood DJ",
-    date: "20-07-2025",
-    status: "Open",
-  },
-  {
-    id: "SL-005",
-    buyerName: "Santiago Pérez",
-    buyerAvatar: "/client.png",
-    buyerContact: "(305) 442-9811",
-    buyerEmail: "santiago.perez@email.com",
-    artistName: "Nora Ibrahim",
-    artistAvatar: "/client.png",
-    artistLocation: "Cairo, Egypt",
-    artistRate: "$800 per event",
-    artistSpecialty: "Oud Player",
-    date: "28-07-2025",
-    status: "Confirmed",
-  },
-  {
-    id: "SL-006",
-    buyerName: "Leah Kim",
-    buyerAvatar: "/client.png",
-    buyerContact: "(512) 345-7702",
-    buyerEmail: "leah.kim@email.com",
-    artistName: "Marcus Reed",
-    artistAvatar: "/client.png",
-    artistLocation: "Austin, United States",
-    artistRate: "$1,000 per event",
-    artistSpecialty: "Indie Band",
-    date: "30-07-2025",
-    status: "Open",
-  },
-  {
-    id: "SL-007",
-    buyerName: "Omar Khalid",
-    buyerAvatar: "/client.png",
-    buyerContact: "(773) 610-2844",
-    buyerEmail: "omar.khalid@email.com",
-    artistName: "Sofia Petrova",
-    artistAvatar: "/client.png",
-    artistLocation: "Sofia, Bulgaria",
-    artistRate: "$700 per event",
-    artistSpecialty: "Classical Violinist",
-    date: "05-08-2025",
-    status: "Full",
-  },
-  {
-    id: "SL-008",
-    buyerName: "Priya Sen",
-    buyerAvatar: "/client.png",
-    buyerContact: "(347) 219-6630",
-    buyerEmail: "priya.sen@email.com",
-    artistName: "Mahfuz Anwar",
-    artistAvatar: "/client.png",
-    artistLocation: "Dhaka, Bangladesh",
-    artistRate: "$500 per event",
-    artistSpecialty: "Bengali Folk Singer",
-    date: "10-08-2025",
-    status: "Confirmed",
-  },
-  {
-    id: "SL-009",
-    buyerName: "David Osei",
-    buyerAvatar: "/client.png",
-    buyerContact: "(404) 712-9086",
-    buyerEmail: "david.osei@email.com",
-    artistName: "Ama Boateng",
-    artistAvatar: "/client.png",
-    artistLocation: "Accra, Ghana",
-    artistRate: "$650 per event",
-    artistSpecialty: "Afrobeats Singer",
-    date: "12-08-2025",
-    status: "Open",
-  },
-  {
-    id: "SL-010",
-    buyerName: "Emily Stone",
-    buyerAvatar: "/client.png",
-    buyerContact: "(206) 592-4313",
-    buyerEmail: "emily.stone@email.com",
-    artistName: "Hans Müller",
-    artistAvatar: "/client.png",
-    artistLocation: "Berlin, Germany",
-    artistRate: "$1,300 per event",
-    artistSpecialty: "Techno DJ",
-    date: "15-08-2025",
-    status: "Confirmed",
-  },
-  {
-    id: "SL-011",
-    buyerName: "Jacob Cohen",
-    buyerAvatar: "/client.png",
-    buyerContact: "(702) 889-3345",
-    buyerEmail: "jacob.cohen@email.com",
-    artistName: "Yasmin Farah",
-    artistAvatar: "/client.png",
-    artistLocation: "Dubai, United Arab Emirates",
-    artistRate: "$2,400 per event",
-    artistSpecialty: "Wedding Singer",
-    date: "18-08-2025",
-    status: "Open",
-  },
-  {
-    id: "SL-012",
-    buyerName: "Lucie Dubois",
-    buyerAvatar: "/client.png",
-    buyerContact: "(617) 233-9055",
-    buyerEmail: "lucie.dubois@email.com",
-    artistName: "Marco Rossi",
-    artistAvatar: "/client.png",
-    artistLocation: "Milan, Italy",
-    artistRate: "$1,100 per event",
-    artistSpecialty: "Saxophonist",
-    date: "22-08-2025",
-    status: "Full",
-  },
-  {
-    id: "SL-013",
-    buyerName: "Chen Wei",
-    buyerAvatar: "/client.png",
-    buyerContact: "(858) 771-6612",
-    buyerEmail: "chen.wei@email.com",
-    artistName: "Anita Kapoor",
-    artistAvatar: "/client.png",
-    artistLocation: "Singapore, Singapore",
-    artistRate: "$1,600 per event",
-    artistSpecialty: "Bollywood Dance Troupe",
-    date: "25-08-2025",
-    status: "Confirmed",
-  },
-  {
-    id: "SL-014",
-    buyerName: "Carlos Silva",
-    buyerAvatar: "/client.png",
-    buyerContact: "(310) 499-2208",
-    buyerEmail: "carlos.silva@email.com",
-    artistName: "Fernanda Lima",
-    artistAvatar: "/client.png",
-    artistLocation: "São Paulo, Brazil",
-    artistRate: "$950 per event",
-    artistSpecialty: "Samba Band",
-    date: "27-08-2025",
-    status: "Open",
-  },
-  {
-    id: "SL-015",
-    buyerName: "Hiro Tanaka",
-    buyerAvatar: "/client.png",
-    buyerContact: "(971) 358-4455",
-    buyerEmail: "hiro.tanaka@email.com",
-    artistName: "Mika Sato",
-    artistAvatar: "/client.png",
-    artistLocation: "Tokyo, Japan",
-    artistRate: "$1,800 per event",
-    artistSpecialty: "Pianist",
-    date: "30-08-2025",
-    status: "Confirmed",
-  },
-  {
-    id: "SL-016",
-    buyerName: "Maya Johnson",
-    buyerAvatar: "/client.png",
-    buyerContact: "(414) 276-0198",
-    buyerEmail: "maya.johnson@email.com",
-    artistName: "Kwame Nkrumah",
-    artistAvatar: "/client.png",
-    artistLocation: "Kumasi, Ghana",
-    artistRate: "$750 per event",
-    artistSpecialty: "Drumming Ensemble",
-    date: "02-09-2025",
-    status: "Full",
-  },
-  {
-    id: "SL-017",
-    buyerName: "Sara Ali",
-    buyerAvatar: "/client.png",
-    buyerContact: "(646) 878-9921",
-    buyerEmail: "sara.ali@email.com",
-    artistName: "Rafiq Chowdhury",
-    artistAvatar: "/client.png",
-    artistLocation: "Chittagong, Bangladesh",
-    artistRate: "$550 per event",
-    artistSpecialty: "Qawwali Group",
-    date: "05-09-2025",
-    status: "Open",
-  },
-  {
-    id: "SL-018",
-    buyerName: "George Parker",
-    buyerAvatar: "/client.png",
-    buyerContact: "(303) 761-1129",
-    buyerEmail: "george.parker@email.com",
-    artistName: "Elena Popescu",
-    artistAvatar: "/client.png",
-    artistLocation: "Bucharest, Romania",
-    artistRate: "$900 per event",
-    artistSpecialty: "Opera Singer",
-    date: "08-09-2025",
-    status: "Confirmed",
-  },
-  {
-    id: "SL-019",
-    buyerName: "Noah Williams",
-    buyerAvatar: "/client.png",
-    buyerContact: "(416) 782-4456",
-    buyerEmail: "noah.williams@email.com",
-    artistName: "Olivia Brown",
-    artistAvatar: "/client.png",
-    artistLocation: "Toronto, Canada",
-    artistRate: "$1,200 per event",
-    artistSpecialty: "Acoustic Duo",
-    date: "10-09-2025",
-    status: "Open",
-  },
-  {
-    id: "SL-020",
-    buyerName: "Zara Khan",
-    buyerAvatar: "/client.png",
-    buyerContact: "(281) 634-2217",
-    buyerEmail: "zara.khan@email.com",
-    artistName: "Tomás García",
-    artistAvatar: "/client.png",
-    artistLocation: "Mexico City, Mexico",
-    artistRate: "$1,400 per event",
-    artistSpecialty: "Mariachi Band",
-    date: "12-09-2025",
-    status: "Confirmed",
-  },
-];
+interface IAgent {
+  id: string;
+  role: "AGENT";
+  avatar: string;
+  name: string;
+  email: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  location: string;
+  experience: string;
+  availability: string[];
+  price: string;
+  agent_artists: string[];
+  agent_pending_artists: string[];
+}
 
 export default function BookingRequestsPage() {
+  const [activeTab, setActiveTab] = useState<"requests" | "agents" | "">("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<BookingRequest | null>(
     null
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   //   const [currentPage, setCurrentPage] = useState(1);
-  const [bookings, setBookings] = useState(mockBookings);
+  const { data: artists, isLoading } = useGetArtistsQuery("");
 
-  const filteredBookings = bookings.filter(
-    (booking) =>
-      booking.buyerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.artistName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  console.log(artists?.data);
 
   const handleViewDetails = (booking: BookingRequest) => {
     setSelectedBooking(booking);
@@ -362,93 +95,192 @@ export default function BookingRequestsPage() {
       {/* Search and Table Container */}
       <div className='bg-white rounded-lg'>
         {/* Search Header */}
-        <div className='py-4 lg:pb-8'>
-          <div className='relative max-w-md ml-auto'>
-            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4' />
-            <Input
-              placeholder='Search for artist....'
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className='pl-10 h-12 bg-muted border-border'
-            />
+
+        <header className='sticky top-0 z-40  bg-background mb-5'>
+          <div className='px-4 py-6 sm:px-6 lg:px-8'>
+            <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+              {/* Search Bar */}
+              <div className='relative flex-1 max-w-md'>
+                <Search className='absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground' />
+                <input
+                  type='text'
+                  placeholder='Search for artist....'
+                  className='w-full rounded-lg border border-input bg-background py-2 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary'
+                />
+              </div>
+
+              {/* Tabs */}
+              <div className='flex items-center gap-6'>
+                <button
+                  onClick={() => setActiveTab("requests")}
+                  className={`relative text-sm font-medium transition-colors border-2 ${
+                    activeTab === "requests"
+                      ? "!border-[#235789]"
+                      : "border-gray-300"
+                  } px-4 py-2 rounded-3xl cursor-pointer ${
+                    activeTab === "requests"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  New Request{" "}
+                  <span className='ml-2 inline-block rounded-full bg-destructive px-2 py-0.5 text-xs font-bold text-white'>
+                    13
+                  </span>
+                </button>
+                <button
+                  onClick={() => setActiveTab("agents")}
+                  className={`relative text-sm font-medium transition-colors border-2 ${
+                    activeTab === "agents"
+                      ? "!border-[#235789]"
+                      : "border-gray-300"
+                  } px-4 py-2 rounded-3xl cursor-pointer ${
+                    activeTab === "agents"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  See New Agent
+                </button>
+                <button
+                  onClick={() => setActiveTab("")}
+                  className={`relative text-sm font-medium transition-colors border-2 ${
+                    activeTab === "" ? "!border-[#235789]" : "border-gray-300"
+                  } px-4 py-2 rounded-3xl cursor-pointer ${
+                    activeTab === "agents"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  All
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        </header>
 
         {/* Table */}
-        <div className='overflow-x-auto rounded-lg'>
-          <table className='w-full'>
-            <thead className='bg-[#235789] text-white p-4 font-medium'>
-              <tr>
-                <th className='px-4 py-3 text-left text-base font-medium'>
-                  Agent
-                </th>
-                <th className='px-4 py-3 text-left text-base font-medium'>
-                  Email
-                </th>
-                <th className='px-4 py-3 text-left text-base font-medium'>
-                  Location
-                </th>
-                <th className='px-4 py-3 text-left text-base font-medium'>
-                  Availability
-                </th>
-                <th className='px-4 py-3 text-left text-base font-medium hidden md:table-cell'>
-                  Commission Rate
-                </th>
-                <th className='px-4 py-3 text-left text-base font-medium'>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-gray-200'>
-              {filteredBookings.map((booking, index) => (
-                <tr key={index} className='hover:bg-gray-50'>
-                  <td className='px-4 py-3'>
-                    <div className='flex items-center gap-2'>
-                      <Avatar className='h-6 w-6'>
-                        <AvatarImage
-                          src={booking.artistAvatar || "/placeholder.svg"}
-                        />
-                        <AvatarFallback>
-                          {booking.artistName
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className='text-base'>{booking.artistName}</span>
-                    </div>
-                  </td>
-                  <td className='px-4 py-3 text-base'>{booking.buyerEmail}</td>
-                  <td className='px-4 py-3 text-base'>
-                    {booking.artistLocation}
-                  </td>
-                  <td className='px-4 py-3 text-base'>
-                    {getStatusBadge(booking.status)}
-                    {/* {booking.status} */}
-                  </td>
-                  <td className='px-4 py-3 hidden md:table-cell'>
-                    10% per event
-                  </td>
-                  <td className='px-4 py-3'>
-                    <div className='flex items-center gap-2'>
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-8 w-8'
-                        onClick={() => handleViewDetails(booking)}
-                      >
-                        <Eye className='h-4 w-4' />
-                      </Button>
-                      <Button variant='ghost' size='icon' className='h-8 w-8'>
-                        <Trash2 className='h-4 w-4' />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <main className='px-4 py-6 sm:px-6 lg:px-8'>
+          {activeTab === "" && (
+            <div className='overflow-x-auto rounded-lg'>
+              <table className='w-full'>
+                <thead className='bg-[#235789] text-white p-4 font-medium'>
+                  <tr>
+                    <th className='px-4 py-3 text-left text-base font-medium'>
+                      Agent
+                    </th>
+                    <th className='px-4 py-3 text-left text-base font-medium'>
+                      Email
+                    </th>
+                    <th className='px-4 py-3 text-left text-base font-medium'>
+                      Location
+                    </th>
+                    <th className='px-4 py-3 text-left text-base font-medium'>
+                      Availability
+                    </th>
+                    <th className='px-4 py-3 text-left text-base font-medium hidden md:table-cell'>
+                      Commission Rate
+                    </th>
+                    <th className='px-4 py-3 text-left text-base font-medium'>
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className='divide-y divide-gray-200'>
+                  {isLoading
+                    ? Array(10)
+                        .fill(0)
+                        .map((_, index) => (
+                          <tr key={index} className='hover:bg-gray-50'>
+                            <td className='px-4 py-3'>
+                              <div className='flex items-center gap-2'>
+                                <Skeleton className='h-6 w-6 rounded-full' />
+                                <Skeleton className='h-4 w-24' />
+                              </div>
+                            </td>
+                            <td className='px-4 py-3'>
+                              <Skeleton className='h-4 w-24' />
+                            </td>
+                            <td className='px-4 py-3'>
+                              <Skeleton className='h-4 w-24' />
+                            </td>
+                            <td className='px-4 py-3'>
+                              <Skeleton className='h-4 w-24' />
+                            </td>
+                            <td className='px-4 py-3 hidden md:table-cell'>
+                              <Skeleton className='h-4 w-24' />
+                            </td>
+                            <td className='px-4 py-3'>
+                              <div className='flex items-center gap-2'>
+                                <Skeleton className='h-6 w-6 rounded-full' />
+                                <Skeleton className='h-6 w-6 rounded-full' />
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                    : artists?.data?.map((agent: IAgent) => (
+                        <tr key={agent.id} className='hover:bg-gray-50'>
+                          <td className='px-4 py-3'>
+                            <div className='flex items-center gap-2'>
+                              <Avatar className='h-6 w-6'>
+                                <AvatarImage
+                                  src={
+                                    process.env.NEXT_PUBLIC_API_URL +
+                                    agent.avatar
+                                  }
+                                />
+                                <AvatarFallback>
+                                  {agent.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className='text-base'>{agent.name}</span>
+                            </div>
+                          </td>
+                          <td className='px-4 py-3 text-base'>
+                            {agent?.email || "N/A"}
+                          </td>
+                          <td className='px-4 py-3 text-base'>
+                            {agent?.location || "N/A"}
+                          </td>
+                          <td className='px-4 py-3 text-base'>
+                            {agent?.availability || "N/A"}
+                          </td>
+                          <td className='px-4 py-3 hidden md:table-cell'>
+                            {agent?.price || "N/A"}
+                          </td>
+                          <td className='px-4 py-3'>
+                            <div className='flex items-center gap-2'>
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                className='h-8 w-8'
+                                // onClick={() => handleViewDetails(booking)}
+                              >
+                                <Eye className='h-4 w-4' />
+                              </Button>
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                className='h-8 w-8'
+                              >
+                                <Trash2 className='h-4 w-4' />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {activeTab === "requests" && <RequestsTable />}
+          {activeTab === "agents" && <AgentsTable />}
+        </main>
 
         {/* Pagination */}
         <div className='flex items-center justify-center gap-2 p-4 border-t'>

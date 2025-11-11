@@ -83,7 +83,7 @@ export default function Home() {
       console.log("res => ", res?.data?.url);
 
       if (res?.data?.data?.url) {
-        window.location.href = res?.data?.url;
+        window.open(res?.data?.data?.url, "_blank");
       } else {
         alert("Failed to initiate payment. Please try again.");
       }

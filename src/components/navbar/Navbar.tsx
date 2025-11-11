@@ -15,8 +15,6 @@ export function Navbar() {
   const pathname = usePathname();
   const { data: profile, isLoading } = useGetProfileQuery("");
 
-  console.log("profile", profile?.data);
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };

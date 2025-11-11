@@ -79,13 +79,12 @@ export default function DashboardSidebar() {
 
             {sidebarView !== "agent" &&
               sidebarView !== "venue" &&
-              sidebarView !== "artists" &&
+              sidebarView !== "artist" &&
               sidebarView !== "user" && <AdminSidebar />}
 
             {sidebarView === "agent" && <AgentSidebar />}
             {sidebarView === "venue" && <VenueSidebar />}
-            {sidebarView === "artists" && <ArtistSidebar />}
-            {/* {sidebarView === "buyer" && <BuyerSidebar />} */}
+            {sidebarView === "artist" && <ArtistSidebar />}
             {sidebarView === "user" && <UserSidebar />}
           </SidebarContent>
 
