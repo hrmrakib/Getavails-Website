@@ -3,7 +3,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,11 +11,20 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Search, Trash2, Eye, MapPin } from "lucide-react";
+import {
+  Search,
+  Trash2,
+  Eye,
+  MapPin,
+  MessageCircle,
+  MessageCircleMore,
+} from "lucide-react";
 import { RequestsTable } from "@/components/dashboard/artist/RequestsTable";
 import { AgentsTable } from "@/components/dashboard/artist/AgentsTable";
 import { useGetArtistsQuery } from "@/redux/features/artist/artistAPI";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AvailabilityModal } from "@/components/dashboard/artist/AvailabilityModal";
+import Link from "next/link";
 
 interface BookingRequest {
   id: string;
@@ -246,29 +254,34 @@ export default function BookingRequestsPage() {
                           <td className='px-4 py-3 text-base'>
                             {agent?.location || "N/A"}
                           </td>
+
                           <td className='px-4 py-3 text-base'>
-                            {agent?.availability || "N/A"}
+                            {agent?.availability &&
+                            agent.availability.length > 0 ? (
+                              <AvailabilityModal
+                                availability={agent.availability}
+                                onSelect={(iso) => {
+                                  console.log("picked:", iso);
+                                }}
+                              />
+                            ) : (
+                              <span className='text-gray-400'>
+                                No availability
+                              </span>
+                            )}
                           </td>
+
                           <td className='px-4 py-3 hidden md:table-cell'>
                             {agent?.price || "N/A"}
                           </td>
                           <td className='px-4 py-3'>
-                            <div className='flex items-center gap-2'>
-                              <Button
-                                variant='ghost'
-                                size='icon'
-                                className='h-8 w-8'
-                                // onClick={() => handleViewDetails(booking)}
+                            <div className='flex items-center pl-4'>
+                              <Link
+                                href={`/dashboard/artist/message/${agent.id}`}
+                                className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
                               >
-                                <Eye className='h-4 w-4' />
-                              </Button>
-                              <Button
-                                variant='ghost'
-                                size='icon'
-                                className='h-8 w-8'
-                              >
-                                <Trash2 className='h-4 w-4' />
-                              </Button>
+                                <MessageCircleMore className='h-4 w-4' />
+                              </Link>
                             </div>
                           </td>
                         </tr>

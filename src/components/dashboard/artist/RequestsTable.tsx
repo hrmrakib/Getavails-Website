@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessageCircle, Trash2, ChevronDown } from "lucide-react";
 import Image from "next/image";
+import { useAgentRequestQuery } from "@/redux/features/artist/artistAPI";
 
 interface Request {
   id: string;
@@ -12,6 +13,21 @@ interface Request {
   offerPrice: string;
   status: "pending" | "confirm";
   image: string;
+}
+
+interface IAgent {
+  id: string;
+  role: "AGENT";
+  email: string;
+  avatar: string;
+  name: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  location: string;
+  experience: string;
+  availability: string[];
+  price: string;
+  agent_artists: string[]; // Array of artist IDs
+  agent_pending_artists: string[]; // Array of pending artist IDs
 }
 
 const MOCK_REQUESTS: Request[] = Array.from({ length: 15 }, (_, i) => ({
@@ -35,6 +51,8 @@ export function RequestsTable() {
     startIdx,
     startIdx + itemsPerPage
   );
+  const { data: agentRequest } = useAgentRequestQuery("");
+  console.log("agentRequest", agentRequest?.data);
 
   const getStatusColor = (status: string) => {
     return status === "confirm" ? "text-green-500" : "text-yellow-500";
@@ -71,7 +89,7 @@ export function RequestsTable() {
             </tr>
           </thead>
           <tbody className='divide-y divide-border'>
-            {paginatedRequests.map((request) => (
+            {agentRequest?.data?.map((request: IAgent) => (
               <tr
                 key={request.id}
                 className='hover:bg-muted/50 transition-colors'
@@ -80,23 +98,21 @@ export function RequestsTable() {
                 <td className='px-6 py-4'>
                   <div className='flex items-center gap-3'>
                     <Image
-                      src={request.image || "/placeholder.svg"}
-                      alt={request.agentName}
+                      src={process.env.NEXT_PUBLIC_IMAGE_URL + request.avatar}
+                      alt={request.name}
                       width={40}
                       height={40}
                       className='h-10 w-10 rounded-full object-cover'
                     />
-                    <span className='text-sm font-medium'>
-                      {request.agentName}
-                    </span>
+                    <span className='text-sm font-medium'>{request.name}</span>
                   </div>
                 </td>
                 <td className='px-6 py-4 text-sm'>{request.location}</td>
-                <td className='px-6 py-4 text-sm'>{request.eventDuration}</td>
+                <td className='px-6 py-4 text-sm'>{request.role}</td>
                 <td className='px-6 py-4 text-sm font-medium'>
-                  {request.offerPrice}
+                  {request.price}
                 </td>
-                <td className='px-6 py-4 text-sm'>
+                {/* <td className='px-6 py-4 text-sm'>
                   <div className='relative inline-block'>
                     <button
                       onClick={() =>
@@ -125,7 +141,7 @@ export function RequestsTable() {
                         </div>
                       )}
                   </div>
-                </td>
+                </td> */}
                 <td className='px-6 py-4'>
                   <div className='flex items-center gap-3'>
                     <button className='p-2 hover:bg-muted rounded-lg transition-colors'>
