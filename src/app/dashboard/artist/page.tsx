@@ -18,19 +18,19 @@ export default function DashboardPage() {
             <Card className='flex-1 border-none shadow-sm bg-[#E6F0F9]'>
               <CardHeader className=''>
                 <CardTitle className='text-base font-medium text-[#1E1E1E]'>
-                  Revenue
+                  Total Revenue
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className='text-3xl font-bold'>
-                  {overview?.data?.totalRevenue || 0}
+                  ${overview?.data?.totalRevenue || 0}
                 </p>
               </CardContent>
             </Card>
             <Card className='flex-1 border-none shadow-sm bg-[#E6F0F9]'>
               <CardHeader className=''>
                 <CardTitle className='text-base font-medium text-[#1E1E1E]'>
-                  Revenue
+                  Total Bookings
                 </CardTitle>
               </CardHeader>
               <CardContent>

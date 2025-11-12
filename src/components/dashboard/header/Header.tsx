@@ -15,16 +15,19 @@ const Header = () => {
   const [headerTitle, setHeaderTitle] = useState("Dashboard");
   const pathname = usePathname();
 
+  const segments = pathname.split("/");
+  const role = segments[2];
+
   useEffect(() => {
-    setHeaderTitle(pathname.split("/")[1].split("-").join(" "));
-  }, [pathname]);
+    setHeaderTitle(role);
+  }, [role]);
 
   if (
     pathname === "/signup" ||
     pathname === "/signin" ||
     pathname === "/forget-password" ||
     pathname === "/verify-password" ||
-    pathname === "/verify-otp" || 
+    pathname === "/verify-otp" ||
     pathname === "/reset-password"
   ) {
     return null;
@@ -38,7 +41,7 @@ const Header = () => {
         <div className='flex items-center justify-between py-2'>
           <div>
             <h1 className='text-2xl lg:text-4xl font-bold text-[#222222] capitalize'>
-              {headerTitle}
+              {headerTitle} Dashboard
             </h1>
           </div>
           <div className='flex items-center gap-4'>
