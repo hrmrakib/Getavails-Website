@@ -12,6 +12,16 @@ const artistAPI = baseAPI.injectEndpoints({
       }),
     }),
 
+    getNewAgents: builder.query({
+      query: () => ({
+        url: "/agents",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
+
     agentRequest: builder.query({
       query: () => ({
         url: "/artist/agent-requests",
@@ -21,9 +31,37 @@ const artistAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    approveAgent: builder.mutation({
+      query: (agent_id) => ({
+        url: `/artist/approve-agent`,
+        method: "POST",
+        body: { agent_id },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
+
+    rejectAgent: builder.mutation({
+      query: (agent_id) => ({
+        url: `/artist/reject-agent`,
+        method: "POST",
+        body: { agent_id },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetArtistsQuery, useAgentRequestQuery } = artistAPI;
+export const {
+  useGetArtistsQuery,
+  useGetNewAgentsQuery,
+  useAgentRequestQuery,
+  useApproveAgentMutation,
+  useRejectAgentMutation,
+} = artistAPI;
 
 export default artistAPI;

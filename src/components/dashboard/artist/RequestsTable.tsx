@@ -1,9 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, Trash2, ChevronDown } from "lucide-react";
+import {
+  MessageCircle,
+  Trash2,
+  X,
+  Check,
+  MessageCircleMore,
+} from "lucide-react";
 import Image from "next/image";
-import { useAgentRequestQuery } from "@/redux/features/artist/artistAPI";
+import {
+  useAgentRequestQuery,
+  useApproveAgentMutation,
+  useRejectAgentMutation,
+} from "@/redux/features/artist/artistAPI";
+import { toast } from "sonner";
+import Link from "next/link";
 
 interface Request {
   id: string;
@@ -42,7 +54,6 @@ const MOCK_REQUESTS: Request[] = Array.from({ length: 15 }, (_, i) => ({
 
 export function RequestsTable() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedStatus, setExpandedStatus] = useState<string | null>(null);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(MOCK_REQUESTS.length / itemsPerPage);
 
@@ -51,7 +62,30 @@ export function RequestsTable() {
     startIdx,
     startIdx + itemsPerPage
   );
-  const { data: agentRequest } = useAgentRequestQuery("");
+  const { data: agentRequest, refetch } = useAgentRequestQuery("");
+  const [approveAgentMutation] = useApproveAgentMutation();
+  const [rejectAgentMutation] = useRejectAgentMutation();
+
+  const handleApproveAgent = async (agent_id: string) => {
+    try {
+      await approveAgentMutation(agent_id).unwrap();
+      refetch();
+    } catch (error) {
+      toast.error("Error approving agent");
+      console.error("Error approving agent:", error);
+    }
+  };
+
+  const handleDeclineAgent = async (agent_id: string) => {
+    try {
+      await rejectAgentMutation(agent_id).unwrap();
+      refetch();
+    } catch (error) {
+      toast.error("Error declining agent");
+      console.error("Error declining agent:", error);
+    }
+  };
+
   console.log("agentRequest", agentRequest?.data);
 
   const getStatusColor = (status: string) => {
@@ -66,24 +100,21 @@ export function RequestsTable() {
           <thead>
             <tr className='bg-primary text-primary-foreground'>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
-                Request Id.
+                Agent
               </th>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
-                Agent name
+                Experience
               </th>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
-                Event Location
+                Location
               </th>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
-                Event Duration
+                Availability
               </th>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
-                Offer Priced
+                Rate
               </th>
-              <th className='px-6 py-4 text-left text-sm font-semibold'>
-                Status
-              </th>
-              <th className='px-6 py-4 text-left text-sm font-semibold'>
+              <th className='px-6 py-4 text-center text-sm font-semibold'>
                 Actions
               </th>
             </tr>
@@ -94,7 +125,6 @@ export function RequestsTable() {
                 key={request.id}
                 className='hover:bg-muted/50 transition-colors'
               >
-                <td className='px-6 py-4 text-sm'>{request.id}</td>
                 <td className='px-6 py-4'>
                   <div className='flex items-center gap-3'>
                     <Image
@@ -107,48 +137,33 @@ export function RequestsTable() {
                     <span className='text-sm font-medium'>{request.name}</span>
                   </div>
                 </td>
+                <td className='px-6 py-4 text-sm'>{request.experience}</td>
                 <td className='px-6 py-4 text-sm'>{request.location}</td>
                 <td className='px-6 py-4 text-sm'>{request.role}</td>
                 <td className='px-6 py-4 text-sm font-medium'>
                   {request.price}
                 </td>
-                {/* <td className='px-6 py-4 text-sm'>
-                  <div className='relative inline-block'>
-                    <button
-                      onClick={() =>
-                        setExpandedStatus(
-                          expandedStatus === request.id ? null : request.id
-                        )
-                      }
-                      className={`${getStatusColor(
-                        request.status
-                      )} flex items-center gap-2 font-medium hover:opacity-80 transition-opacity`}
-                    >
-                      {request.status === "confirm" ? "Confirm" : "Pending"}
-                      {request.status === "pending" && (
-                        <ChevronDown className='h-4 w-4' />
-                      )}
-                    </button>
-                    {expandedStatus === request.id &&
-                      request.status === "pending" && (
-                        <div className='absolute top-full left-0 mt-2 w-40 bg-card border border-border rounded-lg shadow-lg z-50'>
-                          <button className='w-full px-4 py-2 text-left text-sm hover:bg-muted text-foreground'>
-                            Accept
-                          </button>
-                          <button className='w-full px-4 py-2 text-left text-sm hover:bg-muted text-foreground border-t border-border'>
-                            Decline
-                          </button>
-                        </div>
-                      )}
-                  </div>
-                </td> */}
                 <td className='px-6 py-4'>
-                  <div className='flex items-center gap-3'>
-                    <button className='p-2 hover:bg-muted rounded-lg transition-colors'>
-                      <MessageCircle className='h-5 w-5 text-muted-foreground hover:text-foreground' />
+                  <div className='flex items-center justify-center gap-3 lg:gap-5'>
+                    <Link
+                      href={`/dashboard/artist/message/${request.id}`}
+                      className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
+                    >
+                      <MessageCircleMore className='h-4 w-4' />
+                    </Link>
+                    <button
+                      onClick={() => handleApproveAgent(request.id)}
+                      className='p-1 hover:bg-muted rounded-lg transition-colors border border-red-500'
+                      title='Decline'
+                    >
+                      <X className='h-5 w-5 text-red-500' />
                     </button>
-                    <button className='p-2 hover:bg-muted rounded-lg transition-colors'>
-                      <Trash2 className='h-5 w-5 text-muted-foreground hover:text-foreground' />
+                    <button
+                      onClick={() => handleDeclineAgent(request.id)}
+                      className='p-1 hover:bg-muted rounded-lg transition-colors border border-green-500'
+                      title='Accept'
+                    >
+                      <Check className='h-5 w-5 text-green-500' />
                     </button>
                   </div>
                 </td>

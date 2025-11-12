@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, MessageCircleMore } from "lucide-react";
 import Image from "next/image";
+import { useGetNewAgentsQuery } from "@/redux/features/artist/artistAPI";
+import Link from "next/link";
 
 interface Agent {
   id: string;
@@ -13,6 +15,21 @@ interface Agent {
   rate: string;
   image: string;
   genre?: string;
+}
+
+interface IAgent {
+  id: string;
+  role: "AGENT";
+  email: string;
+  avatar: string;
+  name: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  location: string;
+  experience: string;
+  availability: string[];
+  price: string;
+  agent_artists: string[];
+  agent_pending_artists: string[];
 }
 
 const MOCK_AGENTS: Agent[] = Array.from({ length: 15 }, (_, i) => ({
@@ -33,6 +50,9 @@ export function AgentsTable() {
 
   const startIdx = (currentPage - 1) * itemsPerPage;
   const paginatedAgents = MOCK_AGENTS.slice(startIdx, startIdx + itemsPerPage);
+
+  const { data: newAgents } = useGetNewAgentsQuery("");
+  console.log(newAgents?.data);
 
   return (
     <div className='space-y-6'>
@@ -62,7 +82,7 @@ export function AgentsTable() {
             </tr>
           </thead>
           <tbody className='divide-y divide-border'>
-            {paginatedAgents.map((agent) => (
+            {newAgents?.data?.map((agent: IAgent) => (
               <tr
                 key={agent.id}
                 className='hover:bg-muted/50 transition-colors'
@@ -70,7 +90,7 @@ export function AgentsTable() {
                 <td className='px-6 py-4'>
                   <div className='flex items-center gap-3'>
                     <Image
-                      src={agent.image || "/placeholder.svg"}
+                      src={process.env.NEXT_PUBLIC_API_URL + agent.avatar}
                       alt={agent.name}
                       height={40}
                       width={40}
@@ -84,12 +104,15 @@ export function AgentsTable() {
                 </td>
                 <td className='px-6 py-4 text-sm'>{agent.location}</td>
                 <td className='px-6 py-4 text-sm'>{agent.availability}</td>
-                <td className='px-6 py-4 text-sm font-medium'>{agent.rate}</td>
+                <td className='px-6 py-4 text-sm font-medium'>{agent.price}</td>
                 <td className='px-6 py-4'>
                   <div className='flex items-center gap-3'>
-                    <button className='p-2 hover:bg-muted rounded-lg transition-colors'>
-                      <MessageCircle className='h-5 w-5 text-muted-foreground hover:text-foreground' />
-                    </button>
+                    <Link
+                      href={`/dashboard/artist/message/${agent.id}`}
+                      className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
+                    >
+                      <MessageCircleMore className='h-4 w-4' />
+                    </Link>
                   </div>
                 </td>
               </tr>

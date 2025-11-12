@@ -21,7 +21,10 @@ import {
 } from "lucide-react";
 import { RequestsTable } from "@/components/dashboard/artist/RequestsTable";
 import { AgentsTable } from "@/components/dashboard/artist/AgentsTable";
-import { useGetArtistsQuery } from "@/redux/features/artist/artistAPI";
+import {
+  useAgentRequestQuery,
+  useGetArtistsQuery,
+} from "@/redux/features/artist/artistAPI";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AvailabilityModal } from "@/components/dashboard/artist/AvailabilityModal";
 import Link from "next/link";
@@ -65,6 +68,7 @@ export default function BookingRequestsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   //   const [currentPage, setCurrentPage] = useState(1);
   const { data: artists, isLoading } = useGetArtistsQuery("");
+  const { data: agentRequest, refetch } = useAgentRequestQuery("");
 
   console.log(artists?.data);
 
@@ -118,7 +122,7 @@ export default function BookingRequestsPage() {
               </div>
 
               {/* Tabs */}
-              <div className='flex items-center gap-6'>
+              <div className='flex items-center gap-3'>
                 <button
                   onClick={() => setActiveTab("requests")}
                   className={`relative text-sm font-medium transition-colors border-2 ${
@@ -133,7 +137,7 @@ export default function BookingRequestsPage() {
                 >
                   New Request{" "}
                   <span className='ml-2 inline-block rounded-full bg-destructive px-2 py-0.5 text-xs font-bold text-white'>
-                    13
+                    {agentRequest?.data?.length || 0}
                   </span>
                 </button>
                 <button
@@ -160,7 +164,7 @@ export default function BookingRequestsPage() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  All
+                  Default
                 </button>
               </div>
             </div>
@@ -296,7 +300,7 @@ export default function BookingRequestsPage() {
         </main>
 
         {/* Pagination */}
-        <div className='flex items-center justify-center gap-2 p-4 border-t'>
+        {/* <div className='flex items-center justify-center gap-2 p-4 border-t'>
           <Button variant='ghost' size='sm'>
             ← Previous
           </Button>
@@ -318,7 +322,7 @@ export default function BookingRequestsPage() {
           <Button variant='ghost' size='sm'>
             Next →
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Drawer */}
