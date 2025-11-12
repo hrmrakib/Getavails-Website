@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight } from "lucide-react";
@@ -13,11 +13,15 @@ import { Skeleton } from "../ui/skeleton";
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { data: profile, isLoading } = useGetProfileQuery("");
+  const { data: profile, isLoading, refetch } = useGetProfileQuery("");
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   const navItems = [
     { name: "Home", href: "/" },

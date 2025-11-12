@@ -12,15 +12,19 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Sample data for the revenue chart
-const chartData = [
-  { month: "Jan", thisYear: 8000000, lastYear: 6000000 },
-  { month: "Feb", thisYear: 12000000, lastYear: 8000000 },
-  { month: "Mar", thisYear: 15000000, lastYear: 12000000 },
-  { month: "Apr", thisYear: 8000000, lastYear: 15000000 },
-  { month: "May", thisYear: 6000000, lastYear: 10000000 },
-  { month: "Jun", thisYear: 18000000, lastYear: 8000000 },
-  { month: "Jul", thisYear: 20000000, lastYear: 16000000 },
+const defaultRevenueData = [
+  { month: "Jan", revenue: 0 },
+  { month: "Feb", revenue: 0 },
+  { month: "Mar", revenue: 0 },
+  { month: "Apr", revenue: 0 },
+  { month: "May", revenue: 0 },
+  { month: "Jun", revenue: 0 },
+  { month: "Jul", revenue: 0 },
+  { month: "Aug", revenue: 0 },
+  { month: "Sep", revenue: 0 },
+  { month: "Oct", revenue: 0 },
+  { month: "Nov", revenue: 0 },
+  { month: "Dec", revenue: 0 },
 ];
 
 const formatChartValue = (value: number) => {
@@ -39,7 +43,7 @@ const formatNumber = (value: number) => {
   return new Intl.NumberFormat("en-US").format(value);
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className='bg-gray-800 text-white px-3 py-2 rounded-lg shadow-lg'>
@@ -50,12 +54,21 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export default function AgentRevenueChart() {
+interface RevenueData {
+  month: string;
+  revenue: number;
+}
+
+export default function AgentRevenueChart({
+  revenue = defaultRevenueData,
+}: {
+  revenue?: RevenueData[];
+}) {
   return (
-    <div className='h-80 w-full !border-none'>
+    <div className='h-80 w-full border-none'>
       <ResponsiveContainer width='100%' height='100%'>
         <LineChart
-          data={chartData}
+          data={revenue}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray='3 3' stroke='#f0f0f0' />
@@ -70,24 +83,16 @@ export default function AgentRevenueChart() {
             tickLine={false}
             tick={{ fontSize: 12, fill: "#666" }}
             tickFormatter={formatChartValue}
-            domain={[0, 30000000]}
-            ticks={[0, 10000000, 20000000, 30000000]}
+            domain={[0, "auto"]}
           />
           <Tooltip content={<CustomTooltip />} />
           <Line
             type='monotone'
-            dataKey='thisYear'
-            stroke='#000000'
+            dataKey='revenue'
+            stroke='#2563eb'
             strokeWidth={2}
-            dot={false}
-            strokeDasharray='5 5'
-          />
-          <Line
-            type='monotone'
-            dataKey='lastYear'
-            stroke='#93c5fd'
-            strokeWidth={2}
-            dot={false}
+            dot={{ r: 3 }}
+            activeDot={{ r: 6 }}
           />
         </LineChart>
       </ResponsiveContainer>

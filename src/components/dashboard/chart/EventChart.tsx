@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -11,22 +12,49 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const data = [
-  { month: "Jan", value: 22000, color: "#3b82f6" },
-  { month: "Feb", value: 28000, color: "#10b981" },
-  { month: "Mar", value: 25000, color: "#000" },
-  { month: "Apr", value: 30000, color: "#7dd3fc" },
-  { month: "May", value: 24000, color: "#93c5fd" },
-  { month: "Jun", value: 27000, color: "#10b981" },
-  { month: "Jul", value: 23000, color: "#3b82f6" },
-  { month: "Aug", value: 29000, color: "#10b981" },
-  { month: "Sep", value: 26000, color: "#1f2937" },
-  { month: "Oct", value: 31000, color: "#7dd3fc" },
-  { month: "Nov", value: 25000, color: "#93c5fd" },
-  { month: "Dec", value: 28000, color: "#10b981" },
+// Default 12-month structure
+const defaultBookings = [
+  { month: "Jan", bookingCount: 0 },
+  { month: "Feb", bookingCount: 0 },
+  { month: "Mar", bookingCount: 0 },
+  { month: "Apr", bookingCount: 0 },
+  { month: "May", bookingCount: 0 },
+  { month: "Jun", bookingCount: 0 },
+  { month: "Jul", bookingCount: 0 },
+  { month: "Aug", bookingCount: 0 },
+  { month: "Sep", bookingCount: 0 },
+  { month: "Oct", bookingCount: 0 },
+  { month: "Nov", bookingCount: 0 },
+  { month: "Dec", bookingCount: 0 },
 ];
 
-export default function EventChart() {
+// Color palette for each month
+const chartColors = [
+  "#3b82f6", // blue
+  "#10b981", // green
+  "#000000", // black
+  "#7dd3fc", // light blue
+  "#93c5fd", // soft blue
+  "#10b981", // green
+  "#3b82f6", // blue
+  "#10b981", // green
+  "#1f2937", // gray
+  "#7dd3fc", // light blue
+  "#93c5fd", // soft blue
+  "#10b981", // green
+];
+
+export default function EventChart({
+  bookings = defaultBookings,
+}: {
+  bookings?: { month: string; bookingCount: number }[];
+}) {
+  // Combine booking data with color for rendering
+  const chartData = bookings.map((item, index) => ({
+    ...item,
+    color: chartColors[index % chartColors.length],
+  }));
+
   return (
     <Card className='!border-none'>
       <CardHeader>
@@ -34,11 +62,12 @@ export default function EventChart() {
           Event Completed This Year
         </CardTitle>
       </CardHeader>
+
       <CardContent className='pb-4'>
         <div className='h-80'>
           <ResponsiveContainer width='100%' height='100%'>
             <BarChart
-              data={data}
+              data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
             >
               <XAxis
@@ -51,7 +80,7 @@ export default function EventChart() {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "#6b7280", fontSize: 12 }}
-                tickFormatter={(value) => `${value / 1000}K`}
+                tickFormatter={(value) => `${value}`}
               />
               <Tooltip
                 contentStyle={{
@@ -61,12 +90,12 @@ export default function EventChart() {
                   color: "white",
                 }}
                 formatter={(value: number) => [
-                  `${value.toLocaleString()}`,
-                  "Events",
+                  `${value.toLocaleString()} Bookings`,
+                  "Total",
                 ]}
               />
-              <Bar dataKey='value' radius={[4, 4, 0, 0]}>
-                {data.map((entry, index) => (
+              <Bar dataKey='bookingCount' radius={[4, 4, 0, 0]}>
+                {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Bar>

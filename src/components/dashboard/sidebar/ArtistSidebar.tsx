@@ -45,7 +45,7 @@ const ArtistSidebar = () => {
           }
         />
 
-        <NavItem
+        {/* <NavItem
           href='/dashboard/artist/bookings-requests'
           icon={TicketPercent}
           label='Bookings Requests'
@@ -53,7 +53,7 @@ const ArtistSidebar = () => {
             pathname === "/blog-management" ||
             pathname.startsWith("/blog-management/")
           }
-        />
+        /> */}
 
         <NavItem
           href='/dashboard/artist/message'

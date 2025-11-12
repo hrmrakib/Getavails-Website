@@ -2,6 +2,15 @@ import baseAPI from "@/redux/api/api";
 
 const artistAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
+    getOverview: builder.query({
+      query: () => ({
+        url: "/artist/overview",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
     getArtists: builder.query({
       query: () => ({
         url: "/artist/agents",
@@ -68,6 +77,7 @@ const artistAPI = baseAPI.injectEndpoints({
 });
 
 export const {
+  useGetOverviewQuery,
   useGetArtistsQuery,
   useGetNewAgentsQuery,
   useAgentRequestQuery,
