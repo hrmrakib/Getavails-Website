@@ -1,16 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { X, MapPin, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -21,21 +18,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface Artist {
+interface IArtist {
   id: string;
-  name: string;
-  genre: string;
-  location: string;
-  availability: "Free Now" | "Within 1 week" | "Booked";
-  rate: string;
+  role: "ARTIST";
+  email: string;
   avatar: string;
+  name: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  location: string;
+  genre: string;
+  availability: string[];
+  price: string;
+  artist_agents: string[];
+  artist_pending_agents: string[];
 }
 
 interface BookingDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  artist: Artist | null;
+  artist: IArtist | null;
 }
 
 export function BookingDrawer({
@@ -47,33 +50,27 @@ export function BookingDrawer({
   const [selectedHour, setSelectedHour] = useState<string>("10");
   const [selectedMinute, setSelectedMinute] = useState<string>("00");
   const [selectedPeriod, setSelectedPeriod] = useState<string>("AM");
-  const [message, setMessage] = useState<string>("");
+
+  const artistAvailableDates = useMemo(() => {
+    if (!artist?.availability) return [];
+    return artist.availability.map(
+      (iso) => new Date(iso).toISOString().split("T")[0]
+    );
+  }, [artist?.availability]);
 
   if (!artist) return null;
 
-  const handleBooking = () => {
-    // Handle booking logic here
-    console.log("Booking artist:", artist.name);
-    console.log("Date:", selectedDate);
-    console.log("Time:", `${selectedHour}:${selectedMinute} ${selectedPeriod}`);
-    console.log("Message:", message);
-    onOpenChange(false);
-  };
-
-  // Generate calendar days for current month
   const generateCalendarDays = () => {
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
-    const days = [];
+    const days: Date[] = [];
     const currentDate = new Date(startDate);
 
     while (days.length < 42) {
-      // 6 weeks * 7 days
       days.push(new Date(currentDate));
       currentDate.setDate(currentDate.getDate() + 1);
     }
@@ -82,6 +79,7 @@ export function BookingDrawer({
   };
 
   const calendarDays = generateCalendarDays();
+
   const monthNames = [
     "Jan",
     "Feb",
@@ -97,25 +95,14 @@ export function BookingDrawer({
     "Dec",
   ];
 
-  const getAvailabilityColor = (availability: string) => {
-    switch (availability) {
-      case "Free Now":
-        return "bg-green-100 text-green-800";
-      case "Within 1 week":
-        return "bg-yellow-100 text-yellow-800";
-      case "Booked":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
   return (
     <Drawer open={open} onOpenChange={onOpenChange} direction='right'>
       <DrawerContent className='h-full max-w-md ml-auto mr-0 rounded-l-lg rounded-r-none'>
         <DrawerHeader className='space-y-4 pb-4'>
           <div className='flex items-center justify-between'>
-            <DrawerTitle className='text-xl font-bold'></DrawerTitle>
+            <DrawerTitle className='text-xl font-bold'>
+              {artist.name}
+            </DrawerTitle>
             <DrawerClose asChild>
               <Button variant='ghost' size='icon' className='h-6 w-6'>
                 <X className='h-4 w-4' />
@@ -123,7 +110,7 @@ export function BookingDrawer({
             </DrawerClose>
           </div>
 
-          {/* Artist Info */}
+          {/* 🎤 Artist Info */}
           <div className='bg-muted/30 rounded-lg p-4 space-y-3'>
             <div className='flex flex-col items-center gap-3'>
               <Avatar className='h-12 w-12'>
@@ -138,7 +125,7 @@ export function BookingDrawer({
                     .join("")}
                 </AvatarFallback>
               </Avatar>
-              <div className='flex-1'>
+              <div className='flex-1 text-center'>
                 <h3 className='font-semibold text-lg'>{artist.name}</h3>
                 <p className='text-sm text-muted-foreground'>{artist.genre}</p>
               </div>
@@ -148,38 +135,29 @@ export function BookingDrawer({
               <div className='flex items-center gap-2 text-sm'>
                 <MapPin className='h-4 w-4 text-muted-foreground' />
                 <span>{artist.location}</span>
-                <span className='text-muted-foreground'>
-                  (will free in 5 days)
-                </span>
               </div>
 
               <div className='flex items-center gap-2 text-sm'>
                 <DollarSign className='h-4 w-4 text-muted-foreground' />
-                <span>{artist.rate}</span>
+                <span>{artist.price}</span>
               </div>
             </div>
           </div>
         </DrawerHeader>
 
         <div className='flex-1 px-6 space-y-6 overflow-y-auto'>
-          {/* Date Selection */}
+          {/* 📅 Date Selection */}
           <div className='space-y-3'>
             <Label className='text-base font-semibold'>Select Date</Label>
 
-            {/* Date Display and Navigation */}
+            {/* Calendar Header */}
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-2'>
                 <span className='text-sm font-medium'>
-                  {String(selectedDate.getDate()).padStart(2, "0")}
-                </span>
-                <span className='text-sm font-medium'>
-                  {String(selectedDate.getMonth() + 1).padStart(2, "0")}
-                </span>
-                <span className='text-sm font-medium'>
+                  {monthNames[selectedDate.getMonth()]}{" "}
                   {selectedDate.getFullYear()}
                 </span>
               </div>
-
               <div className='flex items-center gap-2'>
                 <Button
                   variant='ghost'
@@ -192,9 +170,6 @@ export function BookingDrawer({
                 >
                   ←
                 </Button>
-                <span className='text-sm font-medium min-w-12 text-center'>
-                  {monthNames[selectedDate.getMonth()]}
-                </span>
                 <Button
                   variant='ghost'
                   size='sm'
@@ -209,7 +184,7 @@ export function BookingDrawer({
               </div>
             </div>
 
-            {/* Calendar Grid */}
+            {/* 🗓 Calendar Grid */}
             <div className='space-y-2'>
               <div className='grid grid-cols-7 gap-1 text-xs text-muted-foreground'>
                 {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
@@ -223,20 +198,28 @@ export function BookingDrawer({
                 {calendarDays.map((day, index) => {
                   const isCurrentMonth =
                     day.getMonth() === selectedDate.getMonth();
+                  const isoDate = day.toISOString().split("T")[0];
+                  const isAvailable = artistAvailableDates.includes(isoDate);
                   const isSelected =
                     day.toDateString() === selectedDate.toDateString();
-                  const isToday =
-                    day.toDateString() === new Date().toDateString();
 
                   return (
                     <Button
                       key={index}
                       variant={isSelected ? "default" : "ghost"}
                       size='sm'
-                      className={`h-8 w-8 p-0 text-xs ${
-                        !isCurrentMonth ? "text-muted-foreground/50" : ""
-                      } ${isToday ? "bg-blue-50 text-blue-600" : ""}`}
-                      onClick={() => setSelectedDate(day)}
+                      disabled={!isAvailable} // ⛔️ Only allow available dates
+                      className={`h-8 w-8 p-0 text-xs transition-all duration-150
+                        ${!isCurrentMonth ? "text-muted-foreground/40" : ""}
+                        ${
+                          isAvailable
+                            ? "bg-green-500 text-white hover:bg-green-600"
+                            : "opacity-40 cursor-not-allowed"
+                        }
+                        ${isSelected ? "ring-2 ring-blue-500" : ""}`}
+                      onClick={() => {
+                        if (isAvailable) setSelectedDate(day);
+                      }}
                     >
                       {day.getDate()}
                     </Button>
@@ -244,93 +227,52 @@ export function BookingDrawer({
                 })}
               </div>
             </div>
-
-            <div className='flex items-center gap-2 text-sm'>
-              <Button variant='ghost' size='sm'>
-                Today
-              </Button>
-              <Button variant='ghost' size='sm'>
-                Last selection
-              </Button>
-            </div>
           </div>
 
-          {/* Time Selection */}
+          {/* 🕒 Time Display (auto from availability) */}
           <div className='space-y-3'>
-            <Label className='text-base font-semibold'>Enter Time</Label>
-            <div className='flex items-center gap-2'>
-              <Select value={selectedHour} onValueChange={setSelectedHour}>
-                <SelectTrigger className='w-20'>
-                  <SelectValue placeholder='Hour' />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: 12 }, (_, i) => (
-                    <SelectItem
-                      key={i + 1}
-                      value={String(i + 1).padStart(2, "0")}
+            <Label className='text-base font-semibold'>Available Time</Label>
+
+            {artist.availability && artist.availability.length > 0 ? (
+              <div className='space-y-2'>
+                {artist.availability.map((iso, index) => {
+                  const start = new Date(iso);
+                  const end = new Date(start);
+                  end.setHours(end.getHours() + 8); // ⏱ example: 8-hour duration
+
+                  const formatTime = (date: Date) =>
+                    date.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    });
+
+                  return (
+                    <div
+                      key={index}
+                      className='flex justify-between items-center bg-muted/30 p-2 rounded-md text-sm'
                     >
-                      {String(i + 1).padStart(2, "0")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <span className='text-lg font-semibold'>:</span>
-
-              <Select value={selectedMinute} onValueChange={setSelectedMinute}>
-                <SelectTrigger className='w-20'>
-                  <SelectValue placeholder='Min' />
-                </SelectTrigger>
-                <SelectContent>
-                  {["00", "15", "30", "45"].map((minute) => (
-                    <SelectItem key={minute} value={minute}>
-                      {minute}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <div className='flex'>
-                <Button
-                  variant={selectedPeriod === "AM" ? "default" : "outline"}
-                  size='sm'
-                  className='rounded-r-none'
-                  onClick={() => setSelectedPeriod("AM")}
-                >
-                  AM
-                </Button>
-                <Button
-                  variant={selectedPeriod === "PM" ? "default" : "outline"}
-                  size='sm'
-                  className='rounded-l-none'
-                  onClick={() => setSelectedPeriod("PM")}
-                >
-                  PM
-                </Button>
+                      <span>
+                        {start.toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                      <span className='font-medium'>
+                        {formatTime(start)} — {formatTime(end)}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-          </div>
-
-          {/* Message */}
-          <div className='space-y-3'>
-            <Label htmlFor='message' className='text-base font-semibold'>
-              Message
-            </Label>
-            <Textarea
-              id='message'
-              placeholder='Add a message for the artist...'
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className='min-h-20 resize-none'
-            />
+            ) : (
+              <p className='text-muted-foreground text-sm'>
+                No available times
+              </p>
+            )}
           </div>
         </div>
-
-        <DrawerFooter className='pt-4'>
-          <Button onClick={handleBooking} className='w-full'>
-            Book
-          </Button>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
