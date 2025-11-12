@@ -53,6 +53,17 @@ const artistAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    availabilityDate: builder.mutation({
+      query: (data) => ({
+        url: `/profile/update-availability`,
+        method: "POST",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -62,6 +73,7 @@ export const {
   useAgentRequestQuery,
   useApproveAgentMutation,
   useRejectAgentMutation,
+  useAvailabilityDateMutation,
 } = artistAPI;
 
 export default artistAPI;
