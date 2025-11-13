@@ -17,7 +17,7 @@ export function Navbar() {
     skip: !localStorage.getItem("access_token"),
   });
 
-  const toggleMenu = () => {
+  const toggleMenu = () => { 
     setIsMenuOpen(!isMenuOpen);
   };
 

@@ -19,3 +19,9 @@ export const baseAPI = createApi({
 });
 
 export default baseAPI;
+
+export type TList = {
+  page?: number;
+  limit?: number;
+  search?: string;
+};

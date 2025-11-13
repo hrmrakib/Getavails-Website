@@ -19,7 +19,7 @@ export default function DashboardPage() {
               <CardHeader className=''>
                 <CardTitle className='text-base font-medium text-[#1E1E1E]'>
                   Total Revenue
-                </CardTitle>
+                </CardTitle> 
               </CardHeader>
               <CardContent>
                 <p className='text-3xl font-bold'>

@@ -1,135 +1,78 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Mic, Send, CheckCheck } from "lucide-react";
+import { useSocket } from "@/provider/SocketProvider";
+import { useParams, useRouter } from "next/navigation";
+import {
+  useGetInboxChatsQuery,
+  useGetMessagesQuery,
+} from "@/redux/features/chat/chatAPI";
+import { TMessagesResponse } from "./interface";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { tr } from "date-fns/locale";
+dayjs.extend(relativeTime);
 
-interface Contact {
+interface IChat {
   id: string;
   name: string;
+  user_id: string;
   avatar: string;
-  lastMessage: string;
+  last_message: string;
   timestamp: string;
-  unreadCount?: number;
-  isOnline?: boolean;
-  lastSeen?: string;
+  unread: boolean;
+  unread_count: number;
 }
-
-interface Message {
-  id: string;
-  senderId: string;
-  content: string;
-  timestamp: string;
-  isRead: boolean;
-  isSent: boolean;
-}
-
-const mockContacts: Contact[] = [
-  {
-    id: "1",
-    name: "X-AE-A-13b",
-    avatar: "/message/1.png",
-    lastMessage: "Enter your message description here...",
-    timestamp: "12:25",
-    isOnline: true,
-  },
-  {
-    id: "2",
-    name: "Pippins McGray",
-    avatar: "/message/2.png",
-    lastMessage: "Please call me back on 08193843...",
-    timestamp: "12:25",
-  },
-  {
-    id: "3",
-    name: "McKinsey Vermillion",
-    avatar: "/message/3.png",
-    lastMessage: "Enter your message description here...",
-    timestamp: "12:25",
-    unreadCount: 8,
-    isOnline: true,
-  },
-  {
-    id: "4",
-    name: "X-AE-A-13b",
-    avatar: "/message/4.png",
-    lastMessage: "Enter your message description here...",
-    timestamp: "12:25",
-    isOnline: true,
-  },
-  {
-    id: "5",
-    name: "Pippins McGray",
-    avatar: "/message/5.png",
-    lastMessage: "Please call me back on 08193843...",
-    timestamp: "12:25",
-  },
-  {
-    id: "6",
-    name: "X-AE-A-13b",
-    avatar: "/message/6.png",
-    lastMessage: "Enter your message description here...",
-    timestamp: "12:25",
-    isOnline: true,
-  },
-  {
-    id: "7",
-    name: "Pippins McGray",
-    avatar: "/message/7.png",
-    lastMessage: "Please call me back on 08193843...",
-    timestamp: "12:25",
-  },
-  {
-    id: "8",
-    name: "Oarack Babama",
-    avatar: "/message/3.png",
-    lastMessage: "Enter your message description here...",
-    timestamp: "12:25",
-    unreadCount: 2,
-  },
-];
-
-const mockMessages: Message[] = [
-  {
-    id: "1",
-    senderId: "1",
-    content: "You viewed X_AE_A-13b",
-    timestamp: "12:25",
-    isRead: true,
-    isSent: false,
-  },
-  {
-    id: "2",
-    senderId: "user",
-    content:
-      "Hey, what's up? How are you doing? am looking to make a deal with you.",
-    timestamp: "11:25",
-    isRead: true,
-    isSent: true,
-  },
-];
 
 export default function MessagePage() {
+  const { socket, onlineUsers } = useSocket();
+  const { id: chat_id } = useParams<{ id: string }>();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(
-    mockContacts[0]
-  );
+  const [selectedContact, setSelectedContact] = useState<IChat | null>();
   const [messageInput, setMessageInput] = useState("");
-  const [activeTab, setActiveTab] = useState<"All" | "Unread">("All");
+  const [activeTab, setActiveTab] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState(false);
+  const router = useRouter();
 
-  const filteredContacts = mockContacts.filter((contact) =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+  // Todo handle pagination
+  const { data: messagesResponse, refetch: refetchMessages } =
+    useGetMessagesQuery<{
+      data: TMessagesResponse;
+    }>({ page: 1, limit: 10, chat_id, search: undefined }, { skip: !chat_id });
+
+  const { data: inboxChats } = useGetInboxChatsQuery(
+    {
+      page: 1,
+      limit: 10,
+      search: searchTerm,
+      unread: activeTab,
+    },
+    { skip: !chat_id }
   );
+
+  console.log(inboxChats?.data);
+  const pagination = messagesResponse?.meta.pagination;
+  const messages = messagesResponse?.data;
 
   const handleSendMessage = () => {
     if (messageInput.trim()) {
       console.log("[v0] Sending message:", messageInput);
       setMessageInput("");
+
+      //? send message
+      socket?.emit(
+        "send_message",
+        {
+          chat_id,
+          text: messageInput,
+        },
+        refetchMessages
+      );
     }
   };
 
@@ -138,6 +81,28 @@ export default function MessagePage() {
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  //? HANDLE sOCKET
+  useEffect(() => {
+    //? skip if socket is undefined
+    if (!socket) return;
+
+    //? listen for new messages
+    socket.on("new_message", (data) => {
+      const message = JSON.parse(data).data;
+
+      //? skip if message is not for this chat
+      if (message.chat_id !== chat_id) return;
+
+      refetchMessages();
+    });
+  }, [socket, refetchMessages, chat_id]);
+
+  const handleSelectContact = (contact: IChat) => {
+    setSelectedContact(contact);
+    setIsMobileView(false);
+    router.push(`/dashboard/artist/message/${contact.id}`);
   };
 
   return (
@@ -166,9 +131,9 @@ export default function MessagePage() {
           <div className='px-4 py-2 border-b border-gray-200'>
             <div className='flex gap-6'>
               <button
-                onClick={() => setActiveTab("All")}
+                onClick={() => setActiveTab(false)}
                 className={`text-sm font-medium pb-2 border-b-2 transition-colors ${
-                  activeTab === "All"
+                  activeTab === false
                     ? "text-[#235789] border-[#235789]"
                     : "text-gray-500 border-transparent hover:text-gray-700"
                 }`}
@@ -176,9 +141,9 @@ export default function MessagePage() {
                 All
               </button>
               <button
-                onClick={() => setActiveTab("Unread")}
+                onClick={() => setActiveTab(true)}
                 className={`text-sm font-medium pb-2 border-b-2 transition-colors ${
-                  activeTab === "Unread"
+                  activeTab === true
                     ? "text-[#235789] border-[#235789]"
                     : "text-gray-500 border-transparent hover:text-gray-700"
                 }`}
@@ -190,13 +155,10 @@ export default function MessagePage() {
 
           {/* Contacts List */}
           <div className='flex-1 overflow-y-auto'>
-            {filteredContacts.map((contact) => (
+            {inboxChats?.data?.map((contact: IChat) => (
               <div
                 key={contact.id}
-                onClick={() => {
-                  setSelectedContact(contact);
-                  setIsMobileView(true);
-                }}
+                onClick={() => handleSelectContact(contact)}
                 className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
                   selectedContact?.id === contact.id
                     ? "bg-blue-50 border-blue-100"
@@ -206,7 +168,9 @@ export default function MessagePage() {
                 <div className='flex items-center gap-3'>
                   <div className='relative'>
                     <Avatar className='h-10 w-10'>
-                      <AvatarImage src={contact.avatar || "/placeholder.svg"} />
+                      <AvatarImage
+                        src={process.env.NEXT_PUBLIC_IMAGE_URL + contact.avatar}
+                      />
                       <AvatarFallback>
                         {contact.name
                           .split(" ")
@@ -214,26 +178,24 @@ export default function MessagePage() {
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
-                    {contact.isOnline && (
+                    {onlineUsers.includes(contact.user_id) && (
                       <div className='absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full'></div>
                     )}
                   </div>
                   <div className='flex-1 min-w-0'>
-                    <div className='flex items-center justify-between'>
+                    <div className='flex  items-center justify-between'>
                       <p className='text-sm font-medium text-gray-900 truncate'>
                         {contact.name}
                       </p>
-                      <span className='text-xs text-gray-500'>
-                        {contact.timestamp}
-                      </span>
+                      {contact.timestamp.split("T")[1].split(".")[0]}
                     </div>
                     <p className='text-sm text-gray-600 truncate mt-0.5'>
-                      {contact.lastMessage}
+                      {contact.last_message.slice(0, 30)}
                     </p>
                   </div>
-                  {contact.unreadCount && (
+                  {contact.unread_count > 0 && (
                     <div className='bg-[#235789] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
-                      {contact.unreadCount}
+                      {contact.unread_count}
                     </div>
                   )}
                 </div>
@@ -251,9 +213,123 @@ export default function MessagePage() {
           }`}
         >
           {selectedContact ? (
-            <>
+            // <>
+            //   {/* Chat Header */}
+            //   <div className='sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3'>
+            //     <button
+            //       onClick={() => setIsMobileView(false)}
+            //       className='sm:hidden text-gray-600'
+            //     >
+            //       ←
+            //     </button>
+            //     <Avatar className='h-10 w-10'>
+            //       <AvatarImage
+            //         src={selectedContact.avatar || "/placeholder.svg"}
+            //       />
+            //       <AvatarFallback>
+            //         {selectedContact.name
+            //           .split(" ")
+            //           .map((n) => n[0])
+            //           .join("")}
+            //       </AvatarFallback>
+            //     </Avatar>
+            //     <div>
+            //       <p className='font-medium text-gray-900'>
+            //         {selectedContact.name}
+            //       </p>
+            //       <p className='text-sm text-gray-500'>
+            //         Last seen{" "}
+            //         {selectedContact.timestamp.split("T")[1].split(".")[0]}
+            //       </p>
+            //     </div>
+            //   </div>
+
+            //   {/* Messages */}
+            //   <div className='relative h-full border-4 flex-1 overflow-y-auto p-4 space-y-4 overflow-x-hidden'>
+            //     <div className='text-center'>
+            //       <span className='text-xs text-[#235789] bg-blue-50 px-2 py-1 rounded'>
+            //         25 April
+            //       </span>
+            //     </div>
+
+            //     <div className='flex flex-col justify-end h-[90%]'>
+            //       {messages?.map((message) => (
+            //         <div
+            //           key={message.id}
+            //           className={`flex items-end  justify-end ${
+            //             message.isOwner ? "justify-end" : "justify-start"
+            //           } mb-2`}
+            //         >
+            //           <div
+            //             className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+            //               message.isOwner
+            //                 ? "bg-[#235789] text-white"
+            //                 : "bg-gray-100 text-gray-900"
+            //             }`}
+            //           >
+            //             <p className='text-sm'>{message.text}</p>
+            //             <div
+            //               className={`flex items-center gap-1 mt-1 ${
+            //                 message.isOwner ? "justify-end" : "justify-start"
+            //               }`}
+            //             >
+            //               <span
+            //                 className={`text-xs ${
+            //                   message.isOwner
+            //                     ? "text-blue-100"
+            //                     : "text-gray-500"
+            //                 }`}
+            //               >
+            //                 {dayjs(
+            //                   message.updated_at ?? message.created_at
+            //                 ).fromNow()}
+            //               </span>
+            //               {message.isOwner && message.seen_by.length > 1 && (
+            //                 <CheckCheck className='text-blue-200' />
+            //               )}
+            //             </div>
+            //           </div>
+            //         </div>
+            //       ))}
+            //     </div>
+            //   </div>
+
+            //   {/* Message Input */}
+            //   <div className='h-max bg-white border-t border-gray-200 p-4'>
+            //     <div className='flex items-center gap-2'>
+            //       <div className='flex-1 relative'>
+            //         <Input
+            //           placeholder='Write your message...'
+            //           value={messageInput}
+            //           onChange={(e) => setMessageInput(e.target.value)}
+            //           onKeyPress={handleKeyPress}
+            //           className='pr-20 h-12 bg-gray-50 border-gray-200'
+            //         />
+            //         <div className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1'>
+            //           <Button
+            //             variant='ghost'
+            //             size='icon'
+            //             className='h-8 w-8 text-gray-400'
+            //           >
+            //             <Mic className='h-4 w-4' />
+            //           </Button>
+            //           <Button
+            //             onClick={handleSendMessage}
+            //             size='icon'
+            //             className='h-8 w-8 bg-[#235789] hover:bg-[#235789]'
+            //           >
+            //             <Send className='h-4 w-4' />
+            //           </Button>
+            //         </div>
+            //       </div>
+            //     </div>
+            //   </div>
+            // </>
+
+            <div className='relative flex flex-col h-screen'>
+              {/* full viewport height */}
               {/* Chat Header */}
-              <div className='bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3'>
+              <div className='sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3'>
                 <button
                   onClick={() => setIsMobileView(false)}
                   className='sm:hidden text-gray-600'
@@ -275,54 +351,54 @@ export default function MessagePage() {
                   <p className='font-medium text-gray-900'>
                     {selectedContact.name}
                   </p>
-                  <p className='text-sm text-gray-500'>Last seen 7h ago</p>
+                  <p className='text-sm text-gray-500'>
+                    Last seen{" "}
+                    {selectedContact.timestamp.split("T")[1].split(".")[0]}
+                  </p>
                 </div>
               </div>
-
-              {/* Messages */}
-              <div className='relative flex-1 overflow-y-auto p-4 space-y-4'>
+              {/* Messages Section */}
+              <div className='flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50'>
                 <div className='text-center'>
                   <span className='text-xs text-[#235789] bg-blue-50 px-2 py-1 rounded'>
-                    25 April
+                    {messages?.length} messages
                   </span>
                 </div>
 
-                <div className='flex flex-col justify-end h-[90%]'>
-                  {mockMessages.map((message) => (
+                <div className='flex flex-col gap-2'>
+                  {messages?.map((message) => (
                     <div
                       key={message.id}
-                      className={`flex items-end  justify-end ${
-                        message.isSent ? "justify-end" : "justify-start"
+                      className={`flex items-end ${
+                        message.isOwner ? "justify-end" : "justify-start"
                       }`}
                     >
                       <div
                         className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                          message.isSent
+                          message.isOwner
                             ? "bg-[#235789] text-white"
                             : "bg-gray-100 text-gray-900"
                         }`}
                       >
-                        <p className='text-sm'>{message.content}</p>
+                        <p className='text-sm'>{message.text}</p>
                         <div
                           className={`flex items-center gap-1 mt-1 ${
-                            message.isSent ? "justify-end" : "justify-start"
+                            message.isOwner ? "justify-end" : "justify-start"
                           }`}
                         >
                           <span
                             className={`text-xs ${
-                              message.isSent ? "text-blue-100" : "text-gray-500"
+                              message.isOwner
+                                ? "text-blue-100"
+                                : "text-gray-500"
                             }`}
                           >
-                            {message.timestamp}
+                            {dayjs(
+                              message.updated_at ?? message.created_at
+                            ).fromNow()}
                           </span>
-                          {message.isSent && (
-                            <CheckCheck
-                              className={`h-3 w-3 ${
-                                message.isRead
-                                  ? "text-blue-100"
-                                  : "text-blue-200"
-                              }`}
-                            />
+                          {message.isOwner && message.seen_by.length > 1 && (
+                            <CheckCheck className='text-blue-200' />
                           )}
                         </div>
                       </div>
@@ -330,9 +406,8 @@ export default function MessagePage() {
                   ))}
                 </div>
               </div>
-
-              {/* Message Input */}
-              <div className='bg-white border-t border-gray-200 p-4'>
+              {/* Message Input - fixed at bottom */}
+              <div className='fixed bottom-0 left-0 w-64 bg-white border-t border-gray-200 p-4 z-20'>
                 <div className='flex items-center gap-2'>
                   <div className='flex-1 relative'>
                     <Input
@@ -361,8 +436,120 @@ export default function MessagePage() {
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           ) : (
+            // <div className='flex flex-col h-screen'>
+            //   {" "}
+            //   {/* full viewport height */}
+            //   {/* Chat Header */}
+            //   <div className='sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3 z-10'>
+            //     <button
+            //       onClick={() => setIsMobileView(false)}
+            //       className='sm:hidden text-gray-600'
+            //     >
+            //       ←
+            //     </button>
+            //     <Avatar className='h-10 w-10'>
+            //       <AvatarImage
+            //         src={selectedContact.avatar || "/placeholder.svg"}
+            //       />
+            //       <AvatarFallback>
+            //         {selectedContact.name
+            //           .split(" ")
+            //           .map((n) => n[0])
+            //           .join("")}
+            //       </AvatarFallback>
+            //     </Avatar>
+            //     <div>
+            //       <p className='font-medium text-gray-900'>
+            //         {selectedContact.name}
+            //       </p>
+            //       <p className='text-sm text-gray-500'>
+            //         Last seen{" "}
+            //         {selectedContact.timestamp.split("T")[1].split(".")[0]}
+            //       </p>
+            //     </div>
+            //   </div>
+            //   {/* Messages */}
+            //   <div className='flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50'>
+            //     <div className='text-center'>
+            //       <span className='text-xs text-[#235789] bg-blue-50 px-2 py-1 rounded'>
+            //         25 April
+            //       </span>
+            //     </div>
+
+            //     <div className='flex flex-col justify-end gap-2'>
+            //       {messages?.map((message) => (
+            //         <div
+            //           key={message.id}
+            //           className={`flex items-end ${
+            //             message.isOwner ? "justify-end" : "justify-start"
+            //           }`}
+            //         >
+            //           <div
+            //             className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+            //               message.isOwner
+            //                 ? "bg-[#235789] text-white"
+            //                 : "bg-gray-100 text-gray-900"
+            //             }`}
+            //           >
+            //             <p className='text-sm'>{message.text}</p>
+            //             <div
+            //               className={`flex items-center gap-1 mt-1 ${
+            //                 message.isOwner ? "justify-end" : "justify-start"
+            //               }`}
+            //             >
+            //               <span
+            //                 className={`text-xs ${
+            //                   message.isOwner
+            //                     ? "text-blue-100"
+            //                     : "text-gray-500"
+            //                 }`}
+            //               >
+            //                 {dayjs(
+            //                   message.updated_at ?? message.created_at
+            //                 ).fromNow()}
+            //               </span>
+            //               {message.isOwner && message.seen_by.length > 1 && (
+            //                 <CheckCheck className='text-blue-200' />
+            //               )}
+            //             </div>
+            //           </div>
+            //         </div>
+            //       ))}
+            //     </div>
+            //   </div>
+            //   {/* Message Input */}
+            //   <div className='bg-white border-t border-gray-200 p-4'>
+            //     <div className='flex items-center gap-2'>
+            //       <div className='flex-1 relative'>
+            //         <Input
+            //           placeholder='Write your message...'
+            //           value={messageInput}
+            //           onChange={(e) => setMessageInput(e.target.value)}
+            //           onKeyPress={handleKeyPress}
+            //           className='pr-20 h-12 bg-gray-50 border-gray-200'
+            //         />
+            //         <div className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1'>
+            //           <Button
+            //             variant='ghost'
+            //             size='icon'
+            //             className='h-8 w-8 text-gray-400'
+            //           >
+            //             <Mic className='h-4 w-4' />
+            //           </Button>
+            //           <Button
+            //             onClick={handleSendMessage}
+            //             size='icon'
+            //             className='h-8 w-8 bg-[#235789] hover:bg-[#235789]'
+            //           >
+            //             <Send className='h-4 w-4' />
+            //           </Button>
+            //         </div>
+            //       </div>
+            //     </div>
+            //   </div>
+            // </div>
             <div className='flex-1 flex items-center justify-center text-gray-500'>
               <p>Select a conversation to start messaging</p>
             </div>

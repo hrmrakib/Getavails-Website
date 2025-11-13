@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 
 const Header = () => {
   const [admin] = useState({
@@ -14,6 +15,9 @@ const Header = () => {
   });
   const [headerTitle, setHeaderTitle] = useState("Dashboard");
   const pathname = usePathname();
+  const { data: profile, isLoading } = useGetProfileQuery(undefined, {
+    skip: !localStorage.getItem("access_token"),
+  });
 
   const segments = pathname.split("/");
   const role = segments[2];
@@ -56,14 +60,19 @@ const Header = () => {
             </Button>
             <div className='flex items-center gap-3'>
               <Avatar className='h-12 w-12 !rounded-sm'>
-                <AvatarImage src='/admin.png' alt='Daissy' />
-                <AvatarFallback>D</AvatarFallback>
+                <AvatarImage
+                  src={
+                    process.env.NEXT_PUBLIC_IMAGE_URL + profile?.data?.avatar
+                  }
+                  alt='Daissy'
+                />
+                <AvatarFallback>{profile?.data?.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className='hidden sm:block'>
                 <p className='text-base font-medium text-[#1E1E1E]'>
-                  {admin?.name}
+                  {profile?.data?.name}
                 </p>
-                <p className='text-sm text-[#606060]'>{admin?.role}</p>
+                <p className='text-sm text-[#606060]'>{profile?.data?.role}</p>
               </div>
             </div>
           </div>

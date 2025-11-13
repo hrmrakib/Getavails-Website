@@ -50,7 +50,6 @@ export function RequestsTable({ searchQuery }: { searchQuery: string }) {
   const [approveAgentMutation] = useApproveAgentMutation();
   const [rejectAgentMutation] = useRejectAgentMutation();
 
-  // ✅ Smooth scroll when page changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
