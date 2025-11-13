@@ -22,8 +22,8 @@ const artistAPI = baseAPI.injectEndpoints({
     }),
 
     getNewAgents: builder.query({
-      query: () => ({
-        url: "/agents",
+      query: ({ page = 1, limit = 10, search  }) => ({
+        url: `/agents?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -32,8 +32,8 @@ const artistAPI = baseAPI.injectEndpoints({
     }),
 
     agentRequest: builder.query({
-      query: () => ({
-        url: "/artist/agent-requests",
+      query: ({ page = 1, limit = 10, search }) => ({
+        url: `/artist/agent-requests?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,

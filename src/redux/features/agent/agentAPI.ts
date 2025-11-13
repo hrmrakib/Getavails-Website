@@ -21,8 +21,18 @@ const agentAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    getArtistRequests: builder.query({
+      query: () => ({
+        url: "/agent/artist-requests",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetAgentOverviewQuery, useGetMyArtistsQuery } = agentAPI;
+export const { useGetAgentOverviewQuery, useGetMyArtistsQuery,  } = agentAPI;
 export default agentAPI;

@@ -61,7 +61,7 @@ interface IAgent {
 
 export default function BookingRequestsPage() {
   const [activeTab, setActiveTab] = useState<"requests" | "agents" | "">("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<BookingRequest | null>(
     null
   );
@@ -116,6 +116,8 @@ export default function BookingRequestsPage() {
                 <Search className='absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground' />
                 <input
                   type='text'
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder='Search for artist....'
                   className='w-full rounded-lg border border-input bg-background py-2 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary'
                 />
@@ -295,8 +297,10 @@ export default function BookingRequestsPage() {
             </div>
           )}
 
-          {activeTab === "requests" && <RequestsTable />}
-          {activeTab === "agents" && <AgentsTable />}
+          {activeTab === "requests" && (
+            <RequestsTable searchQuery={searchQuery} />
+          )}
+          {activeTab === "agents" && <AgentsTable searchQuery={searchQuery} />}
         </main>
 
         {/* Pagination */}
