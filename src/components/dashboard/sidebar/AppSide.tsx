@@ -92,15 +92,18 @@ export default function DashboardSidebar() {
             <div className='mb-4 text-xs font-medium text-gray-500 uppercase tracking-wider px-4'>
               Settings
             </div>
-            <NavItem
-              href='/dashboard/settings'
-              icon={Settings}
-              label='Settings'
-              active={
-                pathname === "/dashboard/settings" ||
-                pathname.startsWith("/dashboard/settings/")
-              }
-            />
+            <ul>
+              {/* Author @shaishab316 */}
+              <NavItem
+                href='/dashboard/settings'
+                icon={Settings}
+                label='Settings'
+                active={
+                  pathname === "/dashboard/settings" ||
+                  pathname.startsWith("/dashboard/settings/")
+                }
+              />
+            </ul>
             <button
               onClick={() => setIsLogoutModalOpen(true)}
               className='flex w-full items-center gap-3 px-4 py-3 mt-2'
