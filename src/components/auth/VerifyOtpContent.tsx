@@ -252,7 +252,17 @@ export default function VerifyOtpContent() {
                 className='w-full h-12 bg-[#235789] hover:bg-[#1b68af] text-white font-medium'
                 disabled={isLoading}
               >
-                {isLoading ? "Resetting..." : "Reset Password"}
+                {isLoading
+                  ? `${
+                      type === "forgot-password"
+                        ? "Resetting..."
+                        : "Verifying..."
+                    }`
+                  : `${
+                      type === "forgot-password"
+                        ? "Reset Password"
+                        : "Verify Account"
+                    }`}
               </Button>
 
               {/* Resend Section */}

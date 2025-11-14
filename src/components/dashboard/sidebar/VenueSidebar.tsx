@@ -8,6 +8,7 @@ import {
   BookCheck,
   CalendarDays,
   LayoutDashboard,
+  MapIcon,
   MessageCircleMore,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -26,6 +27,16 @@ const VenueSidebar = () => {
         />
 
         <NavItem
+          href='/dashboard/venue/venue-management'
+          icon={MapIcon}
+          label='Venue Management'
+          active={
+            pathname === "/dashboard/venue/venue-management" ||
+            pathname.startsWith("/dashboard/venue/venue-management/")
+          }
+        />
+
+        <NavItem
           href='/dashboard/venue/availability-calendar'
           icon={CalendarDays}
           label='Availability Calendar'
@@ -36,22 +47,12 @@ const VenueSidebar = () => {
         />
 
         <NavItem
-          href='/dashboard/venue/bookings-requests'
-          icon={BookAlert}
-          label='Bookings Requests'
-          active={
-            pathname === "/dashboard/venue/subscriptions" ||
-            pathname.startsWith("/dashboard/venue/bookings-requests/")
-          }
-        />
-
-        <NavItem
-          href='/dashboard/venue/confirm-booking'
+          href='/dashboard/venue/send-customer-offer'
           icon={BookCheck}
-          label='Confirm Booking'
+          label='Send Customer Offer'
           active={
-            pathname === "/dashboard/venue/confirm-booking" ||
-            pathname.startsWith("/dashboard/venue/confirm-booking/")
+            pathname === "/dashboard/venue/send-customer-offer" ||
+            pathname.startsWith("/dashboard/venue/send-customer-offer/")
           }
         />
 

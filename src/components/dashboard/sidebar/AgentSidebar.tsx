@@ -36,22 +36,12 @@ const AgentSidebar = () => {
         />
 
         <NavItem
-          href='/dashboard/agent/bookings-requests'
+          href='/dashboard/agent/send-customer-offer'
           icon={NotebookPen}
-          label='Bookings Requests'
+          label='Send Customer Offer'
           active={
-            pathname === "/dashboard/agent/bookings-requests" ||
-            pathname.startsWith("/dashboard/agent/bookings-requests/")
-          }
-        />
-
-        <NavItem
-          href='/dashboard/agent/confirm-artist'
-          icon={BadgeCheck}
-          label='Confirm Artist'
-          active={
-            pathname === "/dashboard/agent/confirm-artist" ||
-            pathname.startsWith("/dashboard/agent/confirm-artist/")
+            pathname === "/dashboard/agent/send-customer-offer" ||
+            pathname.startsWith("/dashboard/agent/send-customer-offer/")
           }
         />
 
