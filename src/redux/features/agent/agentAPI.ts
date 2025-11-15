@@ -13,8 +13,18 @@ const agentAPI = baseAPI.injectEndpoints({
     }),
 
     getMyArtists: builder.query({
-      query: ({ page = 1, limit = 10 }) => ({
-        url: `/agent/artists?page=${page}&limit=${limit}`,
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/agent/artists?page=${page}&limit=${limit}&search=${search}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
+
+    getNewArtistByAgentPage: builder.query({
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/artists?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -23,8 +33,8 @@ const agentAPI = baseAPI.injectEndpoints({
     }),
 
     getMyArtistRequests: builder.query({
-      query: () => ({
-        url: "/agent/artist-requests",
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/agent/artist-requests?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -70,6 +80,7 @@ const agentAPI = baseAPI.injectEndpoints({
 export const {
   useGetAgentOverviewQuery,
   useGetMyArtistsQuery,
+  useGetNewArtistByAgentPageQuery,
   useGetMyArtistRequestsQuery,
   useAcceptArtistByAgentMutation,
   useRejectArtistByAgentMutation,

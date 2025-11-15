@@ -4,7 +4,7 @@ import { useState } from "react";
 import { MessageCircleMore } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useGetNewAgentsQuery } from "@/redux/features/artist/artistAPI";
+import { useGetNewArtistByAgentPageQuery } from "@/redux/features/agent/agentAPI";
 
 interface IAgent {
   id: string;
@@ -21,12 +21,16 @@ interface IAgent {
   agent_pending_artists: string[];
 }
 
-export function NewArtistTableInAgentPage({ searchQuery }: { searchQuery: string }) {
+export function NewArtistTableInAgentPage({
+  searchQuery,
+}: {
+  searchQuery: string;
+}) {
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
 
   // ✅ Fetch paginated data from backend
-  const { data, isLoading, isError } = useGetNewAgentsQuery({
+  const { data, isLoading, isError } = useGetNewArtistByAgentPageQuery({
     page: currentPage,
     limit,
     search: searchQuery,

@@ -26,6 +26,7 @@ import { BookingDrawer } from "@/components/dashboard/agent/BookingDrawer";
 import { AddArtistModal } from "@/components/dashboard/agent/AddArtistModal";
 import {
   useDeleteArtistByAgentMutation,
+  useGetMyArtistRequestsQuery,
   useGetMyArtistsQuery,
 } from "@/redux/features/agent/agentAPI";
 import Link from "next/link";
@@ -70,6 +71,7 @@ export default function ArtistBooking() {
     limit,
     search: searchQuery,
   });
+  const { data: agentRequest } = useGetMyArtistRequestsQuery({});
 
   console.log(myArtists);
 
@@ -141,7 +143,7 @@ export default function ArtistBooking() {
           >
             New Request{" "}
             <span className='ml-2 inline-block rounded-full bg-destructive px-2 py-0.5 text-xs font-bold text-white'>
-              {/* {agentRequest?.data?.length || 0} */} 0
+              {agentRequest?.data?.length || 0}
             </span>
           </button>
           <button
