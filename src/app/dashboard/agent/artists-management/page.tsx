@@ -3,19 +3,34 @@
 import { useState } from "react";
 import {
   Search,
-  Plus,
   User,
-  MessageSquare,
   Trash2,
   ChevronLeft,
   ChevronRight,
   Eye,
+  MessageCircleMore,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BookingDrawer } from "@/components/dashboard/agent/BookingDrawer";
 import { AddArtistModal } from "@/components/dashboard/agent/AddArtistModal";
-import { useGetMyArtistsQuery } from "@/redux/features/agent/agentAPI";
+import {
+  useDeleteArtistMutation,
+  useGetMyArtistsQuery,
+} from "@/redux/features/agent/agentAPI";
+import Link from "next/link";
+import { toast } from "sonner";
+import { ArtistRequestsInAgentPage } from "@/components/dashboard/agent/RequestsTable";
 
 interface IArtist {
   id: string;
@@ -33,11 +48,18 @@ interface IArtist {
 }
 
 export default function ArtistBooking() {
+  const [activeTab, setActiveTab] = useState<"requests" | "newArtists" | "">(
+    ""
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedArtist, setSelectedArtist] = useState<IArtist | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBookingDrawer, setShowBookingDrawer] = useState(false);
-  const [activeTab, setActiveTab] = useState<"requests" | "addArtist" | "">("");
+  const [showDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
+  const [deleteArtistMutation] = useDeleteArtistMutation();
+
+  const handleCloseDialog = () => setOpenDeleteDialog(false);
 
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -52,6 +74,30 @@ export default function ArtistBooking() {
   const handleBookArtist = (artist: IArtist) => {
     setSelectedArtist(artist);
     setShowBookingDrawer(true);
+  };
+
+  const handleDeleteArtist = (artistId: string) => {
+    setDeleteId(artistId);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleDeleteArtistConfirm = async () => {
+    try {
+      const res = await deleteArtistMutation({
+        artist_id: deleteId,
+      }).unwrap();
+
+      console.log(res, deleteId);
+
+      if (res?.success) {
+        toast.success("Artist deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting artist:", error);
+      toast.error("Error deleting artist");
+    } finally {
+      setOpenDeleteDialog(false);
+    }
   };
 
   const handleNext = () => {
@@ -94,13 +140,13 @@ export default function ArtistBooking() {
             </span>
           </button>
           <button
-            onClick={() => setActiveTab("addArtist")}
+            onClick={() => setActiveTab("newArtists")}
             className={`relative text-sm font-medium transition-colors border-2 ${
-              activeTab === "addArtist"
+              activeTab === "newArtists"
                 ? "!border-[#235789]"
                 : "border-gray-300"
             } px-4 py-2 rounded-3xl cursor-pointer ${
-              activeTab === "addArtist"
+              activeTab === "newArtists"
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground"
             }`}
@@ -123,85 +169,93 @@ export default function ArtistBooking() {
       </div>
 
       {/* Artists Table */}
-      <div className='bg-card rounded-lg border border-border overflow-hidden'>
-        <div className='hidden md:grid md:grid-cols-6 bg-[#235789] text-primary-foreground p-4 font-medium'>
-          <div>Artist</div>
-          <div>Genre</div>
-          <div>Location</div>
-          <div>Availability</div>
-          <div>Price/Rate</div>
-          <div>Actions</div>
-        </div>
+      <main>
+        {activeTab === "" && (
+          <div className='bg-card rounded-lg border border-border overflow-hidden'>
+            <div className='hidden md:grid md:grid-cols-6 bg-[#235789] text-primary-foreground p-4 font-medium'>
+              <div>Artist</div>
+              <div>Genre</div>
+              <div>Location</div>
+              <div>Availability</div>
+              <div>Price/Rate</div>
+              <div>Actions</div>
+            </div>
 
-        {isFetching ? (
-          <div className='p-8 text-center text-muted-foreground'>
-            Loading...
-          </div>
-        ) : (
-          <div className='divide-y divide-border'>
-            {myArtists?.data?.map((artist: IArtist) => (
-              <div
-                key={artist.id}
-                className='p-4 hover:bg-muted/50 transition-colors'
-              >
-                <div className='hidden md:grid md:grid-cols-6 items-center'>
-                  <div className='flex items-center gap-3'>
-                    <Avatar className='h-8 w-8'>
-                      <AvatarImage
-                        src={artist.avatar || "/placeholder.svg"}
-                        alt={artist.name}
-                      />
-                      <AvatarFallback>
-                        {artist.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className='font-medium'>{artist.name}</span>
-                  </div>
-                  <div>{artist.genre}</div>
-                  <div>{artist.location}</div>
-                  <div className='flex items-center gap-2'>
-                    {artist.availability[0]?.split("T")[0]}{" "}
-                    <button
-                      onClick={() => handleBookArtist(artist)}
-                      className='cursor-pointer'
-                    >
-                      <Eye className='h-4 w-4' />
-                    </button>
-                  </div>
-                  <div>{artist.price}</div>
-                  <div className='flex items-center gap-2'>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      onClick={() => handleBookArtist(artist)}
-                      className='h-8 w-8 text-primary hover:text-primary hover:bg-primary/10'
-                    >
-                      <User className='h-4 w-4' />
-                    </Button>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      className='h-8 w-8 text-primary hover:text-primary hover:bg-primary/10'
-                    >
-                      <MessageSquare className='h-4 w-4' />
-                    </Button>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      className='h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10'
-                    >
-                      <Trash2 className='h-4 w-4' />
-                    </Button>
-                  </div>
-                </div>
+            {isFetching ? (
+              <div className='p-8 text-center text-muted-foreground'>
+                Loading...
               </div>
-            ))}
+            ) : (
+              <div className='divide-y divide-border'>
+                {myArtists?.data?.map((artist: IArtist) => (
+                  <div
+                    key={artist.id}
+                    className='p-4 hover:bg-muted/50 transition-colors'
+                  >
+                    <div className='hidden md:grid md:grid-cols-6 items-center'>
+                      <div className='flex items-center gap-3'>
+                        <Avatar className='h-8 w-8'>
+                          <AvatarImage
+                            src={artist.avatar || "/placeholder.svg"}
+                            alt={artist.name}
+                          />
+                          <AvatarFallback>
+                            {artist.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className='font-medium'>{artist.name}</span>
+                      </div>
+                      <div>{artist.genre}</div>
+                      <div>{artist.location}</div>
+                      <div className='flex items-center gap-2'>
+                        {artist.availability[0]?.split("T")[0]}{" "}
+                        <button
+                          onClick={() => handleBookArtist(artist)}
+                          className='cursor-pointer'
+                        >
+                          <Eye className='h-4 w-4' />
+                        </button>
+                      </div>
+                      <div>{artist.price}</div>
+                      <div className='flex items-center gap-2 lg:gap-4'>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={() => handleBookArtist(artist)}
+                          className='h-8 w-8 text-primary hover:text-primary bg-green-200 hover:bg-primary/10'
+                        >
+                          <User className='h-6 w-6' />
+                        </Button>
+                        <Link
+                          href={`/dashboard/artist/message/`}
+                          className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
+                        >
+                          <MessageCircleMore className='h-4 w-4' />
+                        </Link>
+                        <Button
+                          title='Reject '
+                          variant='ghost'
+                          size='icon'
+                          onClick={() => handleDeleteArtist(artist.id)}
+                          className='h-8 w-8 text-destructive hover:text-destructive bg-destructive/10 hover:bg-destructive/30'
+                        >
+                          <Trash2 className='h-6 w-6' />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
-      </div>
+
+        {activeTab === "requests" && <ArtistRequestsInAgentPage />}
+        {/* {activeTab === "newArtists" && <RequestsTable />} */}
+      </main>
 
       {/* Pagination */}
       <div className='flex items-center justify-center gap-2 p-6'>
@@ -236,6 +290,29 @@ export default function ArtistBooking() {
         onOpenChange={setShowBookingDrawer}
         artist={selectedArtist}
       />
+
+      <AlertDialog open={showDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our databases.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => handleCloseDialog()}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleDeleteArtistConfirm()}
+              className='bg-red-500 cursor-pointer'
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

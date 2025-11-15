@@ -22,7 +22,7 @@ const agentAPI = baseAPI.injectEndpoints({
       }),
     }),
 
-    getArtistRequests: builder.query({
+    getMyArtistRequests: builder.query({
       query: () => ({
         url: "/agent/artist-requests",
         method: "GET",
@@ -31,8 +31,24 @@ const agentAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    deleteArtist: builder.mutation({
+      query: (id) => ({
+        url: `/agent/reject-artist`,
+        method: "DELETE",
+        body: id,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetAgentOverviewQuery, useGetMyArtistsQuery,  } = agentAPI;
+export const {
+  useGetAgentOverviewQuery,
+  useGetMyArtistsQuery,
+  useGetMyArtistRequestsQuery,
+  useDeleteArtistMutation,
+} = agentAPI;
 export default agentAPI;

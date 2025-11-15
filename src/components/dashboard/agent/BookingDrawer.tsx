@@ -11,13 +11,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface IArtist {
@@ -47,9 +41,6 @@ export function BookingDrawer({
   artist,
 }: BookingDrawerProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedHour, setSelectedHour] = useState<string>("10");
-  const [selectedMinute, setSelectedMinute] = useState<string>("00");
-  const [selectedPeriod, setSelectedPeriod] = useState<string>("AM");
 
   const artistAvailableDates = useMemo(() => {
     if (!artist?.availability) return [];

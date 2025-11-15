@@ -1,32 +1,35 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Check, MessageCircleMore } from "lucide-react";
+import { X, Check, MessageCircleMore, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import {
-  useAgentRequestQuery,
   useApproveAgentMutation,
   useRejectAgentMutation,
 } from "@/redux/features/artist/artistAPI";
+import { useGetMyArtistRequestsQuery } from "@/redux/features/agent/agentAPI";
+import { BookingDrawer } from "./BookingDrawer";
 
 interface IAgent {
   id: string;
-  role: "AGENT";
+  role: "ARTIST";
   email: string;
   avatar: string;
   name: string;
   gender: "MALE" | "FEMALE" | "OTHER";
   location: string;
-  experience: string;
+  genre: string;
   availability: string[];
   price: string;
-  agent_artists: string[];
-  agent_pending_artists: string[];
+  artist_agents: string[];
+  artist_pending_agents: string[];
 }
 
-export function RequestsTable() {
+export function ArtistRequestsInAgentPage() {
+  const [showBookingDrawer, setShowBookingDrawer] = useState(false);
+  const [selectedArtist, setSelectedArtist] = useState<IAgent | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
 
@@ -34,7 +37,7 @@ export function RequestsTable() {
     data: agentRequest,
     refetch,
     isLoading,
-  } = useAgentRequestQuery({
+  } = useGetMyArtistRequestsQuery({
     page: currentPage,
     limit,
   });
@@ -50,13 +53,20 @@ export function RequestsTable() {
 
   const handleApproveAgent = async (agent_id: string) => {
     try {
-      await approveAgentMutation(agent_id).unwrap();
-      toast.success("Agent approved successfully!");
-      refetch();
+      const res = await approveAgentMutation(agent_id).unwrap();
+      if (res?.success) {
+        toast.success("Agent approved successfully!");
+        refetch();
+      }
     } catch (error) {
       toast.error("Error approving agent");
       console.error("Error approving agent:", error);
     }
+  };
+
+  const handleBookArtist = (artist: IAgent) => {
+    setSelectedArtist(artist);
+    setShowBookingDrawer(true);
   };
 
   const handleDeclineAgent = async (agent_id: string) => {
@@ -95,13 +105,13 @@ export function RequestsTable() {
                 Agent
               </th>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
-                Experience
+                Genre
               </th>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
                 Location
               </th>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
-                Role
+                Availability
               </th>
               <th className='px-6 py-4 text-left text-sm font-semibold'>
                 Rate
@@ -132,9 +142,14 @@ export function RequestsTable() {
                     <span className='text-sm font-medium'>{request.name}</span>
                   </div>
                 </td>
-                <td className='px-6 py-4 text-sm'>{request.experience}</td>
+                <td className='px-6 py-4 text-sm'>{request.genre}</td>
                 <td className='px-6 py-4 text-sm'>{request.location}</td>
-                <td className='px-6 py-4 text-sm'>{request.role}</td>
+                <td className='px-6 py-4 text-sm flex items-center gap-2'>
+                  {request.availability[0]?.split("T")[0]}{" "}
+                  <button onClick={() => handleBookArtist(request)}>
+                    <Eye className='h-5 w-5' />
+                  </button>
+                </td>
                 <td className='px-6 py-4 text-sm font-medium'>
                   {request.price}
                 </td>
@@ -201,6 +216,12 @@ export function RequestsTable() {
           Next →
         </button>
       </div>
+
+      <BookingDrawer
+        open={showBookingDrawer}
+        onOpenChange={setShowBookingDrawer}
+        artist={selectedArtist}
+      />
     </div>
   );
 }
