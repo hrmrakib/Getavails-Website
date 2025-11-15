@@ -5,7 +5,16 @@ import { X, Check, MessageCircleMore, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   useAcceptArtistByAgentMutation,
   useGetMyArtistRequestsQuery,
@@ -33,6 +42,9 @@ export function ArtistRequestsInAgentPage({
 }: {
   searchQuery: string;
 }) {
+  const [openAcceptModal, setOpenAcceptModal] = useState(false);
+  const [openRejectModal, setOpenRejectModal] = useState(false);
+  const [selectedArtistId, setSelectedArtistId] = useState<string | null>(null);
   const [showBookingDrawer, setShowBookingDrawer] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState<IAgent | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -169,14 +181,20 @@ export function ArtistRequestsInAgentPage({
                       <MessageCircleMore className='h-4 w-4' />
                     </Link>
                     <button
-                      onClick={() => handleDeclineAgent(request.id)}
+                      onClick={() => {
+                        setSelectedArtistId(request.id);
+                        setOpenRejectModal(true);
+                      }}
                       className='p-1 border border-red-500 hover:bg-muted rounded-lg transition-colors'
                       title='Decline'
                     >
                       <X className='h-5 w-5 text-red-500' />
                     </button>
                     <button
-                      onClick={() => handleApproveAgent(request.id)}
+                      onClick={() => {
+                        setSelectedArtistId(request.id);
+                        setOpenAcceptModal(true);
+                      }}
                       className='p-1 border border-green-500 hover:bg-muted rounded-lg transition-colors'
                       title='Approve'
                     >
@@ -228,6 +246,61 @@ export function ArtistRequestsInAgentPage({
         onOpenChange={setShowBookingDrawer}
         artist={selectedArtist}
       />
+
+      {/* Accept Modal */}
+      <AlertDialog open={openAcceptModal} onOpenChange={setOpenAcceptModal}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Approve Artist?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to approve this artist request?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+            <AlertDialogAction
+              onClick={async () => {
+                if (selectedArtistId) {
+                  await handleApproveAgent(selectedArtistId);
+                }
+                setOpenAcceptModal(false);
+              }}
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reject Modal */}
+      <AlertDialog open={openRejectModal} onOpenChange={setOpenRejectModal}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reject Artist?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to reject this artist request?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+            <AlertDialogAction
+              className='bg-red-600 text-white hover:bg-red-700'
+              onClick={async () => {
+                if (selectedArtistId) {
+                  await handleDeclineAgent(selectedArtistId);
+                }
+                setOpenRejectModal(false);
+              }}
+            >
+              Confirm Reject
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

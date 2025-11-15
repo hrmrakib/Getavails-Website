@@ -21,7 +21,7 @@ interface IAgent {
   agent_pending_artists: string[];
 }
 
-export function AgentsTable({ searchQuery }: { searchQuery: string }) {
+export function NewArtistTableInAgentPage({ searchQuery }: { searchQuery: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
 

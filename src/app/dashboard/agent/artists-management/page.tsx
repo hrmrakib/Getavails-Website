@@ -31,6 +31,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { ArtistRequestsInAgentPage } from "@/components/dashboard/agent/RequestsTable";
+import { NewArtistTableInAgentPage } from "@/components/dashboard/agent/NewArtistTable";
 
 interface IArtist {
   id: string;
@@ -260,7 +261,9 @@ export default function ArtistBooking() {
         {activeTab === "requests" && (
           <ArtistRequestsInAgentPage searchQuery={searchQuery} />
         )}
-        {/* {activeTab === "newArtists" && <RequestsTable />} */}
+        {activeTab === "newArtists" && (
+          <NewArtistTableInAgentPage searchQuery={searchQuery} />
+        )}
       </main>
 
       {/* Pagination */}
