@@ -1,12 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
+import { useUpdateVenueMutation } from "@/redux/features/venue/venueAPI";
+import { useEffect, useState } from "react";
+
+interface Venue {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  role: "venue";
+  email: string;
+  is_verified: boolean;
+  is_active: boolean;
+  is_admin: boolean;
+  avatar: string;
+  name: string;
+  location: string;
+  balance: number;
+  is_stripe_connected: boolean;
+  availability: string[];
+  price: string;
+  venue_type: string | null;
+  capacity: number | null;
+}
 
 export default function VenueForm() {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
-    location: "",
     email: "",
     venueType: "",
     capacity: "",
@@ -16,6 +37,23 @@ export default function VenueForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const { data: profile, isLoading } = useGetProfileQuery(undefined, {
+    skip: !localStorage.getItem("access_token"),
+  });
+  const [updateVenue] = useUpdateVenueMutation();
+
+  useEffect(() => {
+    if (profile?.data) {
+      setFormData({
+        name: profile.data.name,
+        address: profile.data.location,
+        email: profile.data.email,
+        venueType: profile.data.venue_type,
+        capacity: profile.data.capacity,
+        cost: profile.data.price,
+      });
+    }
+  }, [profile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,7 +74,6 @@ export default function VenueForm() {
 
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.location.trim()) newErrors.location = "Location is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = "Invalid email format";
@@ -50,17 +87,29 @@ export default function VenueForm() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("first");
     e.preventDefault();
     if (!validateForm()) return;
 
+    const data = {
+      capacity: formData.capacity,
+      email: formData.email,
+      location: formData.address,
+      name: formData.name,
+      price: formData.cost,
+      venue_type: formData.venueType,
+    };
+
     setIsSubmitting(true);
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccessMessage("Changes saved successfully!");
-      setTimeout(() => setSuccessMessage(""), 3000);
-      console.log("[v0] Form submitted with data:", formData);
+      const res = await updateVenue(data).unwrap();
+      if (res?.success) {
+        setSuccessMessage("Changes saved successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
+      }
     } catch (error) {
-      console.error("[v0] Error submitting form:", error);
+      console.error("Error submitting form:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +137,7 @@ export default function VenueForm() {
           <div>
             <label
               htmlFor='name'
-              className='block text-base font-medium text-gray-700 mb-3'
+              className='block text-base font-medium text-gray-900 mb-3'
             >
               Name
             </label>
@@ -99,7 +148,7 @@ export default function VenueForm() {
               value={formData.name}
               onChange={handleChange}
               placeholder='Enter name'
-              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-900 placeholder-gray-400 ${
+              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-400 ${
                 errors.name ? "border-b-red-500" : ""
               }`}
             />
@@ -112,7 +161,7 @@ export default function VenueForm() {
           <div>
             <label
               htmlFor='address'
-              className='block text-base font-medium text-gray-700 mb-3'
+              className='block text-base font-medium text-gray-900 mb-3'
             >
               Address
             </label>
@@ -123,7 +172,7 @@ export default function VenueForm() {
               value={formData.address}
               onChange={handleChange}
               placeholder='Enter address'
-              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-900 placeholder-gray-400 ${
+              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-400 ${
                 errors.address ? "border-b-red-500" : ""
               }`}
             />
@@ -132,35 +181,11 @@ export default function VenueForm() {
             )}
           </div>
 
-          {/* Location Section */}
-          <div>
-            <label
-              htmlFor='location'
-              className='block text-base font-medium text-gray-700 mb-3'
-            >
-              Location
-            </label>
-            <input
-              id='location'
-              type='text'
-              name='location'
-              value={formData.location}
-              onChange={handleChange}
-              placeholder='Enter location'
-              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-900 placeholder-gray-400 ${
-                errors.location ? "border-b-red-500" : ""
-              }`}
-            />
-            {errors.location && (
-              <p className='text-red-500 text-sm mt-1'>{errors.location}</p>
-            )}
-          </div>
-
           {/* Email Section */}
           <div>
             <label
               htmlFor='email'
-              className='block text-base font-medium text-gray-700 mb-3'
+              className='block text-base font-medium text-gray-900 mb-3'
             >
               Email
             </label>
@@ -171,7 +196,7 @@ export default function VenueForm() {
               value={formData.email}
               onChange={handleChange}
               placeholder='name@example.com'
-              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-900 placeholder-gray-400 ${
+              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-400 ${
                 errors.email ? "border-b-red-500" : ""
               }`}
             />
@@ -184,7 +209,7 @@ export default function VenueForm() {
           <div>
             <label
               htmlFor='venueType'
-              className='block text-base font-medium text-gray-700 mb-3'
+              className='block text-base font-medium text-gray-900 mb-3'
             >
               Venue Type
             </label>
@@ -195,7 +220,7 @@ export default function VenueForm() {
               value={formData.venueType}
               onChange={handleChange}
               placeholder='Enter venue type'
-              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-900 placeholder-gray-400 ${
+              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-400 ${
                 errors.venueType ? "border-b-red-500" : ""
               }`}
             />
@@ -208,7 +233,7 @@ export default function VenueForm() {
           <div>
             <label
               htmlFor='capacity'
-              className='block text-base font-medium text-gray-700 mb-3'
+              className='block text-base font-medium text-gray-900 mb-3'
             >
               Capacity
             </label>
@@ -219,7 +244,7 @@ export default function VenueForm() {
               value={formData.capacity}
               onChange={handleChange}
               placeholder='Enter capacity'
-              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-900 placeholder-gray-400 ${
+              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-400 ${
                 errors.capacity ? "border-b-red-500" : ""
               }`}
             />
@@ -232,7 +257,7 @@ export default function VenueForm() {
           <div>
             <label
               htmlFor='cost'
-              className='block text-base font-medium text-gray-700 mb-3'
+              className='block text-base font-medium text-gray-900 mb-3'
             >
               Cost
             </label>
@@ -243,7 +268,7 @@ export default function VenueForm() {
               value={formData.cost}
               onChange={handleChange}
               placeholder='$525 per month'
-              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-900 placeholder-gray-400 ${
+              className={`w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-600 focus:outline-none transition-colors bg-transparent text-gray-700 placeholder-gray-400 ${
                 errors.cost ? "border-b-red-500" : ""
               }`}
             />
@@ -256,7 +281,7 @@ export default function VenueForm() {
           <button
             type='submit'
             disabled={isSubmitting}
-            className='w-full mt-10 bg-[#235789] hover:bg-[#124b81] disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200'
+            className='w-full mt-10 bg-[#235789] hover:bg-[#124b81] disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 cursor-pointer disabled:cursor-not-allowed'
           >
             {isSubmitting ? "Saving..." : "Save Changes"}
           </button>

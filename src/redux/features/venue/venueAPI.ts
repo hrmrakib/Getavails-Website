@@ -2,7 +2,7 @@ import baseAPI from "@/redux/api/api";
 
 const venueAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
-    getOverview: builder.query({
+    getVenueOverview: builder.query({
       query: () => ({
         url: "/venue/overview",
         method: "GET",
@@ -22,8 +22,23 @@ const venueAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    updateVenue: builder.mutation({
+      query: (data) => ({
+        url: `/venue/edit`,
+        method: "PATCH",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetOverviewQuery, useAvailabilityDateMutation } = venueAPI;
+export const {
+  useGetVenueOverviewQuery,
+  useAvailabilityDateMutation,
+  useUpdateVenueMutation,
+} = venueAPI;
 export default venueAPI;

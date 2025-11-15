@@ -2,12 +2,12 @@ import MessagePage from "@/components/dashboard/message/Message";
 import { SocketProvider } from "@/provider/SocketProvider";
 import React from "react";
 
-const AgentMessage = () => {
+const Message = () => {
   return (
     <SocketProvider>
       <MessagePage />
     </SocketProvider>
-  );
+  ); 
 };
 
-export default AgentMessage;
+export default Message;

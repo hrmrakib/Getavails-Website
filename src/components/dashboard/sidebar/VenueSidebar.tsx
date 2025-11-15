@@ -4,8 +4,6 @@ import React from "react";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import { NavItem } from "./CommonItem";
 import {
-  BookAlert,
-  BookCheck,
   CalendarDays,
   LayoutDashboard,
   MapIcon,
@@ -47,21 +45,11 @@ const VenueSidebar = () => {
         />
 
         <NavItem
-          href='/dashboard/venue/send-customer-offer'
-          icon={BookCheck}
-          label='Send Customer Offer'
-          active={
-            pathname === "/dashboard/venue/send-customer-offer" ||
-            pathname.startsWith("/dashboard/venue/send-customer-offer/")
-          }
-        />
-
-        <NavItem
-          href='/dashboard/venue/message'
+          href='/dashboard/venue/message/'
           icon={MessageCircleMore}
           label='Message'
           active={
-            pathname === "/dashboard/venue/message" ||
+            pathname === "/dashboard/venue/message/" ||
             pathname.startsWith("/dashboard/venue/message/")
           }
         />

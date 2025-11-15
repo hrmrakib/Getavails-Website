@@ -1,12 +1,11 @@
-import MessagePage from "@/components/dashboard/message/Message";
-import React from "react";
+import CommonMessagesPage from "@/components/dashboard/message/CommonMessagesPage";
 
-const AgentMessage = () => {
+const MessagePage = () => {
   return (
-    <>
-      <MessagePage />
-    </>
+    <div>
+      <CommonMessagesPage />
+    </div>
   );
 };
 
-export default AgentMessage;
+export default MessagePage;
