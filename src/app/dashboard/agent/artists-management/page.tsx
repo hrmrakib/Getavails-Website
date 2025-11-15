@@ -25,7 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BookingDrawer } from "@/components/dashboard/agent/BookingDrawer";
 import { AddArtistModal } from "@/components/dashboard/agent/AddArtistModal";
 import {
-  useDeleteArtistMutation,
+  useDeleteArtistByAgentMutation,
   useGetMyArtistsQuery,
 } from "@/redux/features/agent/agentAPI";
 import Link from "next/link";
@@ -57,14 +57,18 @@ export default function ArtistBooking() {
   const [showBookingDrawer, setShowBookingDrawer] = useState(false);
   const [showDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteId, setDeleteId] = useState("");
-  const [deleteArtistMutation] = useDeleteArtistMutation();
+  const [deleteArtistMutation] = useDeleteArtistByAgentMutation();
 
   const handleCloseDialog = () => setOpenDeleteDialog(false);
 
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const { data: myArtists, isFetching } = useGetMyArtistsQuery({ page, limit });
+  const { data: myArtists, isFetching } = useGetMyArtistsQuery({
+    page,
+    limit,
+    search: searchQuery,
+  });
 
   console.log(myArtists);
 
@@ -253,7 +257,9 @@ export default function ArtistBooking() {
           </div>
         )}
 
-        {activeTab === "requests" && <ArtistRequestsInAgentPage />}
+        {activeTab === "requests" && (
+          <ArtistRequestsInAgentPage searchQuery={searchQuery} />
+        )}
         {/* {activeTab === "newArtists" && <RequestsTable />} */}
       </main>
 

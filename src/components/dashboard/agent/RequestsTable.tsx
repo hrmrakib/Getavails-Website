@@ -5,11 +5,12 @@ import { X, Check, MessageCircleMore, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+
 import {
-  useApproveAgentMutation,
-  useRejectAgentMutation,
-} from "@/redux/features/artist/artistAPI";
-import { useGetMyArtistRequestsQuery } from "@/redux/features/agent/agentAPI";
+  useAcceptArtistByAgentMutation,
+  useGetMyArtistRequestsQuery,
+  useRejectArtistByAgentMutation,
+} from "@/redux/features/agent/agentAPI";
 import { BookingDrawer } from "./BookingDrawer";
 
 interface IAgent {
@@ -27,7 +28,11 @@ interface IAgent {
   artist_pending_agents: string[];
 }
 
-export function ArtistRequestsInAgentPage() {
+export function ArtistRequestsInAgentPage({
+  searchQuery,
+}: {
+  searchQuery: string;
+}) {
   const [showBookingDrawer, setShowBookingDrawer] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState<IAgent | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,10 +45,11 @@ export function ArtistRequestsInAgentPage() {
   } = useGetMyArtistRequestsQuery({
     page: currentPage,
     limit,
+    search: searchQuery,
   });
 
-  const [approveAgentMutation] = useApproveAgentMutation();
-  const [rejectAgentMutation] = useRejectAgentMutation();
+  const [approveAgentMutation] = useAcceptArtistByAgentMutation();
+  const [rejectAgentMutation] = useRejectArtistByAgentMutation();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -51,9 +57,9 @@ export function ArtistRequestsInAgentPage() {
 
   const totalPages = agentRequest?.meta?.totalPages || 1;
 
-  const handleApproveAgent = async (agent_id: string) => {
+  const handleApproveAgent = async (artist_id: string) => {
     try {
-      const res = await approveAgentMutation(agent_id).unwrap();
+      const res = await approveAgentMutation(artist_id).unwrap();
       if (res?.success) {
         toast.success("Agent approved successfully!");
         refetch();
@@ -69,9 +75,9 @@ export function ArtistRequestsInAgentPage() {
     setShowBookingDrawer(true);
   };
 
-  const handleDeclineAgent = async (agent_id: string) => {
+  const handleDeclineAgent = async (artist_id: string) => {
     try {
-      await rejectAgentMutation(agent_id).unwrap();
+      await rejectAgentMutation(artist_id).unwrap();
       toast.success("Agent declined successfully!");
       refetch();
     } catch (error) {

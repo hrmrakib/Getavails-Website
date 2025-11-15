@@ -32,9 +32,31 @@ const agentAPI = baseAPI.injectEndpoints({
       }),
     }),
 
-    deleteArtist: builder.mutation({
+    acceptArtistByAgent: builder.mutation({
+      query: (id) => ({
+        url: `/agent/approve-artist`,
+        method: "POST",
+        body: id,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
+
+    rejectArtistByAgent: builder.mutation({
       query: (id) => ({
         url: `/agent/reject-artist`,
+        method: "POST",
+        body: id,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
+
+    deleteArtistByAgent: builder.mutation({
+      query: (id) => ({
+        url: `/agent/delete-artist`,
         method: "DELETE",
         body: id,
         headers: {
@@ -49,6 +71,8 @@ export const {
   useGetAgentOverviewQuery,
   useGetMyArtistsQuery,
   useGetMyArtistRequestsQuery,
-  useDeleteArtistMutation,
+  useAcceptArtistByAgentMutation,
+  useRejectArtistByAgentMutation,
+  useDeleteArtistByAgentMutation,
 } = agentAPI;
 export default agentAPI;
