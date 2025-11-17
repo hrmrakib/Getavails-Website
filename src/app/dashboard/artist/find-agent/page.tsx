@@ -68,7 +68,11 @@ export default function BookingRequestsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   //   const [currentPage, setCurrentPage] = useState(1);
   const { data: artists, isLoading } = useGetArtistsQuery("");
-  const { data: agentRequest, refetch } = useAgentRequestQuery("");
+  const {
+    data: agentRequest,
+    isLoading: agentRequestLoading,
+    refetch,
+  } = useAgentRequestQuery("");
 
   console.log(artists?.data);
 
@@ -101,6 +105,11 @@ export default function BookingRequestsPage() {
         return <Badge variant='secondary'>Unknown</Badge>;
     }
   };
+
+  if (agentRequestLoading)
+    return (
+      <p className='text-center text-muted-foreground py-6'>Loading ...</p>
+    );
 
   return (
     <div className='min-h-screen bg-transparent'>
@@ -178,28 +187,34 @@ export default function BookingRequestsPage() {
           {activeTab === "" && (
             <div className='overflow-x-auto rounded-lg'>
               <table className='w-full'>
-                <thead className='bg-[#235789] text-white p-4 font-medium'>
-                  <tr>
-                    <th className='px-4 py-3 text-left text-base font-medium'>
-                      Agent
-                    </th>
-                    <th className='px-4 py-3 text-left text-base font-medium'>
-                      Email
-                    </th>
-                    <th className='px-4 py-3 text-left text-base font-medium'>
-                      Location
-                    </th>
-                    <th className='px-4 py-3 text-left text-base font-medium'>
-                      Availability
-                    </th>
-                    <th className='px-4 py-3 text-left text-base font-medium hidden md:table-cell'>
-                      Commission Rate
-                    </th>
-                    <th className='px-4 py-3 text-left text-base font-medium'>
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
+                {!agentRequest?.data?.length ? (
+                  <p className='text-center text-muted-foreground py-6'>
+                    No agent requests found.
+                  </p>
+                ) : (
+                  <thead className='bg-[#235789] text-white p-4 font-medium'>
+                    <tr>
+                      <th className='px-4 py-3 text-left text-base font-medium'>
+                        Agent
+                      </th>
+                      <th className='px-4 py-3 text-left text-base font-medium'>
+                        Email
+                      </th>
+                      <th className='px-4 py-3 text-left text-base font-medium'>
+                        Location
+                      </th>
+                      <th className='px-4 py-3 text-left text-base font-medium'>
+                        Availability
+                      </th>
+                      <th className='px-4 py-3 text-left text-base font-medium hidden md:table-cell'>
+                        Commission Rate
+                      </th>
+                      <th className='px-4 py-3 text-left text-base font-medium'>
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                )}
 
                 <tbody className='divide-y divide-gray-200'>
                   {isLoading
@@ -224,7 +239,7 @@ export default function BookingRequestsPage() {
                             </td>
                             <td className='px-4 py-3 hidden md:table-cell'>
                               <Skeleton className='h-4 w-24' />
-                            </td>
+                            </td> 
                             <td className='px-4 py-3'>
                               <div className='flex items-center gap-2'>
                                 <Skeleton className='h-6 w-6 rounded-full' />

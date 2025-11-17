@@ -29,6 +29,7 @@ import AgentSidebar from "./AgentSidebar";
 import VenueSidebar from "./VenueSidebar";
 import ArtistSidebar from "./ArtistSidebar";
 import UserSidebar from "./UserSidebar";
+import OrganizerSidebar from "./OrganizerSidebar";
 
 export default function DashboardSidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -80,8 +81,10 @@ export default function DashboardSidebar() {
             {sidebarView !== "agent" &&
               sidebarView !== "venue" &&
               sidebarView !== "artist" &&
+              sidebarView !== "organizer" &&
               sidebarView !== "user" && <AdminSidebar />}
 
+            {sidebarView === "organizer" && <OrganizerSidebar />}
             {sidebarView === "agent" && <AgentSidebar />}
             {sidebarView === "venue" && <VenueSidebar />}
             {sidebarView === "artist" && <ArtistSidebar />}

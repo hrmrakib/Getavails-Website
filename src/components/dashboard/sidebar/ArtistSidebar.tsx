@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   MessageCircleMore,
   SearchCheck,
-  TicketPercent,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -44,16 +43,6 @@ const ArtistSidebar = () => {
             pathname.startsWith("/dashboard/artist/find-agent/")
           }
         />
-
-        {/* <NavItem
-          href='/dashboard/artist/bookings-requests'
-          icon={TicketPercent}
-          label='Bookings Requests'
-          active={
-            pathname === "/blog-management" ||
-            pathname.startsWith("/blog-management/")
-          }
-        /> */}
 
         <NavItem
           href='/dashboard/artist/message'

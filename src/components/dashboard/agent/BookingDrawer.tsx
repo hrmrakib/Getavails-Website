@@ -106,7 +106,7 @@ export function BookingDrawer({
             <div className='flex flex-col items-center gap-3'>
               <Avatar className='h-12 w-12'>
                 <AvatarImage
-                  src={artist.avatar || "/placeholder.svg"}
+                  src={process.env.NEXT_PUBLIC_API_URL + artist.avatar}
                   alt={artist.name}
                 />
                 <AvatarFallback>
