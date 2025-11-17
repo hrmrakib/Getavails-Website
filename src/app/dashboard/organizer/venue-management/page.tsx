@@ -8,61 +8,43 @@ import {
   Eye,
   MessageCircleMore,
 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BookingDrawer } from "@/components/dashboard/agent/BookingDrawer";
 import { AddArtistModal } from "@/components/dashboard/agent/AddArtistModal";
-import { useDeleteArtistByAgentMutation } from "@/redux/features/agent/agentAPI";
 import Link from "next/link";
-import { toast } from "sonner";
-import { useGetAllAgentQuery } from "@/redux/features/organizer/organizerAPI";
-import ConfirmedRequestPage from "@/components/dashboard/organizer/agentOffer/ConfirmedAgentRequest";
+import { useGetAllVenueQuery } from "@/redux/features/organizer/organizerAPI";
 import OfferRequest from "@/components/dashboard/organizer/agentOffer/OfferAgentRequest";
+import VenueConfirmedRequest from "@/components/dashboard/organizer/venueManage/VenueConfirmedRequest";
 
-interface IAgent {
+interface IVenue {
   id: string;
-  role: "AGENT";
+  role: "VENUE";
   email: string;
   avatar: string;
   name: string;
-  gender: "MALE" | "FEMALE" | "OTHER";
   location: string;
   subscription_name: string | null;
-  experience: string;
   availability: string[];
-  price: string;
-  agent_artists: string[];
-  agent_pending_artists: string[];
+  price: string | null;
+  venue_type: string;
+  capacity: number;
 }
 
-export default function ArtistBooking() {
+export default function VenueManagement() {
   const [activeTab, setActiveTab] = useState<
     "new" | "confirmed" | "offer-request"
   >("new");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedArtist, setSelectedArtist] = useState<IAgent | null>(null);
+  const [selectedArtist, setSelectedArtist] = useState<IVenue | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBookingDrawer, setShowBookingDrawer] = useState(false);
-  const [showDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [deleteId, setDeleteId] = useState("");
-  const [deleteArtistMutation] = useDeleteArtistByAgentMutation();
 
-  const handleCloseDialog = () => setOpenDeleteDialog(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const { data: agentOffer, isFetching } = useGetAllAgentQuery({
+  const { data: agentOffer, isFetching } = useGetAllVenueQuery({
     page,
     limit,
     search: searchQuery,
@@ -77,28 +59,9 @@ export default function ArtistBooking() {
   const totalArtists = agentOffer?.meta?.total || 0;
   const totalPages = Math.ceil(totalArtists / limit);
 
-  const handleBookArtist = (artist: IAgent) => {
+  const handleBookArtist = (artist: IVenue) => {
     setSelectedArtist(artist);
     setShowBookingDrawer(true);
-  };
-
-  const handleDeleteArtistConfirm = async () => {
-    try {
-      const res = await deleteArtistMutation({
-        artist_id: deleteId,
-      }).unwrap();
-
-      console.log(res, deleteId);
-
-      if (res?.success) {
-        toast.success("Artist deleted successfully");
-      }
-    } catch (error) {
-      console.error("Error deleting artist:", error);
-      toast.error("Error deleting artist");
-    } finally {
-      setOpenDeleteDialog(false);
-    }
   };
 
   const handleNext = () => {
@@ -114,10 +77,10 @@ export default function ArtistBooking() {
       <p className='text-center text-muted-foreground py-6'>Loading ...</p>
     );
 
-  if (!agentOffer?.data?.length)
-    return (
-      <p className='text-center text-muted-foreground py-6'>No data found.</p>
-    );
+  // if (!agentOffer?.data?.length)
+  //   return (
+  //     <p className='text-center text-muted-foreground py-6'>No data found.</p>
+  //   );
 
   return (
     <div className='min-h-screen bg-background'>
@@ -205,7 +168,7 @@ export default function ArtistBooking() {
                 </div>
               ) : (
                 <div className='divide-y divide-border'>
-                  {agentOffer?.data?.map((artist: IAgent) => (
+                  {agentOffer?.data?.map((artist: IVenue) => (
                     <div
                       key={artist.id}
                       className='p-4 hover:bg-muted/50 transition-colors'
@@ -239,7 +202,7 @@ export default function ArtistBooking() {
                             <Eye className='h-4 w-4' />
                           </button>
                         </div>
-                        <div>{artist.price}</div>
+                        <div>{artist.price || "N/A"}</div>
                         <div className='flex items-center gap-2 lg:gap-4'>
                           <Link
                             href={`/dashboard/Organizer/message/`}
@@ -285,7 +248,7 @@ export default function ArtistBooking() {
         )}
 
         {activeTab === "confirmed" && (
-          <ConfirmedRequestPage searchQuery={searchQuery} />
+          <VenueConfirmedRequest searchQuery={searchQuery} />
         )}
         {activeTab === "offer-request" && (
           <OfferRequest searchQuery={searchQuery} />
@@ -293,34 +256,12 @@ export default function ArtistBooking() {
       </main>
 
       <AddArtistModal open={showAddModal} onOpenChange={setShowAddModal} />
+
       <BookingDrawer
         open={showBookingDrawer}
         onOpenChange={setShowBookingDrawer}
         artist={selectedArtist}
       />
-
-      <AlertDialog open={showDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our databases.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => handleCloseDialog()}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => handleDeleteArtistConfirm()}
-              className='bg-red-500 cursor-pointer'
-            >
-              Confirm
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

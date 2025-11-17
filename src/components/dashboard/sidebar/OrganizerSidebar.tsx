@@ -24,7 +24,10 @@ const OrganizerSidebar = () => {
           href='/dashboard/organizer'
           icon={LayoutDashboard}
           label='Overview'
-          active={pathname === "/dashboard" || pathname === "/dashboard"}
+          active={
+            pathname === "/dashboard/organizer" ||
+            pathname === "/dashboard/organizer"
+          }
         />
 
         <NavItem
@@ -32,8 +35,8 @@ const OrganizerSidebar = () => {
           icon={BanknoteArrowUp}
           label='Agent Offer'
           active={
-            pathname === "/dashboard/agent-offer" ||
-            pathname.startsWith("/dashboard/agent-offer/")
+            pathname === "/dashboard/organizer/agent-offer" ||
+            pathname.startsWith("/dashboard/organizer/agent-offer/")
           }
         />
 
@@ -42,8 +45,8 @@ const OrganizerSidebar = () => {
           icon={Medal}
           label='Venue Management'
           active={
-            pathname === "/dashboard/venue-management" ||
-            pathname.startsWith("/dashboard/venue-management/")
+            pathname === "/dashboard/organizer/venue-management" ||
+            pathname.startsWith("/dashboard/organizer/venue-management/")
           }
         />
 
@@ -52,8 +55,8 @@ const OrganizerSidebar = () => {
           icon={FolderKanban}
           label='Events'
           active={
-            pathname === "/dashboard/events" ||
-            pathname.startsWith("/dashboard/events/")
+            pathname === "/dashboard/organizer/events" ||
+            pathname.startsWith("/dashboard/organizer/events/")
           }
         />
 
@@ -62,8 +65,8 @@ const OrganizerSidebar = () => {
           icon={FolderKanban}
           label='Earn / Ticket Info. '
           active={
-            pathname === "/dashboard/earn-ticket-info" ||
-            pathname.startsWith("/dashboard/earn-ticket-info/")
+            pathname === "/dashboard/organizer/earn-ticket-info" ||
+            pathname.startsWith("/dashboard/organizer/earn-ticket-info/")
           }
         />
 
