@@ -2,83 +2,89 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { Edit, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  useCreateNewEventMutation,
+  useEndEventMutation,
+  useGetEventListQuery,
+  useUpdateEventMutation,
+} from "@/redux/features/events/eventsAPI";
+import { toast } from "sonner";
 
-export interface Event {
+interface Event {
   id: string;
+  created_at: string;
+  updated_at: string;
+  published_at: string;
+  status: "UPCOMING" | "LIVE" | "COMPLETED" | "CANCELLED" | string;
   title: string;
-  artist: string;
-  venue: string;
+  description: string;
+  images: string[];
   location: string;
-  date: string;
-  totalSpent: number;
-  status: "ongoing" | "completed";
-  description?: string;
-  ticketPrice?: number;
-  capacity?: number;
-  time?: string;
-  image?: string;
+  ticket_price: number;
+  start_date: string;
+  end_date: string;
+  artist_names: string[];
+  organizer_id: string;
+  capacity: number;
+  available_capacity: number;
+  can_buy_tickets: boolean;
+  total_ticket_sold: number;
 }
 
-const INITIAL_EVENTS: Event[] = [
-  {
-    id: "1",
-    title: "DJ Nova Live",
-    artist: "Arijit Sing",
-    venue: "Electric Hall",
-    location: "New York, USA",
-    date: "Aug 25",
-    totalSpent: 12400,
-    status: "ongoing",
-    description: "An electrifying live performance by DJ Nova",
-    ticketPrice: 50,
-    capacity: 500,
-    time: "8:00 PM",
-  },
-];
-
 export default function Home() {
-  const [events, setEvents] = useState<Event[]>(INITIAL_EVENTS);
   const [activeTab, setActiveTab] = useState<
-    "event-list" | "completed" | "add-event"
+    "event-list" | "completed" | "add-event" | "edit-event"
   >("event-list");
   const [formData, setFormData] = useState({
     title: "",
     artist: "",
-    venue: "",
     location: "",
-    date: "",
-    time: "",
     description: "",
     ticketPrice: "",
     capacity: "",
+    startDate: "",
+    startTime: "",
+    endDate: "",
+    endTime: "",
     image: "" as string | null,
   });
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [eventId, setEventId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
-  const ongoingEvents = events.filter((e) => e.status === "ongoing");
-  const completedEvents = events.filter((e) => e.status === "completed");
-
-  const handleStartEvent = (id: string) => {
-    setEvents(
-      events.map((e) => (e.id === id ? { ...e, status: "ongoing" } : e))
-    );
-  };
-
-  const handleEndEvent = (id: string) => {
-    setEvents(
-      events.map((e) => (e.id === id ? { ...e, status: "completed" } : e))
-    );
-  };
+  const { data: eventList, refetch } = useGetEventListQuery({
+    status: activeTab === "event-list" ? "running" : "completed",
+  });
+  const [endEventMutation, { isLoading: isEnding }] = useEndEventMutation();
+  const [updateEventMutation] = useUpdateEventMutation();
+  const [createNewEventMutation] = useCreateNewEventMutation();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({ ...prev, image: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    setImageFile(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleFormChange = (
@@ -88,50 +94,135 @@ export default function Home() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePublishEvent = (e: React.FormEvent) => {
+  const buildEventPayload = () => {
+    const startIso = new Date(
+      `${formData.startDate}T${formData.startTime}:00`
+    ).toISOString();
+    const endIso = new Date(
+      `${formData.endDate}T${formData.endTime}:00`
+    ).toISOString();
+
+    return {
+      event_id: eventId ?? undefined,
+      artist_names: formData.artist.split(",").map((a) => a.trim()),
+      capacity: Number(formData.capacity),
+      title: formData.title,
+      description: formData.description,
+      location: formData.location,
+      ticket_price: Number(formData.ticketPrice),
+      start_date: startIso,
+      end_date: endIso,
+      published_at: new Date().toISOString(),
+      status: "UPCOMING",
+    };
+  };
+
+  const handlePublishEvent = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.artist || !formData.venue) {
-      alert("Please fill in all required fields");
+    if (!imageFile) {
+      toast.error("Please upload an image");
       return;
     }
 
-    const newEvent: Event = {
-      id: Date.now().toString(),
-      title: formData.title,
-      artist: formData.artist,
-      venue: formData.venue,
-      location: formData.location,
-      date: formData.date,
-      time: formData.time,
-      totalSpent:
-        parseFloat(formData.ticketPrice) * parseInt(formData.capacity || "1"),
-      status: "ongoing",
-      description: formData.description,
-      ticketPrice: parseFloat(formData.ticketPrice),
-      capacity: parseInt(formData.capacity),
-      image: formData.image || undefined,
-    };
+    const payload = buildEventPayload();
 
-    setEvents([...events, newEvent]);
+    const formDataToSend = new FormData();
 
-    setFormData({
-      title: "",
-      artist: "",
-      venue: "",
-      location: "",
-      date: "",
-      time: "",
-      description: "",
-      ticketPrice: "",
-      capacity: "",
-      image: null,
-    });
-    setActiveTab("event-list");
+    if (imageFile) {
+      formDataToSend.append("images", imageFile);
+    }
+    formDataToSend.append("data", JSON.stringify(payload));
+
+    console.log("FORM DATA:", payload);
+
+    try {
+      const res = await createNewEventMutation(formDataToSend).unwrap();
+      console.log(res);
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
   };
 
-  const displayEvents =
-    activeTab === "event-list" ? ongoingEvents : completedEvents;
+  const handleEditEvent = (event: Event) => {
+    setActiveTab("edit-event");
+    setEventId(event.id);
+
+    const start = new Date(event.start_date);
+    const end = new Date(event.end_date);
+
+    setFormData({
+      title: event.title,
+      artist: event.artist_names.join(", "),
+      location: event.location,
+      description: event.description,
+      ticketPrice: event.ticket_price.toString(),
+      capacity: event.capacity.toString(),
+
+      startDate: start.toISOString().split("T")[0],
+      startTime: start.toISOString().split("T")[1].slice(0, 5),
+
+      endDate: end.toISOString().split("T")[0],
+      endTime: end.toISOString().split("T")[1].slice(0, 5),
+
+      image: event.images[0],
+    });
+
+    setImageFile(null);
+    setPreviewImage(event.images[0]);
+  };
+
+  const handleEndEventModal = (eventId: string) => {
+    setEventId(eventId);
+    setOpenModal(true);
+  };
+
+  const handleUpdateEvent = async () => {
+    const payload = buildEventPayload();
+
+    const formDataToSend = new FormData();
+
+    if (imageFile) {
+      formDataToSend.append("images", imageFile);
+    }
+
+    formDataToSend.append("data", JSON.stringify(payload));
+
+    try {
+      const res = await updateEventMutation(formDataToSend).unwrap();
+
+      console.log(res);
+      if (res?.success) {
+        refetch();
+        setActiveTab("event-list");
+        toast.success("Event updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+    } finally {
+      console.log("finally");
+    }
+  };
+
+  const handleEndEvent = async () => {
+    console.log(eventId);
+    try {
+      const res = await endEventMutation({
+        event_id: eventId,
+      }).unwrap();
+
+      console.log(res);
+      if (res?.success) {
+        refetch();
+        toast.success("Event ended successfully");
+      }
+    } catch (error) {
+      console.error("Error ending event:", error);
+      toast.error("Error ending event");
+    } finally {
+      setOpenModal(false);
+    }
+  };
 
   return (
     <main className='min-h-screen bg-gray-50'>
@@ -165,8 +256,8 @@ export default function Home() {
                 className={`w-full px-4 py-2 ${
                   activeTab === "add-event"
                     ? "bg-[#235789] "
-                    : "bg-white shadow-md"
-                } text-black font-medium rounded-lg hover:bg-[#235789] hover:text-white transition-colors sm:w-auto`}
+                    : "bg-[#235789] shadow-md"
+                } font-medium rounded-lg hover:bg-[#114c68] text-white  transition-colors sm:w-auto cursor-pointer`}
               >
                 Add Event
               </button>
@@ -183,7 +274,7 @@ export default function Home() {
                   : "Completed Events"}
               </h2>
 
-              {displayEvents.length === 0 ? (
+              {eventList?.data?.length === 0 ? (
                 <div className='rounded-lg border border-gray-200 bg-white p-8 text-center'>
                   <p className='text-gray-500'>
                     No {activeTab === "event-list" ? "ongoing" : "completed"}{" "}
@@ -191,36 +282,54 @@ export default function Home() {
                   </p>
                 </div>
               ) : (
-                <div className='grid gap-4 sm:grid-cols-2'>
-                  {displayEvents.map((event) => (
+                <div className='grid gap-4 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3'>
+                  {eventList?.data?.map((event: Event) => (
                     <div
                       key={event.id}
                       className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow'
                     >
-                      <h3 className='mb-4 text-lg font-bold text-gray-900'>
+                      <h3 className='mb-4 text-xl lg:text-2xl font-bold text-gray-900'>
                         {event.title}
                       </h3>
-                      <ul className='mb-6 space-y-2 text-sm text-gray-700'>
-                        <li>• Artist: {event.artist}</li>
-                        <li>• Venue: {event.venue}</li>
+                      <ul className='mb-6 space-y-2 text-base text-[#1E1E1E] font-medium'>
+                        <li>• Artist: {event.artist_names.join(", ")}</li>
                         <li>• Location: {event.location}</li>
-                        <li>• Date: {event.date}</li>
                         <li>
-                          • Total spent: ${event.totalSpent.toLocaleString()}
+                          • Start Date: {event.start_date.split("T")[0]} - (
+                          {event.start_date.split("T")[1].split(".")[0]})
                         </li>
+                        <li>
+                          • End Date: {event.end_date.split("T")[0]} - (
+                          {event.start_date.split("T")[1].split(".")[0]})
+                        </li>
+                        <li>• Capacity: ${event.capacity}</li>
+                        <li>• Total spent: ${event.ticket_price}</li>
                       </ul>
-                      <button
-                        onClick={() =>
-                          activeTab === "event-list"
-                            ? handleEndEvent(event.id)
-                            : handleStartEvent(event.id)
-                        }
-                        className='w-full rounded-lg bg-gray-200 py-2 font-medium text-gray-900 hover:bg-gray-300 transition-colors'
-                      >
-                        {activeTab === "event-list"
-                          ? "End Event"
-                          : "Start Event"}
-                      </button>
+                      <div className='flex items-center gap-5'>
+                        <button
+                          onClick={() =>
+                            activeTab === "event-list" &&
+                            handleEndEventModal(event.id)
+                          }
+                          disabled={activeTab === "completed"}
+                          className={`w-full rounded-lg bg-gray-200 py-2 font-medium text-gray-900 hover:bg-gray-300 transition-colors ${
+                            activeTab === "completed"
+                              ? "bg-[#E9EEF3] disabled:cursor-not-allowed disabled:opacity-50"
+                              : "cursor-pointer"
+                          }`}
+                        >
+                          {activeTab === "event-list"
+                            ? "End Event"
+                            : "Completed Event"}
+                        </button>
+                        <button
+                          disabled={activeTab === "completed"}
+                          onClick={() => handleEditEvent(event)}
+                          className='disabled:cursor-not-allowed disabled:opacity-50'
+                        >
+                          <Edit className='text-[#4b4d4e]' />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -228,10 +337,10 @@ export default function Home() {
             </div>
           )}
 
-          {activeTab === "add-event" && (
+          {(activeTab === "add-event" || activeTab === "edit-event") && (
             <div className='max-w-2xl mx-auto'>
               <h2 className='mb-8 text-2xl font-bold text-gray-900'>
-                Add New Event
+                {activeTab === "add-event" ? "Add New Event" : "Edit Event"}
               </h2>
 
               <form onSubmit={handlePublishEvent} className='space-y-6'>
@@ -243,126 +352,261 @@ export default function Home() {
                     onChange={handleImageUpload}
                     className='hidden'
                   />
+
                   <button
                     type='button'
                     onClick={() => fileInputRef.current?.click()}
                     className='w-full'
                   >
-                    {formData.image ? (
+                    {formData.image && previewImage ? (
                       <div className='space-y-4'>
                         <Image
-                          src={formData.image || "/placeholder.svg"}
+                          src={
+                            previewImage
+                              ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${previewImage}`
+                              : "/default.jpg"
+                          }
                           alt='Preview'
+                          width={600}
+                          height={300}
+                          unoptimized
                           className='mx-auto h-40 w-full object-cover rounded'
                         />
+
                         <p className='text-sm text-[#235789] hover:text-blue-700'>
                           Change Picture
                         </p>
                       </div>
                     ) : (
                       <div className='space-y-2'>
-                        <div className='mx-auto h-32 w-full bg-blue-100 rounded flex items-center justify-center'></div>
-                        <p className='text-center text-gray-600'>Add Picture</p>
+                        <div className='mx-auto h-32 w-full bg-blue-100 rounded flex items-center justify-center'>
+                          <p className='text-gray-600'>Add Picture</p>
+                        </div>
                       </div>
                     )}
                   </button>
                 </div>
 
                 <div className='space-y-4'>
-                  <input
-                    type='text'
-                    name='title'
-                    placeholder='Event Title'
-                    value={formData.title}
-                    onChange={handleFormChange}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
-                    required
-                  />
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='title'
+                      className='text-gray-900 font-medium'
+                    >
+                      Event Title
+                    </label>
+                    <input
+                      type='text'
+                      name='title'
+                      placeholder='Event Title'
+                      value={formData.title}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                      required
+                    />
+                  </div>
 
-                  <textarea
-                    name='description'
-                    placeholder='Event Description'
-                    value={formData.description}
-                    onChange={handleFormChange}
-                    rows={3}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none resize-none'
-                  />
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='description'
+                      className='text-gray-900 font-medium'
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      name='description'
+                      placeholder='Event Description'
+                      value={formData.description}
+                      onChange={handleFormChange}
+                      rows={3}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none resize-none'
+                    />
+                  </div>
 
-                  <input
-                    type='text'
-                    name='location'
-                    placeholder='Enter Location'
-                    value={formData.location}
-                    onChange={handleFormChange}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
-                  />
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='location'
+                      className='text-gray-900 font-medium'
+                    >
+                      Location
+                    </label>
+                    <input
+                      type='text'
+                      name='location'
+                      placeholder='Enter Location'
+                      value={formData.location}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                    />
+                  </div>
 
-                  <input
-                    type='number'
-                    name='ticketPrice'
-                    placeholder='Ticket Price'
-                    value={formData.ticketPrice}
-                    onChange={handleFormChange}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
-                  />
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='ticketPrice'
+                      className='text-gray-900 font-medium'
+                    >
+                      Ticket Price
+                    </label>
+                    <input
+                      type='number'
+                      name='ticketPrice'
+                      placeholder='Ticket Price'
+                      value={formData.ticketPrice}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                    />
+                  </div>
 
-                  <input
-                    type='number'
-                    name='capacity'
-                    placeholder='Capacity'
-                    value={formData.capacity}
-                    onChange={handleFormChange}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
-                  />
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='capacity'
+                      className='text-gray-900 font-medium'
+                    >
+                      Capacity
+                    </label>
+                    <input
+                      type='number'
+                      name='capacity'
+                      placeholder='Capacity'
+                      value={formData.capacity}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                    />
+                  </div>
 
-                  <input
-                    type='date'
-                    name='date'
-                    value={formData.date}
-                    onChange={handleFormChange}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
-                  />
+                  {/* start date and time */}
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='startDate'
+                      className='text-gray-900 font-medium'
+                    >
+                      Start Date
+                    </label>
+                    <input
+                      type='date'
+                      name='startDate'
+                      value={formData.startDate}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                    />
+                  </div>
 
-                  <input
-                    type='time'
-                    name='time'
-                    value={formData.time}
-                    onChange={handleFormChange}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
-                  />
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='startTime'
+                      className='text-gray-900 font-medium'
+                    >
+                      Start Time
+                    </label>
+                    <input
+                      type='time'
+                      name='startTime'
+                      value={formData.startTime}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                    />
+                  </div>
 
-                  <input
-                    type='text'
-                    name='artist'
-                    placeholder='Artist Name'
-                    value={formData.artist}
-                    onChange={handleFormChange}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
-                    required
-                  />
+                  {/* end date and time */}
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='endDate'
+                      className='text-gray-900 font-medium'
+                    >
+                      End Date
+                    </label>
+                    <input
+                      type='date'
+                      name='endDate'
+                      value={formData.endDate}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                    />
+                  </div>
 
-                  <input
-                    type='text'
-                    name='venue'
-                    placeholder='Venue'
-                    value={formData.venue}
-                    onChange={handleFormChange}
-                    className='w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
-                    required
-                  />
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='endTime'
+                      className='text-gray-900 font-medium'
+                    >
+                      End Time
+                    </label>
+                    <input
+                      type='time'
+                      name='endTime'
+                      value={formData.endTime}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                    />
+                  </div>
+
+                  <div className='space-y-2'>
+                    <label
+                      htmlFor='title'
+                      className='text-gray-900 font-medium'
+                    >
+                      Artist Name
+                    </label>
+                    <input
+                      type='text'
+                      name='artist'
+                      placeholder='Artist Name'
+                      value={formData.artist}
+                      onChange={handleFormChange}
+                      className='w-full rounded-lg mt-2 border border-gray-300 px-4 py-3 placeholder-gray-500 focus:border-blue-500 focus:outline-none'
+                      required
+                    />
+                  </div>
                 </div>
 
                 <button
-                  type='submit'
-                  className='w-full rounded-lg bg-[#235789] py-3 font-bold text-white hover:bg-blue-700 transition-colors'
+                  type='button'
+                  onClick={(e) => {
+                    if (activeTab === "edit-event") {
+                      handleUpdateEvent();
+                    } else {
+                      handlePublishEvent(e);
+                    }
+                  }}
+                  className='w-full rounded-lg mt-2 bg-[#235789] py-3 font-bold text-white hover:bg-[#14528b] transition-colors cursor-pointer'
                 >
-                  Publish Now
+                  {activeTab === "edit-event"
+                    ? "Update Event"
+                    : "Publish Event"}
                 </button>
               </form>
             </div>
           )}
         </div>
       </div>
+
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <form>
+          <DialogContent className='sm:max-w-[425px]'>
+            <DialogHeader>
+              <DialogTitle className='text-center mb-6'>
+                <span>⚠️</span> End Event
+              </DialogTitle>
+              <DialogDescription className='text-lg text-center leading-8'>
+                Once you end the event, you will not be able to undo this
+                action. To make changes, you will need to create a new event.
+              </DialogDescription>
+            </DialogHeader>
+            <p className='text-xl  text-center mt-2'>
+              Are you sure you want to proceed with ending this event?
+            </p>
+            <DialogFooter className='py-6 w-full flex items-center justify-between gap-5'>
+              <Button
+                onClick={() => handleEndEvent()}
+                className='flex-1 h-10 bg-[#235789] hover:bg-red-400 transform transition duration-300 ease-in-out'
+                type='submit'
+              >
+                End Event {isEnding && <Loader2 className='animate-spin' />}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </form>
+      </Dialog>
     </main>
   );
 }

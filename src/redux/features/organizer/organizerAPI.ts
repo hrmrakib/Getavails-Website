@@ -73,6 +73,15 @@ const organizerAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+    getVenueOfferRequest: builder.query({
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/organizer/venue-offers?page=${page}&limit=${limit}&search=${search}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -84,5 +93,6 @@ export const {
   useAcceptAgentOfferMutation,
   useGetAllVenueQuery,
   useGetConfirmedVenueQuery,
+  useGetVenueOfferRequestQuery,
 } = organizerAPI;
 export default organizerAPI;

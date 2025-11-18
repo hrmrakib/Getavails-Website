@@ -5,12 +5,11 @@ import { useEffect, useState } from "react";
 import { Menu, X, Check, Loader2 } from "lucide-react";
 import {
   useAcceptAgentOfferMutation,
-  useGetAgentOfferRequestQuery,
+  useGetVenueOfferRequestQuery,
 } from "@/redux/features/organizer/organizerAPI";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -66,7 +65,7 @@ export default function AgentDetailsPage({
 
   const [status, setStatus] = useState<string | null>(null);
 
-  const { data: agentOffer, isLoading } = useGetAgentOfferRequestQuery({
+  const { data: agentOffer, isLoading } = useGetVenueOfferRequestQuery({
     page,
     limit,
     search: searchQuery,
@@ -144,7 +143,7 @@ export default function AgentDetailsPage({
         }`}
       >
         <div className='p-6'>
-          <h2 className='text-lg font-semibold mb-6'>Agent Offers</h2>
+          <h2 className='text-lg font-semibold mb-6'>Venue Offers</h2>
 
           <nav className='space-y-2'>
             {agentOffer.data.map((agent: IOfferRequest, index: number) => (
