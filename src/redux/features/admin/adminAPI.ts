@@ -1,4 +1,5 @@
 import baseAPI from "@/redux/api/api";
+import { create } from "domain";
 import { get } from "http";
 
 const adminAPI = baseAPI.injectEndpoints({
@@ -42,6 +43,17 @@ const adminAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    createSubscription: builder.mutation({
+      query: (data) => ({
+        url: `/admin/subscriptions`,
+        method: "POST",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -50,4 +62,5 @@ export const {
   useGetUsersQuery,
   useDeleteUserMutation,
   useGetSubscriptionInfoQuery,
+  useCreateSubscriptionMutation,
 } = adminAPI;

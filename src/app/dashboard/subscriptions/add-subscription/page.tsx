@@ -6,7 +6,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -19,6 +18,8 @@ import { ArrowLeft, X, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useCreateSubscriptionMutation } from "@/redux/features/admin/adminAPI";
+import { toast } from "sonner";
 
 const suggestedFeatures = [
   "Venue scheduling and booking support",
@@ -31,18 +32,15 @@ const suggestedFeatures = [
 
 export default function AddSubscriptionPage() {
   const router = useRouter();
-
   const [formData, setFormData] = useState({
     name: "",
     price: "",
     subscription_interval: "",
     isHot: true,
   });
-
-  console.log(formData);
-
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [featureInput, setFeatureInput] = useState("");
+  const [createSubscriptionMutation] = useCreateSubscriptionMutation();
 
   const norm = (s: string) => s.trim().toLowerCase();
   const selectedSet = useMemo(
@@ -62,22 +60,27 @@ export default function AddSubscriptionPage() {
     setSelectedFeatures((prev) => prev.filter((f) => f !== label));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const payload = {
       name: formData.name,
       price: formData.price === "" ? 0 : Number(formData.price),
-      subscription_interval: formData.subscription_interval.toLowerCase(),
+      subscription_interval: formData.subscription_interval,
       features: selectedFeatures,
       isHot: formData.isHot,
     };
 
-    console.log("API Payload:", payload);
-    router.push("/dashboard/subscriptions");
-
-    // call your API:
-    // createSubscription(payload)
+    try {
+      const res = await createSubscriptionMutation(payload).unwrap();
+      if (res?.success) {
+        toast.success("Subscription created successfully!");
+        router.push("/dashboard/subscriptions");
+      }
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      toast.error("Error creating subscription");
+    }
   };
 
   return (
