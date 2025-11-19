@@ -1,98 +1,46 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Info, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useGetSubscriptionInfoQuery } from "@/redux/features/admin/adminAPI";
 
-import { Label } from "@/components/ui/label";
-
-// Mock data matching the design
-const mockUsers = Array.from({ length: 60 }, (_, i) => ({
-  id: i + 1,
-  slNo: "#BI00001",
-  name: "Hazel Janis",
-  email: "janis202@gmail.com",
-  subscriptionPlan: "Basic",
-  planDate: "4-25-2025",
-  contactNumber: "+626-445-4928",
-  profileImage: "/placeholder.png",
-  country: "Indonesia",
-  disableAccess: false,
-  deleteAccount: false,
-}));
+interface ISubscription {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  name: string;
+  features: string[];
+  price: number;
+  isHot: boolean;
+  subscribed_user_count: number;
+  subscription_interval: "MONTHLY" | "YEARLY";
+  isOwned: boolean;
+}
 
 export default function UserListPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [actionModalOpen, setActionModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<
-    (typeof mockUsers)[0] | null
-  >(null);
-  const itemsPerPage = 10;
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
-  // Filter users based on search term
-  const filteredUsers = mockUsers.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.contactNumber.includes(searchTerm)
-  );
+  const { data: users } = useGetSubscriptionInfoQuery({
+    page: page,
+    limit: limit,
+    search: searchTerm,
+  });
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentUsers = filteredUsers.slice(startIndex, endIndex);
-
-  const handleActionClick = (user: (typeof mockUsers)[0]) => {
-    setSelectedUser(user);
-    setActionModalOpen(true);
-  };
-
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        pages.push(
-          1,
-          "...",
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          "...",
-          totalPages
-        );
-      }
-    }
-
-    return pages;
-  };
+  const pagination = users?.meta?.pagination;
+  const currentPage = pagination?.page || 1;
+  const totalPages = pagination?.totalPages || 1;
+  const totalUsers = pagination?.total || 0;
 
   return (
     <div className='min-h-screen bg-transparent'>
       <div className='w-full'>
         {/* Header */}
         <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-2.5'>
-          <h1 className='text-2xl font-semibold text-gray-900'>Payment List</h1>
+          <h1 className='text-2xl font-semibold text-gray-900'>Earning List</h1>
           <div className='relative w-full sm:w-80 bg-transparent rounded-xl'>
             <Search className='absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input
@@ -101,7 +49,7 @@ export default function UserListPage() {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1);
+                setPage(1);
               }}
               className='pr-10 text-black'
             />
@@ -113,76 +61,44 @@ export default function UserListPage() {
           {/* Desktop Table */}
           <div className='hidden md:block'>
             <table className='w-full'>
-              <thead className='bg-table-header-bg'>
-                <tr>
-                  <th className='px-6 py-4 text-left text-base font-medium text-table-header-color'>
-                    Sl no.
-                  </th>
-                  <th className='px-6 py-4 text-left text-base font-medium text-table-header-color'>
-                    Profile
-                  </th>
-                  <th className='px-6 py-4 text-left text-base font-medium text-table-header-color'>
+              <thead className='!bg-table-header-bg'>
+                <tr className='!bg-[#235789]'>
+                  <th className='px-6 py-4 text-left text-base font-medium text-[#fff]'>
                     Name
                   </th>
-                  <th className='px-6 py-4 text-left text-base font-medium text-table-header-color'>
-                    Email
+                  <th className='px-6 py-4 text-left text-base font-medium text-[#fff]'>
+                    Subscription
                   </th>
-                  <th className='px-6 py-4 text-left text-base font-medium text-table-header-color'>
-                    Subscription Plan
+                  <th className='px-6 py-4 text-left text-base font-medium text-[#fff]'>
+                    Total Subscriber
                   </th>
-                  <th className='px-6 py-4 text-left text-base font-medium text-table-header-color'>
+                  <th className='px-6 py-4 text-left text-base font-medium text-[#fff]'>
                     Date
                   </th>
-
-                  <th className='px-6 py-4 text-left text-base font-medium text-table-header-color'>
-                    Action
+                  <th className='px-6 py-4 text-left text-base font-medium text-[#fff]'>
+                    Per Price
                   </th>
                 </tr>
               </thead>
               <tbody className='divide-y divide-gray-200'>
-                {currentUsers.map((user) => (
+                {users?.data?.map((user: ISubscription) => (
                   <tr key={user.id} className='hover:bg-gray-50'>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.slNo}
-                    </td>
-                    <td className='px-6 py-4'>
-                      <Avatar className='h-10 w-10'>
-                        <AvatarImage
-                          src={user.profileImage || "/admin.svg"}
-                          alt={user.name}
-                          width={40}
-                          height={40}
-                        />
-                        <AvatarFallback>
-                          {user.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                      {user.name || "N/A"}
                     </td>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.name}
+                      {user.subscription_interval || "N/A"}
+                    </td>
+                    <td className='px-6 py-4 text-base text-black font-medium'>
+                      <span className='border-2 border-green-500 px-2 rounded-2xl'>
+                        {user.subscribed_user_count || "N/A"}
+                      </span>
                     </td>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.email}
+                      {user.created_at.split("T")[0] || "N/A"}
                     </td>
                     <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.subscriptionPlan}
-                    </td>
-                    <td className='px-6 py-4 text-base text-table-color font-medium'>
-                      {user.planDate}
-                    </td>
-
-                    <td className='px-6 py-4'>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='h-10 w-10 p-0 cursor-pointer'
-                        onClick={() => handleActionClick(user)}
-                      >
-                        <Info className='h-6 w-6 text-[#235789]' />
-                      </Button>
+                      {user.price || "N/A"}
                     </td>
                   </tr>
                 ))}
@@ -192,48 +108,35 @@ export default function UserListPage() {
 
           {/* Mobile Cards */}
           <div className='md:hidden'>
-            <div className='bg-[#235789] px-4 py-3'>
+            <div className='bg-orange-400 px-4 py-3'>
               <h2 className='text-sm font-medium text-white'>User List</h2>
             </div>
             <div className='divide-y divide-gray-200'>
-              {currentUsers.map((user) => (
+              {users?.data?.map((user: ISubscription) => (
                 <div key={user.id} className='p-4'>
                   <div className='flex items-start gap-3'>
-                    <Avatar className='h-12 w-12'>
-                      <AvatarImage
-                        src={user.profileImage || "/placeholder.svg"}
-                        alt={user.name}
-                      />
-                      <AvatarFallback>
-                        {user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
                     <div className='flex-1 space-y-2'>
                       <div className='flex items-center justify-between'>
                         <h3 className='font-medium text-gray-900'>
                           {user.name}
                         </h3>
-                        <span className='text-xs text-gray-500'>
-                          {user.slNo}
-                        </span>
                       </div>
-                      <div className='space-y-1 text-sm text-gray-600'>
-                        <p>{user.email}</p>
-                        <p>{user.contactNumber}</p>
+                      <div className='space-y-1 text-base text-gray-900'>
+                        <p className='font-medium'>
+                          Subscription:{" "}
+                          <span className='font-normal'>
+                            {user.subscription_interval}
+                          </span>
+                        </p>
+                        <p className='font-medium'>
+                          Total Subscriber: {user.subscribed_user_count}
+                        </p>
+                        <p className='font-medium'>Price: {user.price}</p>
+                        <p className='font-medium'>
+                          Date: {user.created_at.split("T")[0]}
+                        </p>
                       </div>
-                      <div className='flex items-center justify-between pt-2'>
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          className='h-8 w-8 p-0'
-                          onClick={() => handleActionClick(user)}
-                        >
-                          <Info className='h-4 w-4 text-gray-400' />
-                        </Button>
-                      </div>
+                      <div className='flex items-center justify-between pt-2'></div>
                     </div>
                   </div>
                 </div>
@@ -243,145 +146,34 @@ export default function UserListPage() {
         </div>
 
         {/* Pagination */}
-        <div className='mt-6 flex items-center justify-center gap-2'>
+        <div className='mt-6 flex items-center justify-center gap-3'>
           <Button
-            variant='ghost'
+            variant='outline'
             size='sm'
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className='h-8 w-8 p-0'
+            onClick={() => setPage(currentPage - 1)}
           >
-            <ChevronLeft className='h-4 w-4' />
+            Previous
           </Button>
 
-          {getPageNumbers().map((page, index) => (
-            <div key={index}>
-              {page === "..." ? (
-                <span className='px-2 text-gray-500'>...</span>
-              ) : (
-                <Button
-                  variant={currentPage === page ? "default" : "ghost"}
-                  size='sm'
-                  onClick={() => setCurrentPage(page as number)}
-                  className={`h-8 w-8 p-0 ${
-                    currentPage === page
-                      ? "bg-[#235789] text-white hover:bg-[#0d64b4]"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  {page}
-                </Button>
-              )}
-            </div>
-          ))}
+          <span className='text-sm font-medium'>
+            Page {currentPage} of {totalPages}
+          </span>
 
           <Button
-            variant='ghost'
+            variant='outline'
             size='sm'
-            onClick={() =>
-              setCurrentPage(Math.min(totalPages, currentPage + 1))
-            }
             disabled={currentPage === totalPages}
-            className='h-8 w-8 p-0'
+            onClick={() => setPage(currentPage + 1)}
           >
-            <ChevronRight className='h-4 w-4' />
+            Next
           </Button>
         </div>
 
         {/* Results info */}
-        <div className='mt-4 text-center text-sm text-gray-600'>
-          Showing {startIndex + 1} to {Math.min(endIndex, filteredUsers.length)}{" "}
-          of {filteredUsers.length} results
+        <div className='mt-2 text-center text-gray-600 text-sm'>
+          Showing {users?.data?.length} of {totalUsers} users
         </div>
-
-        <Dialog open={actionModalOpen} onOpenChange={setActionModalOpen}>
-          <DialogContent className='sm:max-w-md'>
-            <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
-              <DialogTitle className='text-lg font-semibold text-black'>
-                Action
-              </DialogTitle>
-              <Button
-                variant='ghost'
-                size='sm'
-                className='h-5 w-5 p-0'
-                onClick={() => setActionModalOpen(false)}
-              ></Button>
-            </DialogHeader>
-            {selectedUser && (
-              <div className='space-y-4'>
-                <div className='flex flex-col gap-5 text-sm'>
-                  <div className='flex items-center justify-between border-b pb-5'>
-                    <Label className='text-[#333338] text-xl font-medium'>
-                      User Id:
-                    </Label>
-                    <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.slNo}
-                    </p>
-                  </div>
-                  <div className='flex items-center justify-between border-b pb-5'>
-                    <Label className='text-[#333338] text-xl font-medium'>
-                      User Name:
-                    </Label>
-                    <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.name}
-                    </p>
-                  </div>
-                  <div className='flex items-center justify-between border-b pb-5'>
-                    <Label className='text-[#333338] text-xl font-medium'>
-                      Email Address:
-                    </Label>
-                    <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.email}
-                    </p>
-                  </div>
-                  <div className='flex items-center justify-between border-b pb-5'>
-                    <Label className='text-[#333338] text-xl font-medium'>
-                      Contact Number:
-                    </Label>
-                    <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.contactNumber}
-                    </p>
-                  </div>
-                  <div className='flex items-center justify-between border-b pb-5'>
-                    <Label className='text-[#333338] text-xl font-medium'>
-                      Country:
-                    </Label>
-                    <p className='text-[#3e3e41] text-base font-medium'>
-                      {selectedUser.country}
-                    </p>
-                  </div>
-                </div>
-
-                <div className='space-y-4 pt-4'>
-                  {/* <div className='flex items-center justify-between border-b pb-5'>
-                    <Label
-                      htmlFor='disable-access'
-                      className='text-[#333338] text-xl font-medium'
-                    >
-                      Disable User Access
-                    </Label>
-                    <Switch
-                      id='disable-access'
-                      checked={selectedUser.disableAccess}
-                      onCheckedChange={(checked) =>
-                        handleToggleChange("disableAccess", checked)
-                      }
-                    />
-                  </div> */}
-                  <div className='flex items-center justify-between'>
-                    <Label
-                      htmlFor='delete-account'
-                      className='text-[#333338] text-xl font-medium'
-                    >
-                      Delete User Account
-                    </Label>
-                    <Button className='bg-red-500'>Delete</Button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

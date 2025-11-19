@@ -95,7 +95,7 @@ export default function UserListPage() {
       <div className='w-full'>
         {/* Header */}
         <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-2.5'>
-          <h1 className='text-2xl font-semibold text-gray-900'>User List</h1>
+          <h1 className='text-2xl font-semibold text-gray-900'>Venue List</h1>
           <div className='relative w-full sm:w-80 bg-transparent rounded-xl'>
             <Search className='absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input

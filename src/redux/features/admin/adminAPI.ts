@@ -32,6 +32,16 @@ const adminAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    getSubscriptionInfo: builder.query({
+      query: ({ page = 1, limit = 10, search = "" }) => ({
+        url: `/subscriptions?page=${page}&limit=${limit}&search=${search}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -39,4 +49,5 @@ export const {
   useGetAdminOverviewQuery,
   useGetUsersQuery,
   useDeleteUserMutation,
+  useGetSubscriptionInfoQuery,
 } = adminAPI;
