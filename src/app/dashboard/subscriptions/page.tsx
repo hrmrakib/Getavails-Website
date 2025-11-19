@@ -2,11 +2,25 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Check } from "lucide-react";
+import { Plus, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useGetSubscriptionInfoQuery } from "@/redux/features/admin/adminAPI";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  useDeleteSubscriptionMutation,
+  useGetSubscriptionInfoQuery,
+} from "@/redux/features/admin/adminAPI";
+import { toast } from "sonner";
 
 export interface ISubscriptionPlan {
   id: string;
@@ -25,21 +39,42 @@ export default function SubscriptionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const limit = 10;
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteSubscriptionId, setDeleteSubscriptionId] = useState("");
 
-  const { data: subscriptionsResponse } = useGetSubscriptionInfoQuery({
+  const { data: subscriptionsResponse, refetch } = useGetSubscriptionInfoQuery({
     page,
     limit,
     search: searchTerm,
   });
+  const [deleteSubscriptionMutation, { isLoading: isDeleting }] =
+    useDeleteSubscriptionMutation();
 
   const subscriptions = subscriptionsResponse?.data || [];
 
   const handleDelete = (id: string) => {
-    console.log("Delete →", id);
+    setDeleteModalOpen(true);
+    setDeleteSubscriptionId(id);
   };
 
-  const handleEdit = (id: string) => {
-    console.log("Edit →", id);
+  const handleConfirmDelete = async () => {
+    try {
+      const res = await deleteSubscriptionMutation({
+        subscription_id: deleteSubscriptionId,
+      }).unwrap();
+
+      console.log(res);
+
+      if (res?.success) {
+        toast.success("Subscription deleted successfully!");
+        refetch();
+      }
+    } catch (error) {
+      console.error("Error deleting subscription:", error);
+      toast.error("Error deleting subscription");
+    } finally {
+      setDeleteModalOpen(false);
+    }
   };
 
   return (
@@ -69,20 +104,16 @@ export default function SubscriptionsPage() {
               <h3 className='text-xl font-semibold'>{subscription.name}</h3>
 
               <div className='mb-6'>
-                {subscription.name === "Free" ? (
-                  <div className='text-4xl font-bold'>Free</div>
-                ) : (
-                  <div className='flex items-baseline gap-1'>
-                    <span className='text-4xl font-bold'>
-                      ${subscription.price}
+                <div className='flex items-baseline gap-1'>
+                  <span className='text-4xl font-bold'>
+                    ${subscription.price}
+                  </span>
+                  {subscription.subscription_interval && (
+                    <span className='text-blue-200 text-sm'>
+                      /{subscription.subscription_interval}
                     </span>
-                    {subscription.subscription_interval && (
-                      <span className='text-blue-200 text-sm'>
-                        /{subscription.subscription_interval}
-                      </span>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               <div className='flex-1 space-y-3 mb-6'>
@@ -116,7 +147,7 @@ export default function SubscriptionsPage() {
                 <Button
                   variant='outline'
                   className='w-full bg-gradient-to-t from-[#235789CC] to-[#2C73B899] hover:bg-blue-500/30 text-red-300 border-2 !border-red-400/50 shadow-2xl cursor-pointer mt-6'
-                  // onClick={() => onDelete(subscription.id)}
+                  onClick={() => handleDelete(subscription.id)}
                 >
                   Delete Plan
                 </Button>
@@ -137,6 +168,47 @@ export default function SubscriptionsPage() {
           </Link>
         </div>
       </div>
+
+      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <DialogTrigger asChild>
+          <Button variant='destructive'>Delete</Button>
+        </DialogTrigger>
+
+        <DialogContent className='sm:max-w-[425px]'>
+          <DialogHeader>
+            <DialogTitle className='text-red-600 text-center text-lg'>
+              Are you sure?
+            </DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete this
+              item.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className='py-4'>
+            <p className='text-sm text-gray-600'>
+              Do you really want to delete this? This will remove the data
+              permanently.
+            </p>
+          </div>
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant='outline'>Cancel</Button>
+            </DialogClose>
+
+            <Button
+              variant='destructive'
+              onClick={() => {
+                handleConfirmDelete();
+              }}
+            >
+              Yes, Delete{" "}
+              {isDeleting ? <Loader2 className='animate-spin' /> : ""}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

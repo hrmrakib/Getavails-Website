@@ -44,10 +44,42 @@ const adminAPI = baseAPI.injectEndpoints({
       }),
     }),
 
+    getSingleSubscription: builder.query({
+      query: (id) => ({
+        url: `/subscriptions/${id}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
+
     createSubscription: builder.mutation({
       query: (data) => ({
         url: `/admin/subscriptions`,
         method: "POST",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
+
+    updateSubscription: builder.mutation({
+      query: (data) => ({
+        url: `/admin/subscriptions`,
+        method: "PATCH",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
+
+    deleteSubscription: builder.mutation({
+      query: (data) => ({
+        url: `/admin/subscriptions`,
+        method: "DELETE",
         body: data,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -62,5 +94,8 @@ export const {
   useGetUsersQuery,
   useDeleteUserMutation,
   useGetSubscriptionInfoQuery,
+  useGetSingleSubscriptionQuery,
   useCreateSubscriptionMutation,
+  useUpdateSubscriptionMutation,
+  useDeleteSubscriptionMutation,
 } = adminAPI;
