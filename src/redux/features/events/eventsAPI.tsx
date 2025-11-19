@@ -44,6 +44,16 @@ const eventsAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    getTickets: builder.query({
+      query: ({ page = 1, limit = 10, status = "", search = "" }) => ({
+        url: `/organizer/tickets?page=${page}&limit=${limit}&status=${status}&search=${search}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -52,5 +62,6 @@ export const {
   useEndEventMutation,
   useCreateNewEventMutation,
   useUpdateEventMutation,
+  useGetTicketsQuery,
 } = eventsAPI;
 export default eventsAPI;
