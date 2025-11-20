@@ -24,8 +24,8 @@ const blogAPI = baseAPI.injectEndpoints({
     }),
 
     getBlog: builder.query({
-      query: ({ blogId }) => ({
-        url: `/blog/${blogId}`,
+      query: (blogId) => ({
+        url: `/blogs/${blogId}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,

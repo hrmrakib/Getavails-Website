@@ -2,8 +2,9 @@
 "use client";
 
 import type React from "react";
-
-import { useEffect, useState } from "react";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,10 +28,13 @@ interface AddBlogPageProps {
 
 export default function AddBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const editorRef = useRef<HTMLDivElement>(null);
+  const quillRef = useRef<Quill | null>(null);
+  const [content, setContent] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
   const [fileType, setFileType] = useState<"image" | "video" | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fileURL, setFileURL] = useState<string | null>(null);
   const [bannerType, setBannerType] = useState<"image" | "video">("image");
@@ -69,6 +73,38 @@ export default function AddBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
 
     uploadFile();
   }, [selectedFile]);
+
+  useEffect(() => {
+    let initialized = false;
+
+    const init = async () => {
+      if (initialized || quillRef.current) return;
+      initialized = true;
+
+      const Quill = (await import("quill")).default;
+
+      if (editorRef.current && !editorRef.current.querySelector(".ql-editor")) {
+        const quill = new Quill(editorRef.current, {
+          theme: "snow",
+          placeholder: "Enter your Terms and Conditions...",
+        });
+
+        quillRef.current = quill;
+
+        quill.on("text-change", () => {
+          setContent(quill.root.innerHTML);
+        });
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      init();
+    }
+
+    return () => {
+      initialized = true;
+    };
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,7 +151,7 @@ export default function AddBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
     const payload = {
       title: title.trim(),
       description: description.trim(),
-      content: description.trim(),
+      content: content.trim(),
       banner_url: baseURL + fileURL,
       banner_type: bannerType,
     };
@@ -196,6 +232,28 @@ export default function AddBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
               className='w-full min-h-[120px] resize-none !text-lg text-black !border border-[#D0D0D0]'
               required
             />
+          </div>
+
+          {/* Blog Content */}
+          <div>
+            <Label
+              htmlFor='contnet'
+              className='text-lg font-medium text-[#222222] mb-2'
+            >
+              Blog Content
+            </Label>
+
+            <div className='h-auto w-FULL mx-auto flex flex-col justify-between gap-6'>
+              <div className='space-y-6'>
+                <div className='h-auto'>
+                  <div
+                    ref={editorRef}
+                    className='h-[50vh] bg-white text-base'
+                    id='quill-editor'
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Image Upload */}

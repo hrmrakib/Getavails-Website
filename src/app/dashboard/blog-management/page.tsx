@@ -23,107 +23,24 @@ import { MoreVertical, Edit, Trash2, Plus, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
+
+interface Admin {
+  name: string;
+  avatar: string;
+}
 
 interface BlogPost {
   id: string;
+  published_at: string;
+  last_updated_at: string;
   title: string;
   description: string;
-  category: string;
-  author: {
-    name: string;
-    avatar: string;
-    initials: string;
-  };
-  date: string;
-  image: string;
+  content: string;
+  banner_url: string;
+  banner_type: "image" | "video" | "none";
+  admin: Admin;
 }
-
-const mockBlogPosts: BlogPost[] = [
-  {
-    id: "1",
-    title: "Behind the Stage Lights",
-    description:
-      "A closer look at what really happens before the concert begins.",
-    category: "Artists",
-    author: {
-      name: "Lata Mangeshkar",
-      avatar: "/placeholder.png",
-      initials: "LM",
-    },
-    date: "05 Jan, 2025",
-    image: "/blog/1.jpg",
-  },
-  {
-    id: "2",
-    title: "Behind the Stage Lights",
-    description:
-      "A closer look at what really happens before the concert begins.",
-    category: "Agent",
-    author: {
-      name: "Lata Mangeshkar",
-      avatar: "/placeholder.png",
-      initials: "LM",
-    },
-    date: "05 Jan, 2025",
-    image: "/blog/2.jpg",
-  },
-  {
-    id: "3",
-    title: "Behind the Stage Lights",
-    description:
-      "A closer look at what really happens before the concert begins.",
-    category: "Manager",
-    author: {
-      name: "Lata Mangeshkar",
-      avatar: "/placeholder.png",
-      initials: "LM",
-    },
-    date: "05 Jan, 2025",
-    image: "/blog/3.png",
-  },
-  {
-    id: "4",
-    title: "Behind the Stage Lights",
-    description:
-      "A closer look at what really happens before the concert begins.",
-    category: "Venue",
-    author: {
-      name: "Lata Mangeshkar",
-      avatar: "/placeholder.png",
-      initials: "LM",
-    },
-    date: "05 Jan, 2025",
-    image: "/blog/4.jpg",
-  },
-  {
-    id: "5",
-    title: "Behind the Stage Lights",
-    description:
-      "A closer look at what really happens before the concert begins.",
-    category: "Agent",
-    author: {
-      name: "Lata Mangeshkar",
-      avatar: "/placeholder.png",
-      initials: "LM",
-    },
-    date: "05 Jan, 2025",
-    image: "/blog/5.jpg",
-  },
-  {
-    id: "6",
-    title: "Behind the Stage Lights",
-    description:
-      "A closer look at what really happens before the concert begins.",
-    category: "Artists",
-    author: {
-      name: "Lata Mangeshkar",
-      avatar: "/placeholder.png",
-      initials: "LM",
-    },
-    date: "05 Jan, 2025",
-    image: "/blog/6.jpg",
-  },
-];
 
 const categoryColors = {
   Artists: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
@@ -135,11 +52,13 @@ const categoryColors = {
 };
 
 export default function BlogPage() {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const router = useRouter();
+  const { data: blogs } = useGetBlogsQuery({});
 
+  console.log(blogs?.data);
 
   const handleDeleteClick = (postId: string) => {
     setPostToDelete(postId);
@@ -175,35 +94,32 @@ export default function BlogPage() {
 
         {/* Blog Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {blogPosts.map((post) => (
+          {blogs?.data?.map((post: BlogPost) => (
             <Card
               key={post.id}
               className='overflow-hidden !border-none duration-200 pb-6'
             >
               <div className='relative rounded-2xl'>
-                <Image
-                  width={500}
-                  height={500}
-                  src={post.image || "/placeholder.svg"}
-                  alt={post.title}
-                  className='w-full h-48 lg:h-64 object-cover rounded-2xl'
-                />
+                {post.banner_type === "video" ? (
+                  <video
+                    src={post.banner_url}
+                    controls
+                    className='w-full h-48 lg:h-64 object-cover rounded-2xl'
+                  />
+                ) : (
+                  <Image
+                    width={500}
+                    height={500}
+                    src={post.banner_url}
+                    alt={post.title}
+                    className='w-full h-48 lg:h-64 object-cover rounded-2xl'
+                  />
+                )}
               </div>
 
               <CardContent className='px-6 relative -mt-2'>
                 <div className='flex items-center justify-between'>
-                  <div className='top-3 left-3'>
-                    <Badge
-                      className={
-                        categoryColors[
-                          post.category as keyof typeof categoryColors
-                        ]
-                      }
-                    >
-                      {post.category}
-                    </Badge>
-                  </div>
-                  <div className='top-3 right-3'>
+                  <div className='absolute top-3 right-3 items-end'>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -217,7 +133,11 @@ export default function BlogPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align='end' className='w-40'>
                         <DropdownMenuItem
-                          onClick={() => router.push("/dashboard/blog-management/edit-blog/" + post.id)}
+                          onClick={() =>
+                            router.push(
+                              "/dashboard/blog-management/edit-blog/" + post.id
+                            )
+                          }
                           className='flex items-center gap-2 cursor-pointer'
                         >
                           <Edit className='h-4 w-4' />
@@ -244,18 +164,20 @@ export default function BlogPage() {
                 <div className='flex items-center gap-3'>
                   <Avatar className='h-8 w-8'>
                     <AvatarImage
-                      src={post.author.avatar || "/placeholder.png"}
-                      alt={post.author.name}
+                      src={post.admin.avatar || "/placeholder.png"}
+                      alt={post.admin.name}
                     />
                     <AvatarFallback className='text-xs'>
-                      {post.author.initials}
+                      {post.admin.name.split(" ").map((name) => name[0])}
                     </AvatarFallback>
                   </Avatar>
                   <div className='flex-1 min-w-0'>
                     <p className='text-base font-medium text-[#000000] truncate'>
-                      {post.author.name}
+                      {post.admin.name}
                     </p>
-                    <p className='text-xs text-muted-foreground'>{post.date}</p>
+                    <p className='text-xs text-muted-foreground'>
+                      {post.published_at.split("T")[0]}
+                    </p>
                   </div>
                 </div>
               </CardContent>
