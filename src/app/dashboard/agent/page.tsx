@@ -13,13 +13,13 @@ export default function DashboardPage() {
       {/* Main Grid */}
       <div className=' gap-6 mb-8'>
         <div className='lg:col-span-4'>
-          <div className='lg:max-w-[50%] flex flex-wrap gap-6 mb-8'>
+          <div className='lg:max-w-[50%] flex flex-col md:flex-row flex-wrap gap-6 mb-8'>
             {/* Revenue Card */}
             <Card className='flex-1 border-none shadow-sm bg-[#E6F0F9]'>
               <CardHeader className=''>
                 <CardTitle className='text-base font-medium text-[#1E1E1E]'>
                   Total Revenue
-                </CardTitle> 
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className='text-3xl font-bold'>

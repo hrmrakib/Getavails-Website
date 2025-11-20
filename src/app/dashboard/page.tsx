@@ -13,7 +13,7 @@ export default function DashboardPage() {
       {/* Main Grid */}
       <div className=' gap-6 mb-8'>
         <div className='lg:col-span-4'>
-          <div className='lg:max-w-[75%] flex flex-wrap gap-6 mb-8'>
+          <div className='lg:max-w-[75%] flex flex-col md:flex-row flex-wrap gap-6 mb-8'>
             {/* Revenue Card */}
             <Card className='flex-1 border-none shadow-sm bg-[#E6F0F9]'>
               <CardHeader className=''>
