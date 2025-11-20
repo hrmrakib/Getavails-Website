@@ -1,11 +1,13 @@
-import CommonMessagesPage from "@/components/dashboard/message/CommonMessagesPage";
+import MessagePage from "@/components/dashboard/message/Message";
+import { SocketProvider } from "@/provider/SocketProvider";
+import React from "react";
 
-const MessagePage = () => {
+const Message = () => {
   return (
-    <div>
-      <CommonMessagesPage />
-    </div>
+    <SocketProvider>
+      <MessagePage />
+    </SocketProvider>
   );
 };
 
-export default MessagePage;
+export default Message;

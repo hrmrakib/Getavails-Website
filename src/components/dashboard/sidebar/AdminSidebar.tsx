@@ -9,7 +9,7 @@ import {
   BanknoteArrowUp,
   Medal,
   FolderKanban,
-  Headset,
+  MessageCircleMore,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -106,15 +106,15 @@ const AdminSidebar = () => {
           }
         />
 
-        {/* <NavItem
-          href='/dashboard/support'
-          icon={Headset}
-          label='Support'
+        <NavItem
+          href='/dashboard/message'
+          icon={MessageCircleMore}
+          label='Message'
           active={
-            pathname === "/dashboard/support" ||
-            pathname.startsWith("/dashboard/support/")
+            pathname === "/dashboard/message" ||
+            pathname.startsWith("/dashboard/message/")
           }
-        /> */}
+        />
       </SidebarMenu>
     </>
   );

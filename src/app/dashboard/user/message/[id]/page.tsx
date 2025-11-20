@@ -7,7 +7,7 @@ const Message = () => {
     <SocketProvider>
       <MessagePage />
     </SocketProvider>
-  );
+  ); 
 };
 
 export default Message;
