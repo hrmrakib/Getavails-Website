@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Info, Loader2 } from "lucide-react";
+import { Search, Info, Loader2, MessageCircleMore } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +20,7 @@ import {
   useGetUsersQuery,
 } from "@/redux/features/admin/adminAPI";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface IOrganizer {
   id: string;
@@ -93,7 +94,9 @@ export default function UserListPage() {
       <div className='w-full'>
         {/* Header */}
         <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-2.5'>
-          <h1 className='text-2xl font-semibold text-gray-900'>Organizer List</h1>
+          <h1 className='text-2xl font-semibold text-gray-900'>
+            Organizer List
+          </h1>
           <div className='relative w-full sm:w-80 bg-transparent rounded-xl'>
             <Search className='absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
             <Input
@@ -174,15 +177,19 @@ export default function UserListPage() {
                       {user.is_verified ? "✅ Verified" : "❌ Not Verified"}
                     </td>
 
-                    <td className='px-6 py-4'>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='h-10 w-10 p-0 cursor-pointer'
+                    <td className='px-6 py-4 flex items-center gap-3 lg:gap-5'>
+                      <button
+                        className='cursor-pointer'
                         onClick={() => handleActionClick(user)}
                       >
                         <Info className='h-6 w-6 text-[#235789]' />
-                      </Button>
+                      </button>
+                      <Link
+                        href={`/dashboard/artist/message/${user.id}`}
+                        className=' flex items-center justify-center transform transition-colors duration-200 ease-in-out rounded-2xl'
+                      >
+                        <MessageCircleMore className='h-6 w-6 text-[#235789]' />
+                      </Link>
                     </td>
                   </tr>
                 ))}
