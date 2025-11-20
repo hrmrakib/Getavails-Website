@@ -17,7 +17,7 @@ export function Navbar() {
     skip: !localStorage.getItem("access_token"),
   });
 
-  const toggleMenu = () => { 
+  const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
@@ -92,6 +92,14 @@ export function Navbar() {
                     />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
+                  {profile?.data?.is_admin && (
+                    <Link
+                      href={`/dashboard/`}
+                      className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl cursor-pointer'
+                    >
+                      Admin <ArrowRight size={18} />
+                    </Link>
+                  )}
                   <Link
                     href={`/dashboard/${profile?.data?.role}`}
                     className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl cursor-pointer'
@@ -168,7 +176,7 @@ export function Navbar() {
           </div>
 
           {/* Menu Content */}
-          <div className='flex flex-col h-full'>
+          <div className='flex flex-col max-h-full'>
             {/* Navigation Links */}
             <div className='flex-1 px-6 py-6 space-y-1 overflow-y-auto'>
               {navItems.map((item, index) => (
@@ -188,20 +196,11 @@ export function Navbar() {
                   {item.name}
                 </Link>
               ))}
-
-              <div>
-                <Link
-                  href='/dashboard'
-                  className='w-2/3 bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl'
-                >
-                  Go Dashboard <ArrowRight size={18} />
-                </Link>
-              </div>
             </div>
 
             {/* Action Buttons */}
             <div className='p-6 border-t border-gray-100 space-y-4'>
-              {false ? (
+              {!profile?.data ? (
                 <>
                   <Button
                     variant='outline'
@@ -210,38 +209,51 @@ export function Navbar() {
                   >
                     Login
                   </Button>
-                  <Button
-                    className='w-full bg-[#235789] hover:bg-[#1e4a6f] text-white h-12 text-base font-medium'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Get Started
-                    <ArrowRight className='ml-2 h-4 w-4' />
-                  </Button>
                 </>
               ) : (
-                <div className='space-y-4'>
-                  <div className='flex items-center gap-3 p-4 bg-gray-50 rounded-lg'>
-                    <Avatar className='w-12 h-12'>
-                      <AvatarImage
-                        src='/placeholder.png'
-                        width={48}
-                        height={48}
-                        alt='@'
-                      />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className='font-medium text-gray-900'>Welcome back!</p>
-                      <p className='text-sm text-gray-600'>user@example.com</p>
+                <div className='flex items-center justify-center space-x-4'>
+                  {isLoading ? (
+                    <div className='flex items-center gap-6'>
+                      <Skeleton className='w-10 h-10 rounded-full bg-gray-300' />
+                      <Skeleton className='w-40 h-10 rounded-full bg-gray-300' />
                     </div>
-                  </div>
-                  <Link
-                    href='/dashboard'
-                    className='w-full bg-[#235789] hover:bg-[#1e4a6f] text-white h-12 text-base font-medium rounded-lg flex items-center justify-center gap-2 transition-colors duration-200'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Go Dashboard <ArrowRight size={18} />
-                  </Link>
+                  ) : profile?.data ? (
+                    <div className='flex flex-col items-center justify-center gap-4'>
+                      <Avatar className='w-10 h-10' title={profile?.data?.name}>
+                        <AvatarImage
+                          src={
+                            process.env.NEXT_PUBLIC_IMAGE_URL +
+                              profile?.data?.avatar || "/placeholder.png"
+                          }
+                          width={48}
+                          height={48}
+                          alt='Avatar'
+                        />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                      {profile?.data?.is_admin && (
+                        <Link
+                          href={`/dashboard/`}
+                          className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl cursor-pointer'
+                        >
+                          Admin <ArrowRight size={18} />
+                        </Link>
+                      )}
+                      <Link
+                        href={`/dashboard/${profile?.data?.role}`}
+                        className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl cursor-pointer'
+                      >
+                        Go Dashboard <ArrowRight size={18} />
+                      </Link>
+                    </div>
+                  ) : (
+                    <Link
+                      href='/login'
+                      className='border-[#235789] text-[#235789] font-medium border-2 px-6 py-1.5 hover:bg-gray-50 bg-transparent rounded-4xl cursor-pointer'
+                    >
+                      Login
+                    </Link>
+                  )}
                 </div>
               )}
             </div>

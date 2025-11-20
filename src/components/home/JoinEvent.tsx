@@ -100,13 +100,13 @@ export default function JoinEvent() {
             {/* Events Container */}
             <div
               id='events-container'
-              className='grid grid-cols-2 md:grid-cols-3 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide'
+              className='grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide'
               style={{ scrollBehavior: "smooth" }}
             >
               {events.map((event) => (
                 <div
                   key={event.id}
-                  className='flex-shrink-0 w-full md:w- snap-start'
+                  className='flex-shrink-0 w-full md:w-full snap-start'
                 >
                   <div className='border-2 border-slate-300 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow h-full flex flex-col'>
                     {/* Card Header with Category */}
