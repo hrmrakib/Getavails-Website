@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import type React from "react";
@@ -7,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
+import { useSendMailMutation } from "@/redux/features/mail/mailAPI";
+import { toast } from "sonner";
 
 const roles = [
   { id: "artist", label: "Artist" },
   { id: "agent", label: "Agent" },
   { id: "venue", label: "Venue" },
   { id: "buyer", label: "Buyer" },
+  { id: "user", label: "User" },
 ];
 
 export default function ContactFormSection({
@@ -22,11 +26,13 @@ export default function ContactFormSection({
 }) {
   const [selectedRole, setSelectedRole] = useState("artist");
   const [formData, setFormData] = useState({
+    role: selectedRole,
     name: "",
     email: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sendMailMutation] = useSendMailMutation();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,15 +45,24 @@ export default function ContactFormSection({
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const res = await sendMailMutation({
+        remarks: formData.role.toUpperCase(),
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+      }).unwrap();
 
-    console.log("Form submitted:", { ...formData, role: selectedRole });
-
-    // Reset form
-    setFormData({ name: "", email: "", message: "" });
-    setSelectedRole("artist");
-    setIsSubmitting(false);
+      if (res?.success) {
+        toast.success("Message sent successfully!");
+        setFormData({ role: selectedRole, name: "", email: "", message: "" });
+      }
+    } catch (error: any) {
+      toast.error(error?.data?.message);
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

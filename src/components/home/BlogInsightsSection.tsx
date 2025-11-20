@@ -10,7 +10,6 @@ import "swiper/css/pagination";
 import Image from "next/image";
 import Link from "next/link";
 import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
-import page from "@/app/temp/page";
 
 interface Admin {
   name: string;

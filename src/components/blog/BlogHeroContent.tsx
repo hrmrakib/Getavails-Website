@@ -6,23 +6,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
 
-interface Admin {
-  name: string;
-  avatar: string;
-}
-
-interface BlogPost {
-  id: string;
-  published_at: string;
-  last_updated_at: string;
-  title: string;
-  description: string;
-  content: string;
-  banner_url: string;
-  banner_type: "image" | "video" | "none";
-  admin: Admin;
-}
-
 const BlogHeroContent = () => {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
 
