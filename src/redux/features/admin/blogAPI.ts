@@ -21,6 +21,7 @@ const blogAPI = baseAPI.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
+      providesTags: ["Blog"],
     }),
 
     getBlog: builder.query({
@@ -31,6 +32,7 @@ const blogAPI = baseAPI.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
+      providesTags: ["Blog"],
     }),
 
     deleteBlog: builder.mutation({
@@ -42,6 +44,7 @@ const blogAPI = baseAPI.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
+      invalidatesTags: ["Blog"],
     }),
 
     createBlog: builder.mutation({
@@ -53,6 +56,7 @@ const blogAPI = baseAPI.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
+      invalidatesTags: ["Blog"],
     }),
 
     updateBlog: builder.mutation({
@@ -64,6 +68,7 @@ const blogAPI = baseAPI.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
+      invalidatesTags: ["Blog"],
     }),
   }),
 });

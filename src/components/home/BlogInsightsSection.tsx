@@ -9,58 +9,27 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import Image from "next/image";
 import Link from "next/link";
+import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
 
-interface InsightCard {
-  id: number;
-  image: string;
-  title: string;
-  description: string;
+interface Admin {
+  name: string;
+  avatar: string;
 }
 
-const insights: InsightCard[] = [
-  {
-    id: 1,
-    image:
-      "https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=800",
-    title: "How Agents Can Streamline Their Artist Booking Workflow",
-    description:
-      "Learn how Getavails helps agents manage multiple artists, track offers, and close more bookings with less back-and-forth.",
-  },
-  {
-    id: 2,
-    image:
-      "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=800",
-    title: "Digital Marketing Strategies for Musicians",
-    description:
-      "Discover effective digital marketing techniques to help your artists reach wider audiences and build stronger fan engagement.",
-  },
-  {
-    id: 3,
-    image:
-      "https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800",
-    title: "Building Long-Term Artist Relationships",
-    description:
-      "Essential tips for agents on fostering lasting partnerships with artists and creating mutually beneficial collaborations.",
-  },
-  {
-    id: 4,
-    image:
-      "https://images.pexels.com/photos/164938/pexels-photo-164938.jpeg?auto=compress&cs=tinysrgb&w=800",
-    title: "Venue Partnership Best Practices",
-    description:
-      "Learn how to build strong relationships with venues and negotiate better deals for your artists and clients.",
-  },
-  {
-    id: 5,
-    image:
-      "https://images.pexels.com/photos/1047442/pexels-photo-1047442.jpeg?auto=compress&cs=tinysrgb&w=800",
-    title: "Event Production Management",
-    description:
-      "Master the art of coordinating successful events from initial planning through post-event follow-up and analysis.",
-  },
-];
+interface BlogPost {
+  id: string;
+  published_at: string;
+  last_updated_at: string;
+  title: string;
+  description: string;
+  content: string;
+  banner_url: string;
+  banner_type: "image" | "video" | "none";
+  admin: Admin;
+}
 
 export default function BlogInsightsSection() {
+  const { data: blogPosts } = useGetBlogsQuery({});
   return (
     <div className='bg-gray-900 min-h-screen py-16'>
       <div className='max-w-7xl mx-auto px-6'>
@@ -97,13 +66,13 @@ export default function BlogInsightsSection() {
             modules={[EffectCoverflow, Pagination]}
             className='insights-swiper'
           >
-            {insights.map((insight) => (
+            {blogPosts?.data?.map((insight: BlogPost) => (
               <SwiperSlide key={insight.id} className='insight-slide'>
                 <div className='relative w-full h-full rounded-2xl overflow-hidden group cursor-pointer'>
                   <Image
                     width={800}
                     height={600}
-                    src={insight.image}
+                    src={insight.banner_url}
                     alt={insight.title}
                     className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105'
                   />
@@ -119,7 +88,10 @@ export default function BlogInsightsSection() {
                     <p className='text-gray-300 text-sm mb-6 leading-relaxed'>
                       {insight.description}
                     </p>
-                    <button className='w-full flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full hover:bg-white/20 transition-all duration-300 text-sm font-medium'>
+                    <Link
+                      href={`/blog/${insight.id}`}
+                      className='w-full flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full hover:bg-white/20 transition-all duration-300 text-sm font-medium'
+                    >
                       Read More
                       <svg
                         className='ml-2 w-4 h-4'
@@ -134,7 +106,7 @@ export default function BlogInsightsSection() {
                           d='M9 5l7 7-7 7'
                         />
                       </svg>
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </SwiperSlide>

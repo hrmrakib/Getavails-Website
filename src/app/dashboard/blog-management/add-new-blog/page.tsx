@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -11,21 +12,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Image from "next/image";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   useCreateBlogMutation,
   useUploadMediaMutation,
 } from "@/redux/features/admin/blogAPI";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 interface AddBlogPageProps {
   onBack: () => void;
   onSubmit: (blogData: {
@@ -36,7 +29,7 @@ interface AddBlogPageProps {
 }
 
 export default function AddBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const editorRef = useRef<HTMLDivElement>(null);
@@ -169,8 +162,9 @@ export default function AddBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
     try {
       const res = await createBlogMutation(payload).unwrap();
 
-      if (!res?.success) {
+      if (res?.success) {
         toast.success("Blog created successfully!");
+        router.push("/dashboard/blog-management");
       }
     } catch (error: any) {
       console.error("Error creating blog:", error);
