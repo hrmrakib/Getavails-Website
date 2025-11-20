@@ -3,11 +3,33 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Facebook, Linkedin, MessageCircle, Link } from "lucide-react";
+import { Facebook, Linkedin, MessageCircle, Link, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useGetBlogQuery } from "@/redux/features/admin/blogAPI";
+import { useParams } from "next/navigation";
+
+interface Admin {
+  name: string;
+  avatar: string;
+}
+
+interface BlogPost {
+  id: string;
+  published_at: string;
+  last_updated_at: string;
+  title: string;
+  description: string;
+  content: string;
+  banner_url: string;
+  banner_type: "image" | "video" | "none";
+  admin: Admin;
+}
 
 export default function BlogPost() {
   const [copiedLink, setCopiedLink] = useState(false);
+  const params = useParams();
+  const id = params.id as string;
+  const { data: blog, isLoading } = useGetBlogQuery(id);
 
   const handleCopyLink = async () => {
     try {
@@ -46,22 +68,32 @@ export default function BlogPost() {
     window.open(`https://wa.me/?text=${text} ${url}`, "_blank");
   };
 
+  if (isLoading) {
+    return (
+      <div className='min-h-[80vh] flex items-center justify-center'>
+        <Loader2 className='animate-spin' />
+      </div>
+    );
+  }
+
   return (
     <article className='container mx-auto px-4 py-8 md:py-12'>
       {/* Header */}
       <header className='mb-8'>
         <h1 className='text-3xl md:text-4xl lg:text-5xl font-semibold text-[#000000] mb-6 lg:mb-8 text-balance'>
-          Behind the Stage Lights
+          {blog?.data.title || "No Title"}
         </h1>
 
         {/* Hero Image */}
         <div className='relative w-full h-64 md:h-80 lg:h-[575px] rounded-2xl overflow-hidden mb-6'>
-          <Image
-            fill
-            src='/blog-detail.jpg'
-            alt='Concert crowd with dramatic golden stage lighting'
-            className='w-full h-full object-cover'
-          />
+          {!isLoading && blog?.data && (
+            <Image
+              fill
+              src={blog?.data.banner_url}
+              alt={blog?.data.title}
+              className='w-full h-full object-cover'
+            />
+          )}
         </div>
 
         {/* Author Info and Date */}
@@ -69,11 +101,11 @@ export default function BlogPost() {
           <div className='flex items-center gap-3'>
             <Avatar className='w-12 h-12'>
               <AvatarImage src='/user.png' alt='Lata Mangeshkar' />
-              <AvatarFallback>LM</AvatarFallback>
+              <AvatarFallback>{blog?.data?.admin?.name}</AvatarFallback>
             </Avatar>
             <div>
               <p className='font-semibold text-xl text-[#000000]'>
-                Lata Mangeshkar
+                {blog?.data?.admin?.name || "No Name"}
               </p>
               <p className='text-sm text-[#2C73B8] font-medium'>Artist</p>
             </div>
@@ -92,7 +124,7 @@ export default function BlogPost() {
                 d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
               />
             </svg>
-            25 Jan, 2025
+            {blog?.data?.published_at?.split("T")[0] || "No Date"}
           </time>
         </div>
       </header>
@@ -153,75 +185,17 @@ export default function BlogPost() {
         <main className='flex-1 order-1 lg:order-2'>
           <div className='prose prose-lg max-w-none'>
             <p className='text-lg text-[#000000] leading-relaxed mb-6'>
-              Attending a concert is an activity that appealed to many.
-              Experiencing live music performance is different from listening to
-              it through other platforms. Furthermore, you can meet your idol
-              while attending a concert.
+              {blog?.data?.description || "No Description"}
             </p>
 
-            <p className='text-base text-[#000000] leading-relaxed mb-6'>
-              For first-timers, you probably have feelings of anxiety about
-              attending a concert. But, worry not. Check out the following tips
-              for attending a concert for the first time to enhance your
-              experience.
-            </p>
-
-            <h2 className='text-xl font-semibold text-[#000000] mb-4 mt-8'>
-              Tips for Attending a Concert for the First Time
-            </h2>
-
-            <p className='text-base text-[#000000] leading-relaxed mb-6'>
-              No need to be confused, let alone panic, when you&apos;re
-              attending a music concert for the first time. With proper
-              preparation, attending a live music performance for the first time
-              can be an unforgettable experience.
-            </p>
-
-            <p className='text-base leading-relaxed mb-8'>
-              Here are the tips for attending a concert for beginners:
-            </p>
-
-            <div className='space-y-8'>
-              <section>
-                <h3 className='text-lg font-semibold text-foreground mb-4'>
-                  1. Keep Your Body Fit
-                </h3>
-                <p className='text-base text-[#000000] leading-relaxed mb-4'>
-                  Having a prime physical condition will surely enhance your
-                  experience when attending a concert. You sure don&apos;t want
-                  to miss it because you suddenly get ill on D-Day. Before the
-                  big day, make sure to keep your body fit.
-                </p>
-                <p className='text-base text-[#000000] leading-relaxed'>
-                  Maintaining your health is simple. Consume balanced nutritious
-                  foods and do not forget to get enough rest or sleep at night.
-                  Stay active by exercising for approximately 30 minutes every
-                  day. Not only does it make you fit, but also ensures your
-                  stamina after the concert.
-                </p>
-              </section>
-
-              <section>
-                <h3 className='text-lg font-semibold text-foreground mb-4'>
-                  2. Wear Comfortable Clothes
-                </h3>
-                <p className='text-base text-[#000000] leading-relaxed mb-4'>
-                  Wear an outfit according to the venue. If it&apos;s an indoor
-                  performance, wear something warm because it&apos;s usually
-                  chill inside due to the AC. On the other hand, wear a
-                  sweat-absorbing outfit to avoid the heat while attending an
-                  outdoor concert. For example, wear a t-shirt and a pair of
-                  jeans.
-                </p>
-                <p className='text-base text-[#000000] leading-relaxed'>
-                  The most important thing is to wear something comfortable when
-                  attending a concert. Avoid wearing high heels, instead, wear
-                  something more comfortable such as sneakers. It is because
-                  there&apos;s usually a long line and you might stand for a
-                  long time throughout the concert.
-                </p>
-              </section>
-            </div>
+            {blog?.data?.content && (
+              <p
+                className='text-base text-[#000000] leading-relaxed mb-6 prose prose-sm max-w-none'
+                dangerouslySetInnerHTML={{
+                  __html: blog?.data?.content || "No Content",
+                }}
+              />
+            )}
           </div>
         </main>
       </div>

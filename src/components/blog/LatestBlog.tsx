@@ -8,124 +8,41 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
+
+interface Admin {
+  name: string;
+  avatar: string;
+}
+
+interface BlogPost {
+  id: string;
+  published_at: string;
+  last_updated_at: string;
+  title: string;
+  description: string;
+  content: string;
+  banner_url: string;
+  banner_type: "image" | "video" | "none";
+  admin: Admin;
+}
 
 export default function LatestBlog() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(3); // Current page is 3 as shown in the design
-
-  // Sample blog data matching the design
-  const blogPosts = [
-    {
-      id: 1,
-      category: "Artists",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog1.jpg",
-    },
-    {
-      id: 2,
-      category: "Agent",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog2.jpg",
-    },
-    {
-      id: 3,
-      category: "Manager",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog3.png",
-    },
-    {
-      id: 4,
-      category: "Artists",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog2.jpg",
-    },
-    {
-      id: 5,
-      category: "Agent",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog1.jpg",
-    },
-    {
-      id: 6,
-      category: "Manager",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog2.jpg",
-    },
-    {
-      id: 7,
-      category: "Artists",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog1.jpg",
-    },
-    {
-      id: 8,
-      category: "Agent",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog3.png",
-    },
-    {
-      id: 9,
-      category: "Manager",
-      title: "Behind the Stage Lights",
-      description:
-        "A closer look at what really happens before the concert begins.",
-      author: "Lata Mangeshkar",
-      date: "05 Jan, 2025",
-      image: "/blog1.jpg",
-    },
-  ];
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const { data: blogs } = useGetBlogsQuery({
+    page,
+    limit,
+    search: searchQuery,
+  });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case "Artists":
-        return "text-blue-600";
-      case "Agent":
-        return "text-blue-600";
-      case "Manager":
-        return "text-blue-600";
-      default:
-        return "text-blue-600";
-    }
+    setPage(page);
   };
 
   return (
@@ -154,7 +71,7 @@ export default function LatestBlog() {
 
         {/* Blog Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
-          {blogPosts.map((post) => (
+          {blogs?.data?.map((post: BlogPost) => (
             <Card
               key={post.id}
               className='bg-transparent !border-none rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer'
@@ -163,19 +80,19 @@ export default function LatestBlog() {
                 <Image
                   width={420}
                   height={240}
-                  src={post.image || "/placeholder.svg"}
+                  src={post.banner_url}
                   alt={post.title}
                   className='w-full h-full object-cover'
                 />
               </div>
               <div className='p-4'>
-                <div
+                {/* <div
                   className={`text-sm text-[#2C73B8] font-medium mb-2 ${getCategoryColor(
                     post.category
                   )}`}
                 >
                   {post.category}
-                </div>
+                </div> */}
                 <h2 className='text-xl font-semibold text-[#000000] mb-2 line-clamp-2'>
                   {post.title}
                 </h2>
@@ -189,10 +106,10 @@ export default function LatestBlog() {
                   </Avatar>
                   <div>
                     <div className='text-sm lg:text-base font-medium text-[#000000]'>
-                      {post.author}
+                      {post.admin.name}
                     </div>
                     <div className='text-xs text-[#838383] font-medium'>
-                      {post.date}
+                      {post.published_at.split("T")[0]}
                     </div>
                   </div>
                 </div>
@@ -202,50 +119,57 @@ export default function LatestBlog() {
         </div>
 
         {/* Pagination */}
-        <div className='flex items-center justify-center gap-2'>
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-            className='flex items-center gap-1 text-gray-600 hover:text-gray-900'
-          >
-            <ChevronLeft className='w-4 h-4' />
-            Previous
-          </Button>
+        {/* Pagination */}
+        {blogs?.totalPages > 1 && (
+          <div className='flex items-center justify-center gap-2 mt-10'>
+            {/* Previous */}
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() => handlePageChange(Math.max(1, page - 1))}
+              disabled={page === 1}
+              className='flex items-center gap-1 text-gray-600 hover:text-gray-900 disabled:opacity-40'
+            >
+              <ChevronLeft className='w-4 h-4' />
+              Previous
+            </Button>
 
-          <div className='flex items-center gap-1 mx-4'>
-            {[1, 2, 3, "...", 10].map((page, index) => (
-              <Button
-                key={index}
-                variant={page === currentPage ? "default" : "ghost"}
-                size='sm'
-                onClick={() =>
-                  typeof page === "number" && handlePageChange(page)
-                }
-                className={`w-8 h-8 p-0 ${
-                  page === currentPage
-                    ? "bg-[#235789] text-white hover:bg-[#235789]"
-                    : "text-gray-600 hover:text-gray-900"
-                } ${
-                  page === "..." ? "cursor-default hover:bg-transparent" : ""
-                }`}
-                disabled={page === "..."}
-              >
-                {page}
-              </Button>
-            ))}
+            {/* Dynamic Page Numbers */}
+            <div className='flex items-center gap-1'>
+              {Array.from({ length: blogs.totalPages }, (_, i) => i + 1).map(
+                (p) => (
+                  <Button
+                    key={p}
+                    variant={p === page ? "default" : "ghost"}
+                    size='sm'
+                    onClick={() => handlePageChange(p)}
+                    className={`w-8 h-8 p-0 ${
+                      p === page
+                        ? "bg-[#235789] text-white hover:bg-[#235789]"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    {p}
+                  </Button>
+                )
+              )}
+            </div>
+
+            {/* Next */}
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() =>
+                handlePageChange(Math.min(blogs.totalPages, page + 1))
+              }
+              disabled={page === blogs.totalPages}
+              className='flex items-center gap-1 text-gray-600 hover:text-gray-900 disabled:opacity-40'
+            >
+              Next
+              <ChevronRight className='w-4 h-4' />
+            </Button>
           </div>
-
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => handlePageChange(Math.min(10, currentPage + 1))}
-            className='flex items-center gap-1 text-gray-600 hover:text-gray-900'
-          >
-            Next
-            <ChevronRight className='w-4 h-4' />
-          </Button>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import "swiper/css/pagination";
 import Image from "next/image";
 import Link from "next/link";
 import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
+import page from "@/app/temp/page";
 
 interface Admin {
   name: string;
@@ -29,7 +30,11 @@ interface BlogPost {
 }
 
 export default function BlogInsightsSection() {
-  const { data: blogPosts } = useGetBlogsQuery({});
+  const { data: blogPosts } = useGetBlogsQuery({
+    page: 1,
+    limit: 12,
+    search: "",
+  });
   return (
     <div className='bg-gray-900 min-h-screen py-16'>
       <div className='max-w-7xl mx-auto px-6'>

@@ -14,7 +14,7 @@ const blogAPI = baseAPI.injectEndpoints({
     }),
 
     getBlogs: builder.query({
-      query: ({ page = 1, limit = 10, search = "" }) => ({
+      query: ({ page, limit, search = "" }) => ({
         url: `/blogs?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {

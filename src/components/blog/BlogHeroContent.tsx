@@ -4,8 +4,35 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { useState } from "react";
+import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
+
+interface Admin {
+  name: string;
+  avatar: string;
+}
+
+interface BlogPost {
+  id: string;
+  published_at: string;
+  last_updated_at: string;
+  title: string;
+  description: string;
+  content: string;
+  banner_url: string;
+  banner_type: "image" | "video" | "none";
+  admin: Admin;
+}
+
 const BlogHeroContent = () => {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
+
+  const { data: blogs } = useGetBlogsQuery({
+    page: 1,
+    limit: 2,
+    search: "",
+  });
+
+  console.log(blogs);
 
   const handleCardClick = (cardId: string) => {
     setSelectedCard(cardId === selectedCard ? null : cardId);
@@ -22,31 +49,30 @@ const BlogHeroContent = () => {
           <Image
             width={500}
             height={312}
-            src='/blog-banner1.jpg'
-            alt='Concert stage with purple lighting and crowd'
+            src={blogs?.data[0].banner_url}
+            alt={blogs?.data[0].title}
             className='w-full h-full object-cover rounded-4xl'
           />
         </div>
         <div className='px-6 pb-6'>
           <div className='text-[#2C73B8] text-base font-medium mb-2'>Agent</div>
           <h2 className='text-2xl md:text-[32px] font-semibold text-[#000000] mb-3'>
-            Behind the Stage Lights
+            {blogs?.data[0].title}
           </h2>
           <p className='text-[#4D4D4D] text-sm md:text-base leading-relaxed mb-4'>
-            Discover trends, updates, and conversations around platforms,
-            people, and opportunities that shape the way we connect.
+            {blogs?.data[0].description}
           </p>
           <div className='flex items-center gap-3'>
             <Avatar className='w-10 h-10'>
-              <AvatarImage src='/blog-user.jpg' />
+              <AvatarImage src={blogs?.data[0]?.admin?.avatar} />
               <AvatarFallback>LM</AvatarFallback>
             </Avatar>
             <div>
               <div className='text-sm lg:text-base font-medium text-[#000000]'>
-                Lata Mangeshkar
+                {blogs?.data[0].admin.name}
               </div>
               <div className='text-xs lg:text-sm text-[#838383]'>
-                05 Jan, 2025
+                {blogs?.data[0].published_at?.split("T")[0]}
               </div>
             </div>
           </div>
@@ -63,8 +89,8 @@ const BlogHeroContent = () => {
           <Image
             width={500}
             height={312}
-            src='/blog-banner2.jpg'
-            alt='Concert crowd silhouettes with stage lights'
+            src={blogs?.data[1]?.banner_url}
+            alt={blogs?.data[1]?.title}
             className='w-full h-full object-cover rounded-4xl'
           />
         </div>
@@ -73,23 +99,22 @@ const BlogHeroContent = () => {
             Artist
           </div>
           <h2 className='text-2xl md:text-[32px] font-semibold text-[#000000] mb-3'>
-            Behind the Stage Lights
+            {blogs?.data[1]?.title}
           </h2>
           <p className='text-[#4D4D4D] text-sm md:text-base leading-relaxed mb-4'>
-            Discover trends, updates, and conversations around platforms,
-            people, and opportunities that shape the way we connect.
+            {blogs?.data[1]?.description}
           </p>
           <div className='flex items-center gap-3'>
             <Avatar className='w-10 h-10'>
-              <AvatarImage src='/blog-user.jpg' />
+              <AvatarImage src={blogs?.data[1]?.admin?.avatar} />
               <AvatarFallback>LM</AvatarFallback>
             </Avatar>
             <div>
               <div className='text-sm lg:text-base font-medium text-[#000000]'>
-                Lata Mangeshkar
+                {blogs?.data[1]?.admin.name}
               </div>
               <div className='text-xs lg:text-sm text-[#838383]'>
-                05 Jan, 2025
+                {blogs?.data[1]?.published_at?.split("T")[0]}
               </div>
             </div>
           </div>
