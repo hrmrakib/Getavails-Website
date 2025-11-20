@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -13,17 +13,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MoreVertical, Edit, Trash2, Plus, AlertTriangle } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Plus, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
+import {
+  useDeleteBlogMutation,
+  useGetBlogsQuery,
+} from "@/redux/features/admin/blogAPI";
+import { toast } from "sonner";
 
 interface Admin {
   name: string;
@@ -42,40 +47,41 @@ interface BlogPost {
   admin: Admin;
 }
 
-const categoryColors = {
-  Artists: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-  Agent:
-    "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-  Manager: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-  Venue:
-    "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
-};
-
 export default function BlogPage() {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const router = useRouter();
-  const { data: blogs } = useGetBlogsQuery({});
-
-  console.log(blogs?.data);
+  const { data: blogs, isLoading, refetch } = useGetBlogsQuery({});
+  const [deleteBlogMutation, { isLoading: isDeleting }] =
+    useDeleteBlogMutation();
 
   const handleDeleteClick = (postId: string) => {
     setPostToDelete(postId);
     setDeleteModalOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
-    if (postToDelete) {
-      setBlogPosts((prev) => prev.filter((post) => post.id !== postToDelete));
-      setDeleteModalOpen(false);
-      setPostToDelete(null);
-    }
-  };
-
   const handleDeleteCancel = () => {
     setDeleteModalOpen(false);
     setPostToDelete(null);
+  };
+
+  const handleBlogDeleteConfirm = async () => {
+    try {
+      const res = await deleteBlogMutation({
+        blog_id: postToDelete,
+      }).unwrap();
+      console.log(res);
+      if (res?.success) {
+        refetch();
+        toast.success("Blog deleted successfully!");
+        router.push("/dashboard/blog-management");
+      }
+    } catch (error: any) {
+      console.error("Error deleting blog:", error);
+      toast.error(error?.data?.message || "Failed to delete blog");
+    } finally {
+      setDeleteModalOpen(false);
+    }
   };
 
   return (
@@ -94,6 +100,11 @@ export default function BlogPage() {
 
         {/* Blog Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          {isLoading && (
+            <div className='col-span-3 flex justify-center items-center'>
+              <Loader2 className='animate-spin' />
+            </div>
+          )}
           {blogs?.data?.map((post: BlogPost) => (
             <Card
               key={post.id}
@@ -187,32 +198,27 @@ export default function BlogPage() {
 
         {/* Delete Confirmation Modal */}
         <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-          <DialogContent className='sm:max-w-md'>
-            <DialogHeader className='text-center'>
-              <div className='mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center'>
-                <AlertTriangle className='h-6 w-6 text-red-600 dark:text-red-400' />
-              </div>
-              <DialogTitle className='text-lg font-semibold'>
-                Delete Blog
+          <DialogContent className='sm:max-w-[400px]'>
+            <DialogHeader>
+              <DialogTitle className='text-red-600'>
+                Delete Confirmation
               </DialogTitle>
-              <DialogDescription className='text-muted-foreground'>
-                Are you sure you want to delete this blog?
+              <DialogDescription>
+                Are you sure you want to <b>delete this item</b>? This action
+                cannot be undone.
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className='flex flex-col-reverse sm:flex-row gap-2 sm:gap-0'>
-              <Button
-                variant='outline'
-                onClick={handleDeleteCancel}
-                className='flex-1 bg-transparent'
-              >
-                Cancel
-              </Button>
-              <Button
-                variant='destructive'
-                onClick={handleDeleteConfirm}
-                className='flex-1'
-              >
-                Delete
+
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button onClick={handleDeleteCancel} variant='outline'>
+                  Cancel
+                </Button>
+              </DialogClose>
+
+              <Button variant='destructive' onClick={handleBlogDeleteConfirm}>
+                Yes, Delete{" "}
+                {isDeleting ? <Loader2 className='animate-spin' /> : ""}
               </Button>
             </DialogFooter>
           </DialogContent>

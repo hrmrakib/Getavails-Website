@@ -34,9 +34,10 @@ const blogAPI = baseAPI.injectEndpoints({
     }),
 
     deleteBlog: builder.mutation({
-      query: ({ blogId }) => ({
-        url: `/blog/${blogId}/delete`,
+      query: (blogId) => ({
+        url: `/admin/blogs`,
         method: "DELETE",
+        body: blogId,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -56,7 +57,7 @@ const blogAPI = baseAPI.injectEndpoints({
 
     updateBlog: builder.mutation({
       query: (data) => ({
-        url: `/blog/update`,
+        url: `/admin/blogs`,
         method: "PATCH",
         body: data,
         headers: {

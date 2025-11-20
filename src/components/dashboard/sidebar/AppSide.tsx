@@ -92,12 +92,12 @@ export default function DashboardSidebar() {
           </SidebarContent>
 
           <SidebarFooter className='p-6'>
-            <div className='mb-4 text-xs font-medium text-gray-500 uppercase tracking-wider px-4'>
+            {/* <div className='mb-4 text-xs font-medium text-gray-500 uppercase tracking-wider px-4'>
               Settings
-            </div>
+            </div> */}
             <ul>
               {/* Author @shaishab316 */}
-              <NavItem
+              {/* <NavItem
                 href='/dashboard/settings'
                 icon={Settings}
                 label='Settings'
@@ -105,7 +105,7 @@ export default function DashboardSidebar() {
                   pathname === "/dashboard/settings" ||
                   pathname.startsWith("/dashboard/settings/")
                 }
-              />
+              /> */}
             </ul>
             <button
               onClick={() => setIsLogoutModalOpen(true)}

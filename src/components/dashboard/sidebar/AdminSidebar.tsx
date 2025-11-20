@@ -106,7 +106,7 @@ const AdminSidebar = () => {
           }
         />
 
-        <NavItem
+        {/* <NavItem
           href='/dashboard/support'
           icon={Headset}
           label='Support'
@@ -114,7 +114,7 @@ const AdminSidebar = () => {
             pathname === "/dashboard/support" ||
             pathname.startsWith("/dashboard/support/")
           }
-        />
+        /> */}
       </SidebarMenu>
     </>
   );

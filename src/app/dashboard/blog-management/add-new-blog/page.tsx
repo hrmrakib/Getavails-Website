@@ -11,6 +11,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Image from "next/image";
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   useCreateBlogMutation,
   useUploadMediaMutation,
 } from "@/redux/features/admin/blogAPI";
@@ -27,6 +36,7 @@ interface AddBlogPageProps {
 }
 
 export default function AddBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const editorRef = useRef<HTMLDivElement>(null);

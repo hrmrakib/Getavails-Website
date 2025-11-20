@@ -1,27 +1,29 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import type React from "react";
-
-import { useEffect, useState } from "react";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Image from "next/image";
 import {
-  useCreateBlogMutation,
   useGetBlogQuery,
+  useUpdateBlogMutation,
   useUploadMediaMutation,
 } from "@/redux/features/admin/blogAPI";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 interface AddBlogPageProps {
   onBack: () => void;
-  onSubmit: (blogData: {
+  onSubmit?: (blogData: {
     title: string;
     description: string;
     image: File | null;
@@ -29,9 +31,12 @@ interface AddBlogPageProps {
 }
 
 export default function EditBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
+  const editorRef = useRef<HTMLDivElement | null>(null);
+  const quillRef = useRef<Quill | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [fileType, setFileType] = useState<"image" | "video" | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -40,7 +45,8 @@ export default function EditBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
   const [bannerType, setBannerType] = useState<"image" | "video">("image");
   const [uploadMediaMutation, { isLoading: isUploading }] =
     useUploadMediaMutation();
-  const [createBlogMutation] = useCreateBlogMutation();
+  const [updateBlogMutation, { isLoading: isUpdating }] =
+    useUpdateBlogMutation();
   const params = useParams();
   const id = params.id;
 
@@ -54,8 +60,6 @@ export default function EditBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
       setBannerType(blog?.data?.banner_type || "image");
     }
   }, [blog]);
-
-  console.log("single blog", blog?.data);
 
   useEffect(() => {
     if (!selectedFile) return;
@@ -87,7 +91,35 @@ export default function EditBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
     };
 
     uploadFile();
-  }, [selectedFile]);
+  }, [selectedFile, uploadMediaMutation]);
+
+  useEffect(() => {
+    if (!editorRef.current) return;
+
+    const initQuill = async () => {
+      const Quill = (await import("quill")).default;
+
+      if (!quillRef.current) {
+        quillRef.current = new Quill(editorRef.current as HTMLDivElement, {
+          theme: "snow",
+          placeholder: "Enter your blog content...",
+        });
+
+        // Update state whenever user types
+        quillRef.current.on("text-change", () => {
+          setContent(quillRef.current!.root.innerHTML);
+        });
+      }
+
+      // If blog content is available, set it in editor and state
+      if (blog?.data?.content) {
+        quillRef.current.root.innerHTML = blog.data.content;
+        setContent(blog.data.content);
+      }
+    };
+
+    initQuill();
+  }, [blog?.data?.content]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -124,6 +156,11 @@ export default function EditBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
       return;
     }
 
+    if (!content) {
+      toast.error("Please enter blog content");
+      return;
+    }
+
     if (!fileURL) {
       toast.error("Please upload an image or video or enter a URL");
       return;
@@ -131,32 +168,37 @@ export default function EditBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
 
     setIsSubmitting(true);
 
+    let medialUrl;
+
+    if (fileURL.startsWith("http") || fileURL.startsWith("https")) {
+      medialUrl = fileURL;
+    } else {
+      medialUrl = baseURL + fileURL;
+    }
+
     const payload = {
       blog_id: id,
       title: title.trim(),
       description: description.trim(),
-      content: description.trim(),
-      banner_url: baseURL + fileURL,
+      content: content,
+      banner_url: medialUrl,
       banner_type: bannerType,
     };
 
-    try {
-      const res = await createBlogMutation(payload).unwrap();
+    console.log({ payload });
 
-      if (!res?.success) {
+    try {
+      const res = await updateBlogMutation(payload).unwrap();
+
+      if (res?.success) {
         toast.success("Blog created successfully!");
+        router.push("/dashboard/blog-management");
       }
     } catch (error: any) {
       console.error("Error creating blog:", error);
       toast.error(error?.data?.message || "Failed to create blog");
     } finally {
       setIsSubmitting(false);
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setSelectedFile(null);
-      setPreview(null);
-      setFileURL(null);
     }
   };
 
@@ -216,6 +258,28 @@ export default function EditBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
               className='w-full min-h-[120px] resize-none !text-lg text-black !border border-[#D0D0D0]'
               required
             />
+          </div>
+
+          {/* Blog Content */}
+          <div>
+            <Label
+              htmlFor='contnet'
+              className='text-lg font-medium text-[#222222] mb-2'
+            >
+              Blog Content
+            </Label>
+
+            <div className='h-auto w-full mx-auto flex flex-col justify-between gap-6'>
+              <div className='space-y-6'>
+                <div className='h-auto'>
+                  <div
+                    ref={editorRef}
+                    className='h-[50vh] bg-white text-base'
+                    id='quill-editor'
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Image Upload */}
