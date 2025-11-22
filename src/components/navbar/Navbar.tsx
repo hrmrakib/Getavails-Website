@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ArrowRight } from "lucide-react";
@@ -9,13 +10,33 @@ import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 import { Skeleton } from "../ui/skeleton";
+import { useSelector } from "react-redux";
 
 export function Navbar() {
+  const [token, setToken] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { data: profile, isLoading } = useGetProfileQuery(undefined, {
+  const {
+    data: profile,
+    isLoading,
+    refetch,
+  } = useGetProfileQuery(undefined, {
     skip: !localStorage.getItem("access_token"),
   });
+  const user = useSelector((state: any) => state.auth.user);
+
+
+  console.log(profile?.data)
+
+  useEffect(() => {
+    setToken(localStorage.getItem("access_token"));
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      refetch();
+    }
+  }, [user, refetch, token]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

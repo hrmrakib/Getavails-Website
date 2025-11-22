@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useLoginMutation } from "@/redux/features/auth/authAPI";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { saveTokens } from "@/service/authService";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,10 +31,9 @@ export function LoginForm() {
     try {
       const res = await loginMutation({ email, password }).unwrap();
 
-      console.log(res);
-
       if (res?.success) {
         toast("✅ Login successful");
+        await saveTokens(res?.data?.access_token);
         localStorage.setItem("access_token", res?.data?.access_token);
         localStorage.setItem("refresh_token", res?.data?.refresh_token);
 

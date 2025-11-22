@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Edit, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -60,7 +60,9 @@ export default function Home() {
   });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-
+  const [uploadImagePreview, setUploadImagePreview] = useState<string | null>(
+    null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [openModal, setOpenModal] = useState(false);
   const [eventId, setEventId] = useState<string | null>(null);
@@ -70,6 +72,25 @@ export default function Home() {
   const { data: eventList, refetch } = useGetEventListQuery({
     status: activeTab === "event-list" ? "running" : "completed",
   });
+
+  useEffect(() => {
+    if (activeTab === "add-event") {
+      setFormData({
+        title: "",
+        artist: "",
+        location: "",
+        description: "",
+        ticketPrice: "",
+        capacity: "",
+        startDate: "",
+        startTime: "",
+        endDate: "",
+        endTime: "",
+        image: "" as string | null,
+      });
+    }
+  }, [activeTab]);
+
   const [endEventMutation, { isLoading: isEnding }] = useEndEventMutation();
   const [updateEventMutation] = useUpdateEventMutation();
   const [createNewEventMutation] = useCreateNewEventMutation();
@@ -344,7 +365,7 @@ export default function Home() {
               </h2>
 
               <form onSubmit={handlePublishEvent} className='space-y-6'>
-                <div className='rounded-lg border-2 border-dashed border-gray-300 p-8'>
+                {/* <div className='rounded-lg border-2 border-dashed border-gray-300 p-8'>
                   <input
                     ref={fileInputRef}
                     type='file'
@@ -373,9 +394,52 @@ export default function Home() {
                           className='mx-auto h-40 w-full object-cover rounded'
                         />
 
-                        <p className='text-sm text-[#235789] hover:text-blue-700'>
+                        <p className='text-sm text-[#235789] hover:text-[#235789]'>
                           Change Picture
                         </p>
+                      </div>
+                    ) : (
+                      <div className='space-y-2'>
+                        <div className='mx-auto h-32 w-full bg-blue-100 rounded flex items-center justify-center'>
+                          <p className='text-gray-600'>Add Picture</p>
+                        </div>
+                      </div>
+                    )}
+                  </button>
+                </div> */}
+
+                <div className='rounded-lg border-2 border-dashed border-gray-300 p-8'>
+                  <input
+                    ref={fileInputRef}
+                    type='file'
+                    accept='image/*'
+                    onChange={handleImageUpload}
+                    className='hidden'
+                  />
+
+                  <button
+                    type='button'
+                    onClick={() => fileInputRef.current?.click()}
+                    className='w-full'
+                  >
+                    {previewImage || formData.image ? (
+                      <div className='space-y-4'>
+                        <Image
+                          src={
+                            // If selecting a new file → preview BASE64
+                            previewImage
+                              ? previewImage
+                              : // If editing → show existing image URL
+                                `${process.env.NEXT_PUBLIC_IMAGE_URL}${formData.image}`
+                          }
+                          alt='Preview'
+                          width={600}
+                          height={300}
+                          unoptimized
+                          className='mx-auto h-40 w-full object-cover rounded'
+                        />
+
+                        <p className='text-sm text-[#235789]'>Change Picture</p>
                       </div>
                     ) : (
                       <div className='space-y-2'>

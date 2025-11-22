@@ -8,14 +8,9 @@ import Image from "next/image";
 import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 
 const Header = () => {
-  const [admin] = useState({
-    name: "Steven Yuen",
-    role: "Admin",
-    image: "/admin.png",
-  });
   const [headerTitle, setHeaderTitle] = useState("Dashboard");
   const pathname = usePathname();
-  const { data: profile, isLoading } = useGetProfileQuery(undefined, {
+  const { data: profile } = useGetProfileQuery(undefined, {
     skip: !localStorage.getItem("access_token"),
   });
 
@@ -49,7 +44,7 @@ const Header = () => {
             </h1>
           </div>
           <div className='flex items-center gap-4'>
-            <Button variant='ghost' size='icon' className='relative'>
+            {/* <Button variant='ghost' size='icon' className='relative'>
               <Image
                 src='/notification.svg'
                 alt='Admin'
@@ -57,7 +52,7 @@ const Header = () => {
                 height={55}
               />
               <span className='absolute -top-1 -right-1 h-3 w-3 bg-red-500 shadow rounded-full'></span>
-            </Button>
+            </Button> */}
             <div className='flex items-center gap-3'>
               <Avatar className='h-12 w-12 !rounded-sm'>
                 <AvatarImage

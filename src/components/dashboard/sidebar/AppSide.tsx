@@ -23,13 +23,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { NavItem } from "./CommonItem";
 import AdminSidebar from "./AdminSidebar";
 import AgentSidebar from "./AgentSidebar";
 import VenueSidebar from "./VenueSidebar";
 import ArtistSidebar from "./ArtistSidebar";
 import UserSidebar from "./UserSidebar";
 import OrganizerSidebar from "./OrganizerSidebar";
+import { logout } from "@/service/authService";
 
 export default function DashboardSidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -42,8 +42,10 @@ export default function DashboardSidebar() {
   }, [pathname]);
 
   const handleLogout = async () => {
-    // await logout();
-    router.push("/signin");
+    await logout();
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    router.push("/login");
   };
 
   if (

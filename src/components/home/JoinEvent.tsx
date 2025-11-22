@@ -1,83 +1,43 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronRight, Calendar, MapPin, Ticket } from "lucide-react";
 import Image from "next/image";
+import { useGetEventListQuery } from "@/redux/features/user/userAPI";
 
-interface Event {
-  id: number;
+interface IEvent {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  published_at: string;
+  status: string;
   title: string;
-  category: string;
-  date: string;
-  time: string;
-  image: string;
   description: string;
-  artist: string;
+  images: string[];
   location: string;
-  priceRange: string;
-  booked: boolean;
+  ticket_price: number;
+  start_date: string;
+  end_date: string;
+  artist_names: string[];
+  organizer_id: string;
+  capacity: number;
+  available_capacity: number;
+  can_buy_tickets: boolean;
+  organizer: {
+    name: string;
+    avatar: string;
+  };
 }
 
-const EVENTS: Event[] = [
-  {
-    id: 1,
-    title: "Summer Beats 2025",
-    category: "Live Concert",
-    date: "25 December 2025",
-    time: "7:00 PM – 11:00 PM",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-X0laOTYTCqokKJi8lrLQku8otwb3tE.png",
-    description:
-      "Join the biggest open-air concert of the year featuring top Bangladeshi bands and DJs. Experience music, lights, and vibes",
-    artist:
-      "Join the biggest open-air concert of the year featuring top Bangladeshi bands and DJs. Experience music, lights, and vibes",
-    location: "Army Stadium, Dhaka, Bangladesh",
-    priceRange: "৳800 – ৳2500",
-    booked: false,
-  },
-  {
-    id: 2,
-    title: "Summer Beats 2025",
-    category: "Live Concert",
-    date: "25 December 2025",
-    time: "7:00 PM – 11:00 PM",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-X0laOTYTCqokKJi8lrLQku8otwb3tE.png",
-    description:
-      "Join the biggest open-air concert of the year featuring top Bangladeshi bands and DJs. Experience music, lights, and vibes",
-    artist:
-      "Join the biggest open-air concert of the year featuring top Bangladeshi bands and DJs. Experience music, lights, and vibes",
-    location: "Army Stadium, Dhaka, Bangladesh",
-    priceRange: "৳800 – ৳2500",
-    booked: false,
-  },
-  {
-    id: 3,
-    title: "Summer Beats 2025",
-    category: "Live Concert",
-    date: "25 December 2025",
-    time: "7:00 PM – 11:00 PM",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-X0laOTYTCqokKJi8lrLQku8otwb3tE.png",
-    description:
-      "Join the biggest open-air concert of the year featuring top Bangladeshi bands and DJs. Experience music, lights, and vibes",
-    artist:
-      "Join the biggest open-air concert of the year featuring top Bangladeshi bands and DJs. Experience music, lights, and vibes",
-    location: "Army Stadium, Dhaka, Bangladesh",
-    priceRange: "৳800 – ৳2500",
-    booked: false,
-  },
-];
-
 export default function JoinEvent() {
-  const [events, setEvents] = useState<Event[]>(EVENTS);
+  const { data: eventList } = useGetEventListQuery({
+    page: 1,
+    limit: 3,
+  });
 
-  const toggleBooking = (id: number) => {
-    setEvents(
-      events.map((event) =>
-        event.id === id ? { ...event, booked: !event.booked } : event
-      )
-    );
+  console.log({ eventList });
+
+  const handleBooking = async (eventId: string) => {
+    console.log(eventId);
   };
 
   return (
@@ -103,7 +63,7 @@ export default function JoinEvent() {
               className='grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide'
               style={{ scrollBehavior: "smooth" }}
             >
-              {events.map((event) => (
+              {eventList?.data?.map((event: IEvent) => (
                 <div
                   key={event.id}
                   className='flex-shrink-0 w-full md:w-full snap-start'
@@ -112,11 +72,12 @@ export default function JoinEvent() {
                     {/* Card Header with Category */}
                     <div className='px-6 pt-6 pb-4'>
                       <span className='inline-block px-3 py-1 bg-[#235789] text-white text-xs md:text-sm font-semibold rounded-full'>
-                        {event.category}
+                        {event?.status}
                       </span>
                       <p className='text-xs md:text-sm text-muted-foreground mt-2 flex items-center gap-1'>
                         <Calendar className='w-4 h-4' />
-                        {event.date}, {event.time}
+                        {event?.created_at?.split("T")[0]},{" "}
+                        {event.created_at?.split("T")[1].split("Z")[0]}
                       </p>
                     </div>
 
@@ -147,7 +108,7 @@ export default function JoinEvent() {
                           Artist
                         </h4>
                         <p className='text-sm md:text-base text-muted-foreground'>
-                          {event.artist}
+                          {event.artist_names.join(", ")}
                         </p>
                       </div>
 
@@ -158,20 +119,22 @@ export default function JoinEvent() {
                           <span>{event.location}</span>
                         </div>
                         <span className='font-semibold text-foreground'>
-                          {event.priceRange}
+                          {event.ticket_price}
                         </span>
                       </div>
 
                       <button
-                        onClick={() => toggleBooking(event.id)}
-                        className={`w-full py-3 md:py-4 rounded-full font-semibold text-sm md:text-base transition-all duration-300 flex items-center justify-center gap-2 ${
-                          event.booked
-                            ? "bg-green-600 text-white hover:bg-green-700"
-                            : "bg-[#235789] text-white hover:bg-blue-700 active:scale-95"
+                        onClick={() => handleBooking(event.id)}
+                        className={`w-full py-3 md:py-4 rounded-full font-semibold text-sm md:text-base transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
+                          event?.available_capacity > 0
+                            ? "bg-[#235789] text-white hover:bg-[#12538f]"
+                            : "bg-[#235789] text-white hover:bg-[#12538f] active:scale-95"
                         }`}
                       >
                         <Ticket className='w-4 h-4' />
-                        {event.booked ? "Booked ✓" : "Buy Ticket Now"}
+                        {event?.available_capacity > 0
+                          ? "Booked ✓"
+                          : "Buy Ticket Now"}
                         <ChevronRight className='w-4 h-4' />
                       </button>
                     </div>

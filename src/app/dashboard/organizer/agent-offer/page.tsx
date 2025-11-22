@@ -242,7 +242,7 @@ export default function ArtistBooking() {
                         <div>{artist.price}</div>
                         <div className='flex items-center gap-2 lg:gap-4'>
                           <Link
-                            href={`/dashboard/Organizer/message/`}
+                            href={`/dashboard/organizer/message/`}
                             className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
                           >
                             <MessageCircleMore className='h-4 w-4' />

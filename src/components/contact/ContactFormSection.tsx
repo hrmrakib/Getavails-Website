@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, MapPin, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Loader2 } from "lucide-react";
 import { useSendMailMutation } from "@/redux/features/mail/mailAPI";
 import { toast } from "sonner";
 
@@ -52,6 +52,9 @@ export default function ContactFormSection({
         email: formData.email,
         message: formData.message,
       }).unwrap();
+
+      // here wait 1 seconds
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       if (res?.success) {
         toast.success("Message sent successfully!");
