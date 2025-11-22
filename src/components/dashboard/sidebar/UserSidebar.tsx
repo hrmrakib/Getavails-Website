@@ -1,75 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { SidebarMenu } from "@/components/ui/sidebar";
-import { ExpandableNavItem, NavItem, SubNavItem } from "./CommonItem";
-import {
-  LayoutDashboard,
-  Users,
-  BookAlert,
-  CalendarArrowUp,
-  MessageCircleMore,
-} from "lucide-react";
+import { NavItem } from "./CommonItem";
+import { CalendarArrowUp } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const UserSidebar = () => {
-  const [isUserManagementOpen, setIsUserManagementOpen] = useState(true);
   const pathname = usePathname();
-
-  const toggleUserManagement = () => {
-    setIsUserManagementOpen(!isUserManagementOpen);
-  };
 
   return (
     <>
       <SidebarMenu className='px-4 space-y-2'>
-        {/* <NavItem
-          href='/dashboard/user'
-          icon={LayoutDashboard}
-          label='Overview'
-          active={pathname === "/"}
-        /> */}
-
-        {/* <ExpandableNavItem
-          icon={Users}
-          label='Talent Hub'
-          isOpen={isUserManagementOpen}
-          onToggle={toggleUserManagement}
-          active={
-            pathname === "/dashboard/user/talent-hub" ||
-            pathname.startsWith("/user-management") ||
-            pathname === "/artists" ||
-            pathname === "/venue"
-          }
-        >
-          <SubNavItem
-            href='/dashboard/user/talent-hub/artists'
-            label='Artists'
-            active={pathname === "/dashboard/user/talent-hub/artists"}
-          />
-          <SubNavItem
-            href='/dashboard/user/talent-hub/venue'
-            label='Venue'
-            active={pathname === "/dashboard/user/talent-hub/venue"}
-          />
-        </ExpandableNavItem> */}
-
-        {/* <NavItem
-          href='/dashboard/user/bookings-requests'
-          icon={BookAlert}
-          label='Bookings Requests'
-          active={
-            pathname === "/dashboard/user/bookings-requests" ||
-            pathname.startsWith("/dashboard/user/bookings-requests/")
-          }
-        /> */}
-
         <NavItem
-          href='/dashboard/user/event-list'
+          href='/dashboard/user/'
           icon={CalendarArrowUp}
           label='Event List'
           active={
-            pathname === "/dashboard/user/event-list" ||  pathname === "/dashboard/user" ||
+            pathname === "/dashboard/user/event-list" ||
+            pathname === "/dashboard/user" ||
             pathname.startsWith("/dashboard/user/event-list/")
           }
         />
@@ -83,16 +32,6 @@ const UserSidebar = () => {
             pathname.startsWith("/dashboard/user/upcoming-events")
           }
         />
-
-        {/* <NavItem
-          href='/dashboard/user/message'
-          icon={MessageCircleMore}
-          label='Message'
-          active={
-            pathname === "/dashboard/user/message" ||
-            pathname.startsWith("/dashboard/user/message/")
-          }
-        /> */}
       </SidebarMenu>
     </>
   );

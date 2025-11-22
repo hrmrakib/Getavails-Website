@@ -3,7 +3,6 @@
 import type React from "react";
 
 import Link from "next/link";
-import { Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,

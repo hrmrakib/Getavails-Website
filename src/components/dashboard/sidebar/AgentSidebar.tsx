@@ -4,7 +4,6 @@ import React from "react";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import { NavItem } from "./CommonItem";
 import {
-  BadgeCheck,
   LayoutDashboard,
   MessageCircleMore,
   NotebookPen,
