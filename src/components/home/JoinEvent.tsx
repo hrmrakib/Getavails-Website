@@ -1,8 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { ChevronRight, Calendar, MapPin, Ticket } from "lucide-react";
 import Image from "next/image";
 import { useGetEventListQuery } from "@/redux/features/user/userAPI";
+import { getCurrentUser } from "@/service/authService";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
+import { toast } from "sonner";
 
 interface IEvent {
   id: string;
@@ -29,15 +35,40 @@ interface IEvent {
 }
 
 export default function JoinEvent() {
+  const router = useRouter();
+  const [user, setUser] = useState<null | any>(null);
+  const { data: profile } = useGetProfileQuery(undefined, {
+    skip: !localStorage.getItem("access_token"),
+  });
   const { data: eventList } = useGetEventListQuery({
     page: 1,
     limit: 3,
   });
 
-  console.log({ eventList });
+  useEffect(() => {
+    async function getTheUser() {
+      const user = await getCurrentUser();
+      if (user) {
+        setUser(user);
+      }
+    }
+
+    getTheUser();
+  }, []);
 
   const handleBooking = async (eventId: string) => {
-    console.log(eventId);
+    if (!user) {
+      router.push("/login");
+      return;
+    } else if (!profile?.data?.is_verified) {
+      toast.error("Please verify your profile first");
+      return;
+    } else if (profile?.data?.role !== "user") {
+      toast.error("You are not a user, login as a user to book an event");
+      return;
+    }
+
+    router.push(`/event/${eventId}`);
   };
 
   return (
