@@ -54,8 +54,11 @@ const Header = () => {
               <span className='absolute -top-1 -right-1 h-3 w-3 bg-red-500 shadow rounded-full'></span>
             </Button> */}
             <div className='flex items-center gap-3'>
-              <Avatar className='h-12 w-12 !rounded-sm'>
+              <Avatar className='h-12 w-12 !rounded-full'>
                 <AvatarImage
+                  className='h-12 w-12 !rounded-full'
+                  width={55}
+                  height={55}
                   src={
                     process.env.NEXT_PUBLIC_IMAGE_URL + profile?.data?.avatar
                   }
@@ -67,7 +70,10 @@ const Header = () => {
                 <p className='text-base font-medium text-[#1E1E1E]'>
                   {profile?.data?.name}
                 </p>
-                <p className='text-sm text-[#606060]'>{profile?.data?.role}</p>
+                <p className='text-sm text-[#606060]'>
+                  {profile?.data?.role}{" "}
+                  <span className='text-[#606060] font-medium'>{profile?.data?.is_admin ? "(Admin)" : ""}</span>
+                </p>
               </div>
             </div>
           </div>

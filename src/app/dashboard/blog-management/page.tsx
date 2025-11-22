@@ -29,6 +29,7 @@ import {
   useGetBlogsQuery,
 } from "@/redux/features/admin/blogAPI";
 import { toast } from "sonner";
+import page from "@/app/temp/page";
 
 interface Admin {
   name: string;
@@ -51,7 +52,11 @@ export default function BlogPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const router = useRouter();
-  const { data: blogs, isLoading, refetch } = useGetBlogsQuery({});
+  const {
+    data: blogs,
+    isLoading,
+    refetch,
+  } = useGetBlogsQuery({ page: 1, limit: 10 });
   const [deleteBlogMutation, { isLoading: isDeleting }] =
     useDeleteBlogMutation();
 

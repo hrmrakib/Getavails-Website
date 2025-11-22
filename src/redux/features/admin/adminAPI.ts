@@ -86,6 +86,16 @@ const adminAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
+
+    paySubscription: builder.mutation({
+      query: ({ subscriptionId }) => ({
+        url: `/subscriptions/${subscriptionId}/subscribe`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -98,4 +108,5 @@ export const {
   useCreateSubscriptionMutation,
   useUpdateSubscriptionMutation,
   useDeleteSubscriptionMutation,
+  usePaySubscriptionMutation,
 } = adminAPI;
