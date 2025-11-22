@@ -19,6 +19,7 @@ import {
   useTicketPurchaseMutation,
 } from "@/redux/features/user/userAPI";
 import { useState } from "react";
+import page from "@/app/temp/page";
 
 interface IEvent {
   id: string;
@@ -45,7 +46,10 @@ interface IEvent {
 }
 
 export default function Home() {
-  const { data: eventList } = useGetEventListQuery({});
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const { data: eventList } = useGetEventListQuery({ page: 1, limit, search });
   const [open, setOpen] = useState(false);
   const [ticketQuantity, setTicketQuantity] = useState<number>(1);
   const [ticketPurchaseMutation, { isLoading }] = useTicketPurchaseMutation();
@@ -82,10 +86,8 @@ export default function Home() {
       const res = await ticketPurchaseMutation(data).unwrap();
       console.log("res => ", res?.data?.url);
 
-      if (res?.data?.data?.url) {
-        window.open(res?.data?.data?.url, "_blank");
-      } else {
-        alert("Failed to initiate payment. Please try again.");
+      if (res?.data?.url) {
+        window.open(res?.data?.url, "_blank");
       }
     } catch (error) {
       console.error("Error signing up:", error);

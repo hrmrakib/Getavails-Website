@@ -68,7 +68,7 @@ export default function JoinEvent() {
       return;
     }
 
-    router.push(`/event/${eventId}`);
+    router.push(`/dashboard/user/event/${eventId}`);
   };
 
   return (
@@ -157,13 +157,13 @@ export default function JoinEvent() {
                       <button
                         onClick={() => handleBooking(event.id)}
                         className={`w-full py-3 md:py-4 rounded-full font-semibold text-sm md:text-base transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
-                          event?.available_capacity > 0
-                            ? "bg-[#235789] text-white hover:bg-[#12538f]"
+                          event?.available_capacity === 0
+                            ? "bg-[#881a1a] text-white hover:bg-[#8a0707] cursor-not-allowed"
                             : "bg-[#235789] text-white hover:bg-[#12538f] active:scale-95"
                         }`}
                       >
                         <Ticket className='w-4 h-4' />
-                        {event?.available_capacity > 0
+                        {event?.available_capacity === 0
                           ? "Booked ✓"
                           : "Buy Ticket Now"}
                         <ChevronRight className='w-4 h-4' />
