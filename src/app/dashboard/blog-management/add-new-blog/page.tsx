@@ -19,9 +19,10 @@ import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+
 interface AddBlogPageProps {
-  onBack: () => void;
-  onSubmit: (blogData: {
+  onBack?: () => void;
+  onSubmit?: (blogData: {
     title: string;
     description: string;
     image: File | null;
@@ -75,7 +76,7 @@ export default function AddBlogPage({ onBack, onSubmit }: AddBlogPageProps) {
     };
 
     uploadFile();
-  }, [selectedFile]);
+  }, [selectedFile, uploadMediaMutation]);
 
   useEffect(() => {
     let initialized = false;

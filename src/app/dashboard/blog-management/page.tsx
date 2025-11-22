@@ -29,7 +29,6 @@ import {
   useGetBlogsQuery,
 } from "@/redux/features/admin/blogAPI";
 import { toast } from "sonner";
-import page from "@/app/temp/page";
 
 interface Admin {
   name: string;

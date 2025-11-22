@@ -48,8 +48,11 @@ export default function SignUpFormForAgent() {
 
     try {
       const res = await buyerRegisterMutation(data).unwrap();
-      toast.success("Verification OTP sent successfully.");
-      router.push(`/verify-otp?email=${email}`);
+
+      if (res?.success) {
+        toast.success("Verification OTP sent successfully.");
+        router.push(`/verify-otp?email=${email}`);
+      }
     } catch (error) {
       console.error("Error signing up:", error);
     } finally {
