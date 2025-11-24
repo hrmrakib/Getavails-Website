@@ -115,14 +115,14 @@ export function Navbar() {
                       href={`/dashboard/`}
                       className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl cursor-pointer'
                     >
-                      Admin <ArrowRight size={18} />
+                      Admin
                     </Link>
                   )}
                   <Link
                     href={`/dashboard/${profile?.data?.role}`}
                     className='bg-[#235789] flex items-center gap-2 px-6 py-2 text-white rounded-4xl cursor-pointer'
                   >
-                    Go Dashboard <ArrowRight size={18} />
+                    Go Dashboard
                   </Link>
                 </div>
               ) : (
