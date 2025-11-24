@@ -25,9 +25,6 @@ export function Navbar() {
   });
   const user = useSelector((state: any) => state.auth.user);
 
-
-  console.log(profile?.data)
-
   useEffect(() => {
     setToken(localStorage.getItem("access_token"));
   }, []);

@@ -33,7 +33,6 @@ export function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(false);
   const { data: subscriptions } = useGetSubscriptionInfoQuery({});
   const [paySubscriptionMutation] = usePaySubscriptionMutation();
-  console.log("subscriptions", subscriptions?.data);
 
   const plans = [
     {

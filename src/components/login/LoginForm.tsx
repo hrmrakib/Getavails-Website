@@ -35,7 +35,7 @@ export function LoginForm() {
         toast("✅ Login successful");
         await saveTokens(res?.data?.access_token);
         localStorage.setItem("access_token", res?.data?.access_token);
-        localStorage.setItem("refresh_token", res?.data?.refresh_token);
+        localStorage.setItem("getavails_user", JSON.stringify(res?.data?.user));
 
         if (rememberMe) {
           localStorage.setItem("email", email);

@@ -7,9 +7,8 @@ import JoinEvent from "@/components/home/JoinEvent";
 import { PricingSection } from "@/components/home/PricingSection";
 import { RoleJourneySection } from "@/components/how-it-works/RoleJourneySection";
 import { TestimonialsSection } from "@/components/services/TestimonialsSection";
-import React from "react";
 
-const HomePage = () => {
+const HomePage = async () => {
   return (
     <div className='bg-white'>
       <HeroSection />
