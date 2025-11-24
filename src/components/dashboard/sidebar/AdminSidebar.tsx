@@ -14,7 +14,7 @@ import {
 import { usePathname } from "next/navigation";
 
 const AdminSidebar = () => {
-  const [isUserManagementOpen, setIsUserManagementOpen] = useState(true);
+  const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
   const pathname = usePathname();
   const toggleUserManagement = () => {
     setIsUserManagementOpen(!isUserManagementOpen);
@@ -103,6 +103,15 @@ const AdminSidebar = () => {
           active={
             pathname === "/dashboard/blog-management" ||
             pathname.startsWith("/dashboard/blog-management/")
+          }
+        />
+        <NavItem
+          href='/dashboard/user-query'
+          icon={FolderKanban}
+          label='User Query'
+          active={
+            pathname === "/dashboard/user-query" ||
+            pathname.startsWith("/dashboard/user-query/")
           }
         />
 

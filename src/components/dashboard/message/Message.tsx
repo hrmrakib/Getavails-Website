@@ -16,6 +16,7 @@ import {
 import { TMessagesResponse } from "./interface";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 dayjs.extend(relativeTime);
 
 interface IChat {
@@ -33,13 +34,14 @@ export default function MessagePage() {
   const { socket, onlineUsers } = useSocket();
   const { id: chat_id } = useParams<{ id: string }>();
   const router = useRouter();
-
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedContact, setSelectedContact] = useState<IChat | null>(null);
   const [messageInput, setMessageInput] = useState("");
   const [activeTab, setActiveTab] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState(false);
-
+  const { data: profile } = useGetProfileQuery(undefined, {
+    skip: !localStorage.getItem("access_token"),
+  });
   const { data: messagesResponse, refetch: refetchMessages } =
     useGetMessagesQuery<{
       data: TMessagesResponse;
@@ -55,7 +57,7 @@ export default function MessagePage() {
     { skip: false }
   );
 
-  const messages = messagesResponse?.data;
+  const messages = messagesResponse?.data || [];
 
   useEffect(() => {
     if (!inboxChats?.data) return;
@@ -303,9 +305,9 @@ export default function MessagePage() {
                   />
 
                   <div className='absolute right-2 top-1/2 -translate-y-1/2 flex gap-2'>
-                    <Button variant='ghost' size='icon'>
+                    {/* <Button variant='ghost' size='icon'>
                       <Mic className='h-4 w-4 text-gray-400' />
-                    </Button>
+                    </Button> */}
 
                     <Button
                       onClick={handleSendMessage}

@@ -12,11 +12,11 @@ import { useSendMailMutation } from "@/redux/features/mail/mailAPI";
 import { toast } from "sonner";
 
 const roles = [
+  { id: "user", label: "User" },
   { id: "artist", label: "Artist" },
   { id: "agent", label: "Agent" },
   { id: "venue", label: "Venue" },
-  { id: "buyer", label: "Buyer" },
-  { id: "user", label: "User" },
+  { id: "organizer", label: "Organizer" },
 ];
 
 export default function ContactFormSection({
@@ -24,7 +24,7 @@ export default function ContactFormSection({
 }: {
   haveLeft?: boolean;
 }) {
-  const [selectedRole, setSelectedRole] = useState("artist");
+  const [selectedRole, setSelectedRole] = useState("user");
   const [formData, setFormData] = useState({
     role: selectedRole,
     name: "",
