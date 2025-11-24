@@ -14,25 +14,35 @@ import {
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface IArtist {
+export interface IProfile {
   id: string;
-  role: "ARTIST";
+  role: "VENUE" | "AGENT";
   email: string;
   avatar: string;
   name: string;
-  gender: "MALE" | "FEMALE" | "OTHER";
   location: string;
-  genre: string;
+  subscription_name: string | null;
   availability: string[];
-  price: string;
-  artist_agents: string[];
-  artist_pending_agents: string[];
+  price: string | null;
+  artist_agents?: string[];
+  artist_pending_agents?: string[];
+  genre?: string;
+}
+
+export interface IUser extends IProfile {
+  role: "VENUE" | "AGENT";
+  venue_type?: string; // Specific to VENUE
+  capacity?: number; // Specific to VENUE
+  gender?: "MALE" | "FEMALE" | "OTHER"; // Specific to AGENT
+  experience?: string; // Specific to AGENT
+  agent_artists?: string[]; // Specific to AGENT
+  agent_pending_artists?: string[]; // Specific to AGENT
 }
 
 interface BookingDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  artist: IArtist | null;
+  artist?: IUser | null;
 }
 
 export function BookingDrawer({
