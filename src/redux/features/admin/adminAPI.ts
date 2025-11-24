@@ -38,9 +38,6 @@ const adminAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/subscriptions?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 

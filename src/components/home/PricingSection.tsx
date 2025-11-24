@@ -15,6 +15,8 @@ import {
   usePaySubscriptionMutation,
 } from "@/redux/features/admin/adminAPI";
 import { toast } from "sonner";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
+import { useRouter } from "next/navigation";
 
 interface SubscriptionPlan {
   id: string;
@@ -30,70 +32,28 @@ interface SubscriptionPlan {
 }
 
 export function PricingSection() {
+  const router = useRouter();
   const [isAnnual, setIsAnnual] = useState(false);
   const { data: subscriptions } = useGetSubscriptionInfoQuery({});
   const [paySubscriptionMutation] = usePaySubscriptionMutation();
+  const { data: profile } = useGetProfileQuery(undefined);
 
-  const plans = [
-    {
-      name: "Personal",
-      icon: User,
-      description:
-        "For individuals who want to launch a simple portfolio or landing page.",
-      price: { monthly: 0, annual: 0 },
-      features: [
-        "Fully responsive Webflow template",
-        "1 portfolio page",
-        "Basic SEO setup",
-        "Email support",
-        "Lifetime free updates",
-      ],
-      buttonText: "Try now",
-      buttonVariant: "default" as const,
-      theme: "dark",
-      popular: false,
-    },
-    {
-      name: "Starter",
-      icon: Rocket,
-      description:
-        "For teams who want to build stylish websites fast with Webflow.",
-      price: { monthly: 299, annual: 199 },
-      features: [
-        "Includes Figma + Webflow files",
-        "Up to 10 project templates",
-        "Custom domain support",
-        "Priority email support",
-        "Monthly design updates",
-      ],
-      buttonText: "Subscribe now",
-      buttonVariant: "default" as const,
-      theme: "blue",
-      popular: true,
-      savings: "65%",
-    },
-    {
-      name: "Premium",
-      icon: Crown,
-      description:
-        "For companies who need advanced features and top-tier support.",
-      price: { monthly: 699, annual: 499 },
-      features: [
-        "Access to all template collections",
-        "Unlimited projects",
-        "Advanced SEO tools",
-        "24/7 dedicated support",
-        "Weekly new template drops",
-      ],
-      buttonText: "Subscribe now",
-      buttonVariant: "default" as const,
-      theme: "dark",
-      popular: false,
-      savings: "75%",
-    },
-  ];
+  console.log(subscriptions);
+
+  const user = profile?.data;
 
   const handleSubscriptionClick = async (plan: SubscriptionPlan) => {
+    if (!user) {
+      router.push("/login");
+      return;
+    } else if (!profile?.data?.is_verified) {
+      toast.error("Please verify your profile first");
+      return;
+    } else if (profile?.data?.role !== "user") {
+      toast.error("You are not a user, login as a user to book an event");
+      return;
+    }
+
     try {
       console.log(plan.id);
       const res = await paySubscriptionMutation({
@@ -244,12 +204,12 @@ export function PricingSection() {
                 </Button>
 
                 {/* Money Back Guarantee */}
-                {plan.name !== "Personal" && (
+                {/* {plan.name !== "Personal" && (
                   <div className='flex items-center justify-center mt-4 text-sm text-white/80'>
                     <DollarSign className='w-4 h-4 mr-2 bg-white rounded-full text-black' />
                     30-day money back guarantee
                   </div>
-                )}
+                )} */}
               </div>
             );
           })}
