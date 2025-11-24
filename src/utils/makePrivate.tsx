@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
+import { Loader } from "lucide-react";
 
 interface RoleRedirectProps {
   allowedRole?: string;
@@ -30,11 +31,23 @@ export function RoleRedirect({ allowedRole, children }: RoleRedirectProps) {
   }, [profile, isLoading, allowedRole, router]);
 
   if (isLoading || authorized === null) {
-    return <div className='text-center py-20'>Checking access...</div>;
+    return (
+      <div className='text-center flex items-center justify-center gap-2 py-20'>
+        Checking access <Loader className='animate-spin' />
+      </div>
+    );
   }
 
   return <>{children}</>;
 }
+
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+// 😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆😆
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
 
 // "use client";
 
