@@ -32,7 +32,6 @@ export function LoginForm() {
       const res = await loginMutation({ email, password }).unwrap();
 
       if (res?.success) {
-        toast("✅ Login successful");
         await saveTokens(res?.data?.access_token);
         localStorage.setItem("access_token", res?.data?.access_token);
         localStorage.setItem("getavails_user", JSON.stringify(res?.data?.user));
