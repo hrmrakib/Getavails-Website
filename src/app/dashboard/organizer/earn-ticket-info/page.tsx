@@ -155,48 +155,78 @@ export default function VenueManagement() {
         <main>
           <>
             <div className='bg-card rounded-lg border border-border overflow-hidden'>
+              {/* TABLE HEADER */}
               {!tickets?.data?.length ? (
                 <p className='text-center text-muted-foreground py-6 lg:py-20'>
                   No data found.
                 </p>
               ) : (
-                <div className='hidden md:grid md:grid-cols-6 bg-[#235789] text-primary-foreground p-4 font-medium'>
-                  <div>Event Title</div>
-                  <div>Artist</div>
-                  <div>Location</div>
-                  <div>Capacity</div>
-                  <div>Availabile Ticket</div>
-                  <div>Status</div>
-                </div>
+                <>
+                  <div className='hidden md:grid md:grid-cols-6 bg-[#235789] text-primary-foreground p-4 font-medium'>
+                    <div>Event Title</div>
+                    <div>Artist</div>
+                    <div>Location</div>
+                    <div>Capacity</div>
+                    <div>Available Ticket</div>
+                    <div>Status</div>
+                  </div>
+                </>
               )}
 
-              {isFetching ? (
-                <div className='p-8 text-center text-muted-foreground'>
-                  Loading...
-                </div>
-              ) : (
-                <div className='divide-y divide-border'>
-                  {tickets?.data?.map((ticket: ITicket) => (
-                    <div
-                      key={ticket.id}
-                      className='p-4 hover:bg-muted/50 transition-colors'
-                    >
-                      <div className='hidden md:grid md:grid-cols-6 items-center'>
-                        <div className='flex items-center gap-3'>
-                          {ticket.event.title || "N/A"}
-                        </div>
-                        <div>
-                          {ticket?.event?.artist_names.join(", ") || "N/A"}
-                        </div>
-                        <div>{ticket?.event?.location || "N/A"}</div>
-                        <div>{ticket?.event?.capacity || "N/A"}</div>
-                        <div>{ticket.price || "N/A"}</div>
-                        <div>{ticket?.status || "N/A"}</div>
+              {/* ROWS */}
+              <div className='divide-y divide-border'>
+                {tickets?.data?.map((ticket: ITicket) => (
+                  <div
+                    key={ticket.id}
+                    className='p-4 hover:bg-muted/50 transition-colors'
+                  >
+                    {/* Desktop Row */}
+                    <div className='hidden md:grid md:grid-cols-6 items-center'>
+                      <div>{ticket.event.title || "N/A"}</div>
+                      <div>
+                        {ticket.event.artist_names?.join(", ") || "N/A"}
                       </div>
+                      <div>{ticket.event.location || "N/A"}</div>
+                      <div>{ticket.event.capacity || "N/A"}</div>
+                      <div>{ticket.price || "N/A"}</div>
+                      <div>{ticket.status || "N/A"}</div>
                     </div>
-                  ))}
-                </div>
-              )}
+
+                    {/* Mobile Card View */}
+                    <div className='md:hidden flex flex-col gap-2 bg-white rounded-lg border p-4'>
+                      <p className='text-sm'>
+                        <span className='font-semibold'>Event:</span>{" "}
+                        {ticket.event.title}
+                      </p>
+
+                      <p className='text-sm'>
+                        <span className='font-semibold'>Artist:</span>{" "}
+                        {ticket.event.artist_names.join(", ")}
+                      </p>
+
+                      <p className='text-sm'>
+                        <span className='font-semibold'>Location:</span>{" "}
+                        {ticket.event.location}
+                      </p>
+
+                      <p className='text-sm'>
+                        <span className='font-semibold'>Capacity:</span>{" "}
+                        {ticket.event.capacity}
+                      </p>
+
+                      <p className='text-sm'>
+                        <span className='font-semibold'>Available Ticket:</span>{" "}
+                        {ticket.price}
+                      </p>
+
+                      <p className='text-sm'>
+                        <span className='font-semibold'>Status:</span>{" "}
+                        {ticket.status}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Pagination */}

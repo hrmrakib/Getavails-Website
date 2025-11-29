@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Mic, Send, CheckCheck } from "lucide-react";
+import { Search, Mic, Send, CheckCheck, ArrowLeft } from "lucide-react";
 import { useSocket } from "@/provider/SocketProvider";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -31,6 +31,10 @@ interface IChat {
 }
 
 export default function MessagePage() {
+  const [userInfo, setUserInfo] = useState({
+    isAdmin: false,
+    role: "",
+  });
   const { socket, onlineUsers } = useSocket();
   const { id: chat_id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -39,7 +43,7 @@ export default function MessagePage() {
   const [messageInput, setMessageInput] = useState("");
   const [activeTab, setActiveTab] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState(false);
-  const { data: profile } = useGetProfileQuery(undefined, {
+  const { data: profile, isFetching } = useGetProfileQuery(undefined, {
     skip: !localStorage.getItem("access_token"),
   });
   const { data: messagesResponse, refetch: refetchMessages } =
@@ -60,6 +64,13 @@ export default function MessagePage() {
   const messages = messagesResponse?.data || [];
 
   useEffect(() => {
+    setUserInfo({
+      isAdmin: profile?.data?.is_admin || false,
+      role: profile?.data?.role || "",
+    });
+  }, [profile?.data]);
+
+  useEffect(() => {
     if (!inboxChats?.data) return;
     const contact = inboxChats.data.find((c: IChat) => c.id === chat_id);
     if (contact) {
@@ -67,6 +78,46 @@ export default function MessagePage() {
       if (window.innerWidth < 640) setIsMobileView(true);
     }
   }, [chat_id, inboxChats]);
+
+  // get role base path
+  const roleBasePath = async () => {
+    if (userInfo?.isAdmin) {
+      return "/dashboard/message";
+    }
+
+    const role = userInfo?.role?.toLowerCase();
+
+    switch (role) {
+      case "artist":
+        return "/dashboard/artist/message";
+      case "agent":
+        return "/dashboard/agent/message";
+      case "organizer":
+        return "/dashboard/organizer/message";
+      case "venue":
+        return "/dashboard/venue/message";
+      case "user":
+        return "/dashboard/user/message";
+    }
+  };
+
+  // ✅ Always returns a valid path (never undefined)
+  const getRoleBasePath = () => {
+    const isAdmin = profile?.data?.is_admin;
+    const role = profile?.data?.role?.toLowerCase() || "";
+
+    if (isAdmin) return "/dashboard/message";
+
+    const map: Record<string, string> = {
+      artist: "/dashboard/artist/message",
+      agent: "/dashboard/agent/message",
+      organizer: "/dashboard/organizer/message",
+      venue: "/dashboard/venue/message",
+      user: "/dashboard/user/message",
+    };
+
+    return map[role] || "/dashboard/user/message";
+  };
 
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;
@@ -107,14 +158,13 @@ export default function MessagePage() {
     };
   }, [socket, chat_id, refetchMessages]);
 
-  const handleSelectContact = (contact: IChat) => {
+  const handleSelectContact = async (contact: IChat) => {
     setSelectedContact(contact);
-
     if (window.innerWidth < 640) {
       setIsMobileView(true);
     }
 
-    router.push(`/dashboard/artist/message/${contact.id}`);
+    router.push(`${getRoleBasePath()}/${contact.id}`);
   };
 
   const formatTime = (ts?: string) => {
@@ -240,7 +290,7 @@ export default function MessagePage() {
                     setSelectedContact(null);
                   }}
                 >
-                  ←
+                  <ArrowLeft className='h-5 w-5 mr-2' />
                 </button>
 
                 <Avatar>

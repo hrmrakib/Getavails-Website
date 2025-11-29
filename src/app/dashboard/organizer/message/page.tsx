@@ -5,11 +5,11 @@ import React from "react";
 
 const Message = () => {
   return (
-    <RoleRedirect allowedRole='ORGANIZER'>
+    // <RoleRedirect allowedRole='ORGANIZER'>
       <SocketProvider>
         <MessagePage />
       </SocketProvider>
-    </RoleRedirect>
+    // </RoleRedirect>
   );
 };
 
