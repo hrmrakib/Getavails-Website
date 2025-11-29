@@ -149,76 +149,107 @@ export default function VenueManagement() {
           {activeTab === "new" && (
             <>
               <div className='bg-card rounded-lg border border-border overflow-hidden'>
-                {!agentOffer?.data?.length ? (
-                  <p className='text-center text-muted-foreground py-6 lg:py-20'>
-                    No data found.
-                  </p>
-                ) : (
-                  <div className='hidden md:grid md:grid-cols-6 bg-[#235789] text-primary-foreground p-4 font-medium'>
-                    <div>Artist</div>
-                    <div>Email</div>
-                    <div>Location</div>
-                    <div>Availability</div>
-                    <div>Price/Rate</div>
-                    <div>Actions</div>
-                  </div>
-                )}
-
-                {isFetching ? (
-                  <div className='p-8 text-center text-muted-foreground'>
-                    Loading...
-                  </div>
-                ) : (
-                  <div className='divide-y divide-border'>
-                    {agentOffer?.data?.map((artist: IVenue) => (
-                      <div
-                        key={artist.id}
-                        className='p-4 hover:bg-muted/50 transition-colors'
-                      >
-                        <div className='hidden md:grid md:grid-cols-6 items-center'>
-                          <div className='flex items-center gap-3'>
-                            <Avatar className='h-8 w-8'>
-                              <AvatarImage
-                                src={
-                                  process.env.NEXT_PUBLIC_API_URL +
-                                  artist.avatar
-                                }
-                                alt={artist.name}
-                              />
-                              <AvatarFallback>
-                                {artist.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className='font-medium'>{artist.name}</span>
-                          </div>
-                          <div>{artist?.email || "N/A"}</div>
-                          <div>{artist?.location || "N/A"}</div>
-                          <div className='flex items-center gap-2'>
-                            {artist.availability[0]?.split("T")[0]}{" "}
-                            <button
-                              onClick={() => handleBookArtist(artist)}
-                              className='cursor-pointer'
-                            >
-                              <Eye className='h-4 w-4' />
-                            </button>
-                          </div>
-                          <div>{artist.price || "N/A"}</div>
-                          <div className='flex items-center gap-2 lg:gap-4'>
-                            <Link
-                              href={`/dashboard/Organizer/message/`}
-                              className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
-                            >
-                              <MessageCircleMore className='h-4 w-4' />
-                            </Link>
-                          </div>
-                        </div>
+                {agentOffer?.data?.map((artist: IVenue) => (
+                  <div
+                    key={artist.id}
+                    className='p-4 hover:bg-muted/50 transition-colors'
+                  >
+                    {/* Desktop Table Row */}
+                    <div className='hidden md:grid md:grid-cols-6 items-center'>
+                      <div className='flex items-center gap-3'>
+                        <Avatar className='h-8 w-8'>
+                          <AvatarImage
+                            src={
+                              process.env.NEXT_PUBLIC_API_URL + artist.avatar
+                            }
+                          />
+                          <AvatarFallback>
+                            {artist.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className='font-medium'>{artist.name}</span>
                       </div>
-                    ))}
+
+                      <div>{artist.email}</div>
+                      <div>{artist.location}</div>
+
+                      <div className='flex items-center gap-2'>
+                        {artist.availability?.[0]?.split("T")[0] || "N/A"}
+                        <button onClick={() => handleBookArtist(artist)}>
+                          <Eye className='h-4 w-4' />
+                        </button>
+                      </div>
+
+                      <div>{artist.price || "N/A"}</div>
+
+                      <div className='flex items-center gap-2'>
+                        <Link
+                          href={`/dashboard/Organizer/message/`}
+                          className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white rounded-2xl'
+                        >
+                          <MessageCircleMore className='h-4 w-4' />
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className='md:hidden bg-white border rounded-lg p-4 space-y-2'>
+                      <div className='flex items-center gap-3'>
+                        <Avatar className='h-8 w-8'>
+                          <AvatarImage
+                            src={
+                              process.env.NEXT_PUBLIC_API_URL + artist.avatar
+                            }
+                          />
+                          <AvatarFallback>
+                            {artist.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p className='font-medium'>{artist.name}</p>
+                      </div>
+
+                      <p>
+                        <span className='font-semibold'>Email:</span>{" "}
+                        {artist.email}
+                      </p>
+                      <p>
+                        <span className='font-semibold'>Location:</span>{" "}
+                        {artist.location}
+                      </p>
+                      <p>
+                        <span className='font-semibold'>Availability:</span>{" "}
+                        {artist.availability?.[0]?.split("T")[0] || "N/A"}
+                      </p>
+                      <p>
+                        <span className='font-semibold'>Price:</span>{" "}
+                        {artist.price || "N/A"}
+                      </p>
+
+                      <div className='flex items-center justify-between pt-3'>
+                        <button
+                          onClick={() => handleBookArtist(artist)}
+                          className='flex items-center gap-2 text-[#235789]'
+                        >
+                          <Eye className='h-4 w-4' />
+                          View
+                        </button>
+
+                        <Link
+                          href={`/dashboard/Organizer/message/`}
+                          className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white rounded-2xl'
+                        >
+                          <MessageCircleMore className='h-4 w-4' />
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
 
               {/* Pagination */}
