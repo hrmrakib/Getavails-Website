@@ -264,7 +264,7 @@ export default function ArtistBooking() {
                   variant='ghost'
                   size='sm'
                   onClick={handlePrev}
-                  disabled={page === 1}
+                  disabled={page === 1} 
                   className='flex items-center gap-1'
                 >
                   <ChevronLeft className='h-4 w-4' /> Previous
