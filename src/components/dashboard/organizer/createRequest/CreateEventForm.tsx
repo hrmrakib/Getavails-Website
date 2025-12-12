@@ -22,8 +22,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchUserByRoleQuery } from "@/redux/features/organizer/offers/offersAPI";
+import { set } from "date-fns";
+import Image from "next/image";
 
 export type Event = {
   id: string;
@@ -58,9 +60,24 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data } = useSearchUserByRoleQuery({
-    role: formData.role,
-  });
+  const [allUsers, setAllUsers] = useState([]);
+  const [openListModal, setOpenListModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const { data } = useSearchUserByRoleQuery(
+    {
+      role: formData?.role,
+    },
+    {
+      skip: !formData?.role,
+    }
+  );
+
+  useEffect(() => {
+    if (data?.data) {
+      setAllUsers(data?.data);
+      setOpenListModal(true);
+    }
+  }, [data, formData?.role]);
 
   console.log(data?.data);
 
@@ -114,6 +131,12 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
       setErrors({});
       setIsSubmitting(false);
     }, 500);
+  };
+
+  const handleSelectUser = (user: any) => {
+    console.log({ user });
+    setSelectedUser(user);
+    setOpenListModal(false);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -364,28 +387,73 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
       </button>
 
       {/* Select Options */}
-      <Dialog>
-        <form>
-          <DialogTrigger asChild>
-            <Button variant='outline'>Open Dialog</Button>
-          </DialogTrigger>
-          <DialogContent className='sm:max-w-[425px]'>
-            <DialogHeader>
-              <DialogTitle>Edit profile</DialogTitle>
-              <DialogDescription>
-                Make changes to your profile here. Click save when you&apos;re
-                done.
-              </DialogDescription>
-            </DialogHeader>
-            <div className='flex flex-col gap-4'></div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant='outline'>Cancel</Button>
-              </DialogClose>
-              {/* <Button type='submit'>Save changes</Button> */}
-            </DialogFooter>
-          </DialogContent>
-        </form>
+      <Dialog open={openListModal} onOpenChange={setOpenListModal}>
+        <DialogContent className='sm:max-w-[500px]'>
+          <DialogHeader>
+            <DialogTitle>{formData.role} Details</DialogTitle>
+            <DialogDescription>
+              List of {formData.role} information
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className='flex flex-col gap-4 max-h-[400px] overflow-y-auto py-2'>
+            {allUsers?.map((item: any) => (
+              <div
+                key={item.id}
+                className='flex items-center gap-4 p-4 border rounded-xl shadow-sm hover:shadow-md transition cursor-pointer'
+                onClick={() => handleSelectUser(item)}
+              >
+                <Image
+                  alt={item.name}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${item.avatar}`}
+                  className='w-14 h-14 rounded-full object-cover border'
+                  width={100}
+                  height={100}
+                />
+
+                <div className='flex flex-col w-full'>
+                  <div className='flex justify-between items-center'>
+                    <p className='text-lg font-semibold'>{item.name}</p>
+                    <span
+                      className={`px-2 py-1 text-xs rounded font-semibold ${
+                        item.is_active
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {item.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+
+                  <p className='text-sm text-muted-foreground'>{item.email}</p>
+
+                  <div className='flex justify-between mt-2 text-sm font-medium'>
+                    <p>📍 {item.location}</p>
+                    <p>💰 {item.price}</p>
+                  </div>
+
+                  <p className='mt-1 text-sm'>
+                    {item.is_verified ? (
+                      <span className='text-green-600 font-semibold'>
+                        ✔ Verified
+                      </span>
+                    ) : (
+                      <span className='text-red-600 font-semibold'>
+                        ✘ Not Verified
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant='outline'>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </form>
   );

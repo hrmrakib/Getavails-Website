@@ -9,9 +9,10 @@ export type Event = {
   date: string;
   time: string;
   amountRange: string;
-  status: "pending" | "completed";
+  status: "accepted" | "pending" | "completed";
   documents?: string[];
 };
+
 interface EventsListProps {
   events: Event[];
   tab: string;

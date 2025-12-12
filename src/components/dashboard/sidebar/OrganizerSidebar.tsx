@@ -9,6 +9,7 @@ import {
   Medal,
   FolderKanban,
   MessageCircleMore,
+  PencilLine,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { RoleRedirect } from "@/utils/makePrivate";
@@ -29,6 +30,16 @@ const OrganizerSidebar = () => {
             active={
               pathname === "/dashboard/organizer" ||
               pathname === "/dashboard/organizer"
+            }
+          />
+
+          <NavItem
+            href='/dashboard/organizer/create-request'
+            icon={PencilLine}
+            label='Crate Request'
+            active={
+              pathname === "/dashboard/organizer/create-request" ||
+              pathname.startsWith("/dashboard/organizer/create-request/")
             }
           />
 
