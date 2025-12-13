@@ -23,7 +23,7 @@ export function Navbar() {
   } = useGetProfileQuery(undefined, {
     skip: !localStorage.getItem("access_token"),
   });
-  const user = useSelector((state: any) => state.auth.user);
+  const userToggle = useSelector((state: any) => state.auth.userToggle);
 
   useEffect(() => {
     setToken(localStorage.getItem("access_token"));
@@ -33,7 +33,7 @@ export function Navbar() {
     if (token) {
       refetch();
     }
-  }, [user, refetch, token]);
+  }, [userToggle, refetch, token]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

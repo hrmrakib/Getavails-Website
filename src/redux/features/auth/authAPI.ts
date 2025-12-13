@@ -1,4 +1,5 @@
 import baseAPI from "@/redux/api/api";
+import { setUser } from "./authSlice";
 
 const AuthenticationAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -8,6 +9,13 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
         method: "POST",
         body,
       }),
+
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data } = await queryFulfilled;
+        dispatch(setUser({ user: data.data, token: data.access_token }));
+      },
+      
+      invalidatesTags: ["auth"]
     }),
 
     agentRegister: builder.mutation({

@@ -14,6 +14,8 @@ import { useLoginMutation } from "@/redux/features/auth/authAPI";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { saveTokens } from "@/service/authService";
+import { useDispatch } from "react-redux";
+import { userTrack } from "@/redux/features/auth/authSlice";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +25,7 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginMutation] = useLoginMutation();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +38,7 @@ export function LoginForm() {
         await saveTokens(res?.data?.access_token);
         localStorage.setItem("access_token", res?.data?.access_token);
         localStorage.setItem("getavails_user", JSON.stringify(res?.data?.user));
+        dispatch(userTrack());
 
         if (rememberMe) {
           localStorage.setItem("email", email);
