@@ -46,7 +46,7 @@ interface CreateEventFormProps {
 
 export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
   const [formData, setFormData] = useState({
-    role: "",
+    role: "AGENT",
     agent: "",
     artist: "",
     venue: "",
@@ -74,12 +74,9 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
 
   useEffect(() => {
     if (data?.data) {
-      setAllUsers(data?.data);
-      setOpenListModal(true);
+      setAllUsers(data.data);
     }
-  }, [data, formData?.role]);
-
-  console.log(data?.data);
+  }, [data]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -161,27 +158,30 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
     <form onSubmit={handleSubmit} className='space-y-6'>
       {/* Select Agent */}
       <div>
-        <label className='block text-sm font-semibold text-foreground mb-2'>
-          Select Agent
-        </label>
-        <Select
-          value={formData.role}
-          onValueChange={(value) => setFormData({ ...formData, role: value })}
-        >
-          <SelectTrigger className='w-full'>
-            <SelectValue placeholder='Select a role' className='text-black' />
-          </SelectTrigger>
+        <label className='block text-sm font-semibold mb-2'>Select Agent</label>
 
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value='AGENT'>AGENT</SelectItem>
-              <SelectItem value='USER'>USER</SelectItem>
-              <SelectItem value='ORGANIZER'>ORGANIZER</SelectItem>
-              <SelectItem value='VENUE'>VENUE</SelectItem>
-              <SelectItem value='ARTIST'>ARTIST</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <button
+          type='button'
+          onClick={() => setOpenListModal(true)}
+          className='w-full flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+        >
+          {selectedUser ? (
+            <div className='flex items-center gap-3'>
+              {/* <Image
+                src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${selectedUser.avatar}`}
+                alt={selectedUser.name}
+                width={40}
+                height={40}
+                className='rounded-full border'
+              /> */}
+              {/* <span className='font-medium'>{selectedUser?.name}</span> */}
+            </div>
+          ) : (
+            <span className='text-muted-foreground'>
+              Click to select an agent
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Artist */}
