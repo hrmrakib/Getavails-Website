@@ -27,6 +27,15 @@ const AgentSidebar = () => {
           />
 
           <NavItem
+            href='/dashboard/agent/create-request'
+            icon={Palette}
+            label='Create Request'
+            active={
+              pathname === "/dashboard/agent/create-request" ||
+              pathname.startsWith("/dashboard/agent/create-request/")
+            }
+          />
+          <NavItem
             href='/dashboard/agent/artists-management'
             icon={Palette}
             label='Artists Management'

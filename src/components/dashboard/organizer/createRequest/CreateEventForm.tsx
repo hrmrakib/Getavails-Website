@@ -23,9 +23,13 @@ import {
 } from "@/components/ui/dialog";
 
 import { useEffect, useState } from "react";
-import { useSearchUserByRoleQuery } from "@/redux/features/organizer/offers/offersAPI";
+import {
+  useCreateOfferMutation,
+  useSearchUserByRoleQuery,
+} from "@/redux/features/organizer/offers/offersAPI";
 import { set } from "date-fns";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export type Event = {
   id: string;
@@ -37,7 +41,6 @@ export type Event = {
   time: string;
   amountRange: string;
   status: "pending" | "completed";
-  documents?: string[];
 };
 
 interface CreateEventFormProps {
@@ -55,14 +58,14 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
     time: "09:00",
     period: "AM",
     amountRange: "",
-    documents: [] as string[],
   });
+  const [document, setDocument] = useState<File | null>(null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [openListModal, setOpenListModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const { data } = useSearchUserByRoleQuery(
     {
       role: formData?.role,
@@ -71,6 +74,7 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
       skip: !formData?.role,
     }
   );
+  const [createOfferMutation] = useCreateOfferMutation();
 
   useEffect(() => {
     if (data?.data) {
@@ -92,66 +96,83 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
 
-    setIsSubmitting(true);
+    try {
+      const ISODate = new Date(
+        `${formData.date}T${formData.time}`
+      ).toISOString();
 
-    // Simulate API call
-    setTimeout(() => {
-      onSubmit({
-        agent: formData.agent,
-        artist: formData.artist,
-        venue: formData.venue,
+      const formDataTo = new FormData();
+      const data = {
+        price: Number(formData.amountRange),
         location: formData.location,
-        date: formData.date,
-        time: `${formData.time} ${formData.period}`,
-        amountRange: formData.amountRange,
-        documents: formData.documents,
-      });
+        agent_id: selectedUser?.id,
+        date: ISODate,
+      };
 
-      // Reset form
-      setFormData({
-        role: "",
-        agent: "XYZ",
-        artist: "",
-        venue: "",
-        location: "",
-        date: "",
-        time: "09:00",
-        period: "AM",
-        amountRange: "",
-        documents: [],
-      });
-      setErrors({});
-      setIsSubmitting(false);
-    }, 500);
+      formDataTo.append("data", JSON.stringify(data));
+
+      if (document) {
+        formDataTo.append("document", document);
+      }
+
+      const res = await createOfferMutation(formDataTo).unwrap();
+
+      if (res?.success) {
+        toast.success(res?.message);
+      }
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Something went wrong");
+    } finally {
+      setTimeout(() => {
+        setFormData({
+          role: "",
+          agent: "XYZ",
+          artist: "",
+          venue: "",
+          location: "",
+          date: "",
+          time: "09:00",
+          period: "AM",
+          amountRange: "",
+        });
+        setDocument(null);
+        setErrors({});
+        setSelectedUser(null);
+      }, 500);
+    }
   };
 
   const handleSelectUser = (user: any) => {
-    console.log({ user });
     setSelectedUser(user);
     setOpenListModal(false);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
-      const fileNames = Array.from(files).map((f) => f.name);
-      setFormData({
-        ...formData,
-        documents: [...formData.documents, ...fileNames],
-      });
-    }
-  };
 
-  const removeDocument = (index: number) => {
-    setFormData({
-      ...formData,
-      documents: formData.documents.filter((_, i) => i !== index),
-    });
+    if (!files) return;
+
+    // image and pdf only
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "application/pdf",
+    ];
+
+    if (!allowedTypes.includes(files[0].type)) {
+      toast.error("Only image and pdf files are allowed");
+      return;
+    }
+
+    if (files && files.length > 0) {
+      setDocument(files[0]);
+    }
   };
 
   return (
@@ -163,18 +184,18 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
         <button
           type='button'
           onClick={() => setOpenListModal(true)}
-          className='w-full flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+          className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
         >
           {selectedUser ? (
             <div className='flex items-center gap-3'>
-              {/* <Image
+              <Image
                 src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${selectedUser.avatar}`}
                 alt={selectedUser.name}
                 width={40}
                 height={40}
-                className='rounded-full border'
-              /> */}
-              {/* <span className='font-medium'>{selectedUser?.name}</span> */}
+                className='rounded-full border p-1'
+              />
+              <span className='font-medium'>{selectedUser?.name}</span>
             </div>
           ) : (
             <span className='text-muted-foreground'>
@@ -185,7 +206,7 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
       </div>
 
       {/* Artist */}
-      <div>
+      {/* <div>
         <label className='block text-sm font-semibold text-foreground mb-2'>
           Artist
         </label>
@@ -201,10 +222,10 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
         {errors.artist && (
           <p className='text-destructive text-sm mt-1'>{errors.artist}</p>
         )}
-      </div>
+      </div> */}
 
       {/* Venue */}
-      <div>
+      {/* <div>
         <label className='block text-sm font-semibold text-foreground mb-2'>
           Venue
         </label>
@@ -220,7 +241,7 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
         {errors.venue && (
           <p className='text-destructive text-sm mt-1'>{errors.venue}</p>
         )}
-      </div>
+      </div> */}
 
       {/* Location */}
       <div>
@@ -277,7 +298,7 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
               className='w-full px-4 py-3 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all'
             />
           </div>
-          <div className='flex gap-2'>
+          {/* <div className='flex gap-2'>
             <button
               type='button'
               onClick={() => setFormData({ ...formData, period: "AM" })}
@@ -300,7 +321,7 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
             >
               PM
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -310,7 +331,7 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
           Amount Range
         </label>
         <input
-          type='text'
+          type='number'
           placeholder='Write here'
           value={formData.amountRange}
           onChange={(e) =>
@@ -330,49 +351,54 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
         <label className='block text-sm font-semibold text-foreground mb-2'>
           Upload Documents
         </label>
-        <label className='w-full px-4 py-8 border-2 border-dashed border-border rounded-lg bg-card text-center cursor-pointer hover:bg-muted transition-all'>
-          <input
-            type='file'
-            multiple
-            onChange={handleFileUpload}
-            className='hidden'
-          />
-          <div className='flex flex-col items-center gap-2'>
-            <svg
-              className='w-6 h-6 text-muted-foreground'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'
-              />
-            </svg>
-            <span className='text-muted-foreground'>Tap to select file</span>
-          </div>
-        </label>
+        <div className='border border-dashed border-[#686262] rounded-lg'>
+          <label className='w-full px-4 py-8 rounded-lg text-center cursor-pointer transition-all'>
+            <input
+              type='file'
+              multiple
+              onChange={handleFileUpload}
+              className='hidden'
+            />
+            <div className='flex flex-col items-center gap-2'>
+              <svg
+                className='w-6 h-6 text-muted-foreground'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'
+                />
+              </svg>
+              <span className='text-muted-foreground'>Tap to select file</span>
+            </div>
+          </label>
+        </div>
 
         {/* Uploaded Files */}
-        {formData.documents.length > 0 && (
-          <div className='mt-4 space-y-2'>
-            {formData.documents.map((doc, index) => (
-              <div
-                key={index}
-                className='flex items-center justify-between p-3 bg-muted rounded-lg'
-              >
-                <span className='text-sm text-foreground truncate'>{doc}</span>
-                <button
-                  type='button'
-                  onClick={() => removeDocument(index)}
-                  className='text-destructive hover:text-destructive/80 transition-all'
-                >
-                  ✕
-                </button>
+        {document && (
+          <div className='mt-4'>
+            <div className='flex items-center justify-between p-3 bg-muted rounded-lg'>
+              <div className='flex flex-col'>
+                <span className='text-sm font-medium text-foreground'>
+                  📄 {document.name}
+                </span>
+                <span className='text-xs text-muted-foreground'>
+                  {(document.size / 1024).toFixed(2)} KB
+                </span>
               </div>
-            ))}
+
+              <button
+                type='button'
+                onClick={() => setDocument(null)}
+                className='text-destructive hover:text-destructive/80 text-sm font-semibold'
+              >
+                ✕
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -381,9 +407,9 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
       <button
         type='submit'
         disabled={isSubmitting}
-        className='w-full px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all'
+        className='w-full px-6 py-3 bg-[#235789] text-primary-foreground font-semibold rounded-lg hover:bg-[#1a558d] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer'
       >
-        {isSubmitting ? "Uploading..." : "Upload Now"}
+        {isSubmitting ? "Creating..." : "Create Now"}
       </button>
 
       {/* Select Options */}
