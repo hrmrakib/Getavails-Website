@@ -4,6 +4,8 @@ interface EventTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   totalCount: number;
+  count?: number;
+  acceptedCount?: number;
   pendingCount?: number;
   completedCount?: number;
 }
@@ -11,17 +13,26 @@ interface EventTabsProps {
 export default function EventTabs({
   activeTab,
   onTabChange,
+  count,
   totalCount,
+  acceptedCount,
   pendingCount,
   completedCount,
 }: EventTabsProps) {
-  
   const tabs = [
     { id: "create", label: "Create New" },
-    { id: "total", label: `Total (${totalCount})` },
-    { id: "accepted", label: `Accepted (${totalCount})` },
-    { id: "pending", label: `Pending (${pendingCount})` },
-    { id: "completed", label: `Completed (${completedCount})` },
+    {
+      id: "accepted",
+      label: `Accepted ${activeTab === "accepted" ? "(" + count + ")" : ""}`,
+    },
+    {
+      id: "pending",
+      label: `Pending ${activeTab === "pending" ? "(" + count + ")" : ""}`,
+    },
+    {
+      id: "completed",
+      label: `Completed ${activeTab === "completed" ? "(" + count + ")" : ""}`,
+    },
   ];
 
   return (

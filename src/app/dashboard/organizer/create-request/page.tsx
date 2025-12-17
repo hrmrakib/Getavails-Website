@@ -15,7 +15,7 @@ export type Event = {
   date: string;
   time: string;
   amountRange: string;
-  status: "pending" | "completed";
+  status: "pending" | "accepted" | "completed";
   documents?: string[];
 };
 
@@ -78,6 +78,7 @@ export default function Home() {
   //     status: "completed",
   //   },
   // ]);
+
   const { data } = useGetAllOffersQuery(
     {
       page: 1,
@@ -90,8 +91,9 @@ export default function Home() {
   );
 
   const events = data?.data || [];
+  const count = data?.meta?.total;
 
-  console.log(events);
+  console.log("count", events?.length);
 
   const handleCreateEvent = (newEvent: Omit<Event, "id" | "status">) => {
     const event: Event = {
@@ -103,20 +105,10 @@ export default function Home() {
     setActiveTab("total");
   };
 
-  // const getFilteredEvents = () => {
-  //   switch (activeTab) {
-  //     case "pending":
-  //       return events.filter((e) => e.status === "pending");
-  //     case "completed":
-  //       return events.filter((e) => e.status === "completed");
-  //     case "total":
-  //       return events;
-  //     default:
-  //       return [];
-  //   }
-  // };
-
   const pendingCount = events.filter((e: any) => e.status === "pending").length;
+  const acceptedCount = events.filter(
+    (e: any) => e.status === "accepted"
+  ).length;
   const completedCount = events.filter(
     (e: any) => e.status === "completed"
   ).length;
@@ -124,17 +116,14 @@ export default function Home() {
   return (
     <main className='min-h-screen bg-background'>
       <div className='max-w-4xl mx-auto px-4 py-6 md:py-8'>
-        {/* Header */}
         <div className='mb-8'>
-          {/* <h1 className='text-3xl md:text-4xl font-bold text-foreground mb-8'>
-            Events Manager
-          </h1> */}
-
           {/* Tabs */}
           <EventTabs
             activeTab={activeTab}
             onTabChange={setActiveTab}
-            totalCount={events.length}
+            totalCount={events.length || 0}
+            count={events?.length}
+            acceptedCount={events.length}
             pendingCount={pendingCount}
             completedCount={completedCount}
           />

@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, ChevronDown, ChevronUp, Upload } from "lucide-react";
+import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useGetAllOffersQuery } from "@/redux/features/organizer/offers/offersAPI";
 
 type Offer = {

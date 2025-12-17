@@ -1,5 +1,4 @@
 import baseAPI from "@/redux/api/api";
-import { create } from "domain";
 
 const offersAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -24,6 +23,14 @@ const offersAPI = baseAPI.injectEndpoints({
         method: "GET",
       }),
     }),
+
+    acceptOffer: builder.mutation({
+      query: (data) => ({
+        url: `/offers/accept`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -31,5 +38,6 @@ export const {
   useSearchUserByRoleQuery,
   useCreateOfferMutation,
   useGetAllOffersQuery,
+  useAcceptOfferMutation,
 } = offersAPI;
 export default offersAPI;
