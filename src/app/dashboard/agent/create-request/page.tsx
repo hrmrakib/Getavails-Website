@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,8 +11,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
-import { useGetAllOffersQuery } from "@/redux/features/organizer/offers/offersAPI";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Calendar, ChevronDown, ChevronUp, Loader } from "lucide-react";
+import {
+  useGetAllOffersQuery,
+  useSearchUserByRoleQuery,
+} from "@/redux/features/organizer/offers/offersAPI";
+import Image from "next/image";
+import { toast } from "sonner";
 
 type Offer = {
   id: string;
@@ -21,18 +36,36 @@ type Offer = {
   date: string;
   is_fully_accepted: boolean;
   organizer_document_url: string | null;
+  artist_document_url: string | null;
+  venue_document_url: string | null;
+  agent_document_url: string | null;
   organizer: {
     name: string;
     email: string;
   };
 };
 
+type Assignment = {
+  artist?: any;
+  venue?: any;
+  organizer?: any;
+};
+
 export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState<
     "total" | "new" | "completed" | "pending"
-  >("pending");
+  >("new");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [selectRole, setSelectRole] = useState<string>("Select a role");
+  const [allUsers, setAllUsers] = useState([]);
+  const [openListModal, setOpenListModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [search, setSearch] = useState<string>("");
+  const [role, setRole] = useState<string>("");
+  const [document, setDocument] = useState<File | null>(null);
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [assignments, setAssignments] = useState<Record<string, Assignment>>(
+    {}
+  );
 
   const tabMap: Record<typeof activeTab, string> = {
     total: "all",
@@ -47,6 +80,22 @@ export default function BookingsPage() {
     tab: tabMap[activeTab],
   });
 
+  const { data: user, isFetching: isUserLoading } = useSearchUserByRoleQuery(
+    {
+      role,
+      search,
+    },
+    { skip: !role }
+  );
+
+  useEffect(() => {
+    if (user?.data) {
+      setAllUsers(user?.data);
+    }
+  }, [user]);
+
+  console.log({ user });
+
   const offers: Offer[] = data?.data ?? [];
 
   const toggleExpand = (id: string) => {
@@ -55,6 +104,52 @@ export default function BookingsPage() {
 
   const getStatus = (offer: Offer) =>
     offer.is_fully_accepted ? "Completed" : "New";
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (!files) return;
+
+    // image and pdf only
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "application/pdf",
+    ];
+
+    if (!allowedTypes.includes(files[0].type)) {
+      toast.error("Only image and pdf files are allowed");
+      return;
+    }
+
+    if (files && files.length > 0) {
+      setDocument(files[0]);
+    }
+  };
+
+  const handleFetchRole = (role: string, offerId: string) => {
+    setAllUsers([]);
+    setRole(role);
+    setActiveOfferId(offerId);
+    setOpenListModal(true);
+  };
+
+  const handleSelectUser = (user: any) => {
+    if (!activeOfferId) return;
+
+    setAssignments((prev) => ({
+      ...prev,
+      [activeOfferId]: {
+        ...prev[activeOfferId],
+        artist: role === "ARTIST" ? user : prev[activeOfferId]?.artist,
+        venue: role === "VENUE" ? user : prev[activeOfferId]?.venue,
+        organizer: role === "ORGANIZER" ? user : prev[activeOfferId]?.organizer,
+      },
+    }));
+
+    setOpenListModal(false);
+  };
 
   return (
     <div className='min-h-screen bg-background p-4 md:p-6 lg:p-8'>
@@ -92,6 +187,7 @@ export default function BookingsPage() {
         <div className='space-y-4'>
           {offers.map((offer, index) => {
             const status = getStatus(offer);
+            const assignment = assignments[offer.id] || {};
 
             return (
               <div
@@ -143,56 +239,242 @@ export default function BookingsPage() {
                     </div>
 
                     <div>
-                      <strong>Document:</strong>{" "}
-                      {offer.organizer_document_url! ? (
-                        <a
-                          href={
-                            process.env.NEXT_PUBLIC_API_URL! +
-                            offer.organizer_document_url!
-                          }
-                          target='_blank'
-                          className='text-primary underline'
-                        >
-                          View PDF
-                        </a>
-                      ) : (
-                        "Not uploaded"
+                      {offer?.venue_document_url && (
+                        <div>
+                          <strong>Venue Document:</strong>{" "}
+                          {offer.venue_document_url! ? (
+                            <a
+                              href={
+                                process.env.NEXT_PUBLIC_API_URL! +
+                                offer?.venue_document_url!
+                              }
+                              target='_blank'
+                              className='text-primary underline'
+                            >
+                              View Docs
+                            </a>
+                          ) : (
+                            "Not uploaded"
+                          )}
+                        </div>
+                      )}
+
+                      {offer?.agent_document_url && (
+                        <div>
+                          <strong>Agent Document:</strong>{" "}
+                          {offer.agent_document_url! ? (
+                            <a
+                              href={
+                                process.env.NEXT_PUBLIC_API_URL! +
+                                offer?.agent_document_url!
+                              }
+                              target='_blank'
+                              className='text-primary underline'
+                            >
+                              View Docs
+                            </a>
+                          ) : (
+                            "Not uploaded"
+                          )}
+                        </div>
+                      )}
+
+                      {offer?.artist_document_url && (
+                        <div>
+                          <strong>Artist Document:</strong>{" "}
+                          {offer.artist_document_url! ? (
+                            <a
+                              href={
+                                process.env.NEXT_PUBLIC_API_URL! +
+                                offer?.artist_document_url!
+                              }
+                              target='_blank'
+                              className='text-primary underline'
+                            >
+                              View Docs
+                            </a>
+                          ) : (
+                            "Not uploaded"
+                          )}
+                        </div>
+                      )}
+
+                      {offer?.organizer_document_url && (
+                        <div>
+                          <strong>Venue Document:</strong>{" "}
+                          {offer.organizer_document_url! ? (
+                            <a
+                              href={
+                                process.env.NEXT_PUBLIC_API_URL! +
+                                offer?.organizer_document_url!
+                              }
+                              target='_blank'
+                              className='text-primary underline'
+                            >
+                              View Docs
+                            </a>
+                          ) : (
+                            "Not uploaded"
+                          )}
+                        </div>
                       )}
                     </div>
 
                     <form className='space-y-5 pt-4'>
-                      <div className='space-y-2'>
-                        <Label>Agent</Label>
-                        <Select
-                          value={selectRole}
-                          onValueChange={setSelectRole}
-                        >
-                          <SelectTrigger className='w-full'>
-                            <SelectValue placeholder='Select Agent' />
-                          </SelectTrigger>
-                          <SelectContent className='w-full'>
-                            <SelectItem value='Artist'>Artist</SelectItem>
-                            <SelectItem value='Venue'>Venue</SelectItem>
-                            <SelectItem value='Organizer'>Organizer</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      {/* select role to assign */}
+                      <div className='flex items-center justify-between gap-5'>
+                        <div>
+                          <label className='block text-sm font-semibold mb-2'>
+                            Select Artist to assign
+                          </label>
+                          <button
+                            type='button'
+                            onClick={() => handleFetchRole("ARTIST", offer.id)}
+                            className='w-full h-11 flex items-center px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                          >
+                            {assignment.artist ? (
+                              <div className='flex items-center gap-3'>
+                                <Image
+                                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.artist.avatar}`}
+                                  alt={assignment.artist.name}
+                                  width={40}
+                                  height={40}
+                                  className='rounded-full border p-1'
+                                />
+                                <span className='font-medium'>
+                                  {assignment.artist.name}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className='text-muted-foreground'>
+                                Click to select an artist
+                              </span>
+                            )}
+                          </button>
+                        </div>
 
-                      <div className='space-y-2'>
-                        <Label>Date</Label>
-                        <div className='relative'>
-                          <Input
-                            value={new Date(offer.date).toLocaleDateString()}
-                            readOnly
-                          />
-                          <Calendar className='absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground' />
+                        <div>
+                          <label className='block text-sm font-semibold mb-2'>
+                            Select Venue to assign
+                          </label>
+                          <button
+                            type='button'
+                            onClick={() => handleFetchRole("VENUE", offer.id)}
+                            className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                          >
+                            {assignment.venue ? (
+                              <div className='flex items-center gap-3'>
+                                <Image
+                                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.venue.avatar}`}
+                                  alt={assignment.venue.name}
+                                  width={40}
+                                  height={40}
+                                  className='rounded-full border p-1'
+                                />
+                                <span className='font-medium'>
+                                  {assignment.venue?.name}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className='text-muted-foreground'>
+                                Click to select an venue
+                              </span>
+                            )}
+                          </button>
+                        </div>
+
+                        <div>
+                          <label className='block text-sm font-semibold mb-2'>
+                            Select Organizer to assign
+                          </label>
+                          <button
+                            type='button'
+                            onClick={() =>
+                              handleFetchRole("ORGANIZER", offer.id)
+                            }
+                            className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                          >
+                            {assignment.organizer ? (
+                              <div className='flex items-center gap-3'>
+                                <Image
+                                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.organizer.avatar}`}
+                                  alt={assignment.organizer.name}
+                                  width={40}
+                                  height={40}
+                                  className='rounded-full border p-1'
+                                />
+                                <span className='font-medium'>
+                                  {assignment.organizer?.name}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className='text-muted-foreground'>
+                                Click to select an organizer
+                              </span>
+                            )}
+                          </button>
                         </div>
                       </div>
 
-                      <div className='flex justify-end gap-2 pt-4'>
+                      <div className='flex items-center justify-end gap-3 pt-4'>
+                        {/* Download Button */}
                         <Button variant='outline'>Download</Button>
+
+                        {/* Upload Button (Styled Like Button) */}
+                        <label className='flex items-center gap-2 px-4 py-2 border border-dashed border-muted-foreground rounded-md cursor-pointer hover:bg-muted transition'>
+                          <input
+                            type='file'
+                            multiple
+                            className='hidden'
+                            onChange={handleFileUpload}
+                          />
+
+                          <svg
+                            className='w-5 h-5 text-muted-foreground'
+                            fill='none'
+                            stroke='currentColor'
+                            viewBox='0 0 24 24'
+                          >
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'
+                            />
+                          </svg>
+
+                          <span className='text-sm text-muted-foreground'>
+                            Upload file
+                          </span>
+                        </label>
+
+                        {/* Accept Button */}
                         <Button>Accept & Send</Button>
                       </div>
+
+                      {/* Uploaded Files */}
+                      {document && (
+                        <div className='mt-4'>
+                          <div className='flex items-center justify-between p-3 bg-muted rounded-lg'>
+                            <div className='flex flex-col'>
+                              <span className='text-sm font-medium text-foreground'>
+                                📄 {document.name}
+                              </span>
+                              <span className='text-xs text-muted-foreground'>
+                                {(document.size / 1024).toFixed(2)} KB
+                              </span>
+                            </div>
+
+                            <button
+                              type='button'
+                              onClick={() => setDocument(null)}
+                              className='text-destructive hover:text-destructive/80 text-sm font-semibold'
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </form>
                   </div>
                 )}
@@ -209,418 +491,90 @@ export default function BookingsPage() {
           </div>
         )}
       </div>
+
+      {/* Select Options */}
+      <Dialog open={openListModal} onOpenChange={setOpenListModal}>
+        <DialogContent className='sm:max-w-[500px]'>
+          <DialogHeader>
+            <DialogTitle>{role} Details</DialogTitle>
+            <DialogDescription>List of {role} information</DialogDescription>
+
+            {allUsers?.length > 0 && (
+              <Input
+                type='text'
+                placeholder='Search'
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className='w-full px-4 py-3 border rounded-lg bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all'
+              />
+            )}
+          </DialogHeader>
+
+          <div className='flex flex-col gap-4 max-h-[400px] overflow-y-auto py-2'>
+            {isUserLoading && (
+              <p className='text-center text-sm text-muted-foreground'>
+                Loading users <Loader className='animate-spin' />
+              </p>
+            )}
+
+            {allUsers?.map((item: any) => (
+              <div
+                key={item.id}
+                className='flex items-center gap-4 p-4 border rounded-xl shadow-sm hover:shadow-md transition cursor-pointer'
+                onClick={() => handleSelectUser(item)}
+              >
+                <Image
+                  alt={item.name}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${item.avatar}`}
+                  className='w-14 h-14 rounded-full object-cover border'
+                  width={100}
+                  height={100}
+                />
+
+                <div className='flex flex-col w-full'>
+                  <div className='flex justify-between items-center'>
+                    <p className='text-lg font-semibold'>{item.name}</p>
+                    <span
+                      className={`px-2 py-1 text-xs rounded font-semibold ${
+                        item.is_active
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {item.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+
+                  <p className='text-sm text-muted-foreground'>{item.email}</p>
+
+                  <div className='flex justify-between mt-2 text-sm font-medium'>
+                    <p>📍 {item.location}</p>
+                    <p>💰 {item.price}</p>
+                  </div>
+
+                  <p className='mt-1 text-sm'>
+                    {item.is_verified ? (
+                      <span className='text-green-600 font-semibold'>
+                        ✔ Verified
+                      </span>
+                    ) : (
+                      <span className='text-red-600 font-semibold'>
+                        ✘ Not Verified
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant='outline'>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
-
-// "use client";
-
-// import { useState } from "react";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
-// import { Calendar, ChevronDown, ChevronUp, Upload } from "lucide-react";
-// import { useGetAllOffersQuery } from "@/redux/features/organizer/offers/offersAPI";
-
-// // Sample booking data
-// type Booking = {
-//   id: number;
-//   organizerName: string;
-//   priceRange: string;
-//   date: string;
-//   status: "New" | "Completed";
-//   agent?: string;
-//   artist?: string;
-//   venue?: string;
-//   location?: string;
-//   time?: string;
-//   totalAmount?: string;
-//   document?: string;
-// };
-
-// const initialBookings: Booking[] = [
-//   {
-//     id: 1,
-//     organizerName: "XYZ",
-//     priceRange: "$1250",
-//     date: "12 May 2025",
-//     status: "New",
-//   },
-//   {
-//     id: 2,
-//     organizerName: "XYZ",
-//     priceRange: "$1250",
-//     date: "12 May 2025",
-//     status: "Completed",
-//   },
-//   {
-//     id: 3,
-//     organizerName: "XYZ",
-//     priceRange: "$1250",
-//     date: "12 May 2025",
-//     status: "Completed",
-//   },
-//   {
-//     id: 4,
-//     organizerName: "ABC Corp",
-//     priceRange: "$2000",
-//     date: "15 May 2025",
-//     status: "New",
-//   },
-//   {
-//     id: 5,
-//     organizerName: "DEF Ltd",
-//     priceRange: "$1500",
-//     date: "18 May 2025",
-//     status: "Completed",
-//   },
-// ];
-
-// export default function BookingsPage() {
-//   const [activeTab, setActiveTab] = useState<"total" | "new" | "completed">(
-//     "total"
-//   );
-//   const [expandedId, setExpandedId] = useState<number | null>(null);
-//   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
-
-//   const { data } = useGetAllOffersQuery({
-//     page: 1,
-//     limit: 10,
-//     tab: "pending",
-//   });
-
-//   const allOffers = data?.data;
-
-//   console.log({ allOffers });
-
-//   // Filter bookings based on active tab
-//   const filteredBookings = bookings.filter((booking) => {
-//     if (activeTab === "new") return booking.status === "New";
-//     if (activeTab === "completed") return booking.status === "Completed";
-//     return true; // total
-//   });
-
-//   const toggleExpand = (id: number) => {
-//     setExpandedId(expandedId === id ? null : id);
-//   };
-
-//   const handleFormSubmit = (id: number, action: string) => {
-//     console.log(`${action} booking ${id}`);
-//     // Handle form submission logic here
-//   };
-
-//   return (
-//     <div className='min-h-screen bg-background p-4 md:p-6 lg:p-8'>
-//       <div className='mx-auto max-w-5xl'>
-//         {/* Tabs */}
-//         <div className='mb-6 flex flex-wrap gap-2'>
-//           <Button
-//             variant={activeTab === "total" ? "default" : "secondary"}
-//             onClick={() => setActiveTab("total")}
-//             className='rounded-full'
-//           >
-//             Total ({bookings.length})
-//           </Button>
-//           <Button
-//             variant={activeTab === "new" ? "default" : "secondary"}
-//             onClick={() => setActiveTab("new")}
-//             className='rounded-full'
-//           >
-//             New ({bookings.filter((b) => b.status === "New").length})
-//           </Button>
-//           <Button
-//             variant={activeTab === "completed" ? "default" : "secondary"}
-//             onClick={() => setActiveTab("completed")}
-//             className='rounded-full'
-//           >
-//             Completed ({bookings.filter((b) => b.status === "Completed").length}
-//             )
-//           </Button>
-//         </div>
-
-//         {/* Bookings List */}
-//         <div className='space-y-4'>
-//           {filteredBookings.map((booking, index) => (
-//             <div
-//               key={booking.id}
-//               className='overflow-hidden rounded-lg border border-border bg-card'
-//             >
-//               {/* Collapsed View */}
-//               <button
-//                 onClick={() => toggleExpand(booking.id)}
-//                 className='flex w-full items-center justify-between gap-4 p-4 text-left transition-colors hover:bg-accent/50 md:p-5'
-//               >
-//                 <div className='flex min-w-0 flex-1 flex-col gap-3 md:flex-row md:items-center md:gap-6'>
-//                   <span className='text-sm text-muted-foreground md:text-base'>
-//                     {index + 1}.
-//                   </span>
-//                   <div className='grid min-w-0 flex-1 grid-cols-1 gap-2 text-sm md:grid-cols-3 md:gap-4 md:text-base'>
-//                     <span className='truncate'>
-//                       <span className='font-medium'>Organizer Name:</span>{" "}
-//                       {booking.organizerName}
-//                     </span>
-//                     <span className='truncate'>
-//                       <span className='font-medium'>Price Range:</span>{" "}
-//                       {booking.priceRange}
-//                     </span>
-//                     <span className='truncate'>
-//                       <span className='font-medium'>Date:</span> {booking.date}
-//                     </span>
-//                   </div>
-//                   <span
-//                     className={`self-start whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium md:self-center ${
-//                       booking.status === "New"
-//                         ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400"
-//                         : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
-//                     }`}
-//                   >
-//                     {booking.status}
-//                   </span>
-//                 </div>
-//                 <div className='flex-shrink-0'>
-//                   {expandedId === booking.id ? (
-//                     <ChevronUp className='h-5 w-5 text-muted-foreground' />
-//                   ) : (
-//                     <ChevronDown className='h-5 w-5 text-muted-foreground' />
-//                   )}
-//                 </div>
-//               </button>
-
-//               {/* Expanded View */}
-//               {expandedId === booking.id && (
-//                 <div className='border-t border-border bg-muted/30 p-4 md:p-6'>
-//                   <form
-//                     onSubmit={(e) => {
-//                       e.preventDefault();
-//                       handleFormSubmit(booking.id, "submit");
-//                     }}
-//                     className='space-y-5'
-//                   >
-//                     {/* Agent */}
-//                     <div className='space-y-2'>
-//                       <Label
-//                         htmlFor={`agent-${booking.id}`}
-//                         className='font-medium'
-//                       >
-//                         Agent
-//                       </Label>
-//                       <Select>
-//                         <SelectTrigger id={`agent-${booking.id}`}>
-//                           <SelectValue placeholder='Select Agent' />
-//                         </SelectTrigger>
-//                         <SelectContent>
-//                           <SelectItem value='agent1'>Agent 1</SelectItem>
-//                           <SelectItem value='agent2'>Agent 2</SelectItem>
-//                           <SelectItem value='agent3'>Agent 3</SelectItem>
-//                         </SelectContent>
-//                       </Select>
-//                     </div>
-
-//                     {/* Artist */}
-//                     <div className='space-y-2'>
-//                       <Label
-//                         htmlFor={`artist-${booking.id}`}
-//                         className='font-medium'
-//                       >
-//                         Artist
-//                       </Label>
-//                       <div className='relative'>
-//                         <Input
-//                           id={`artist-${booking.id}`}
-//                           placeholder='Write here'
-//                           className='pr-28'
-//                         />
-//                         <span className='absolute right-3 top-1/2 -translate-y-1/2 text-sm text-primary'>
-//                           Enter Amount
-//                         </span>
-//                       </div>
-//                     </div>
-
-//                     {/* Venue */}
-//                     <div className='space-y-2'>
-//                       <Label
-//                         htmlFor={`venue-${booking.id}`}
-//                         className='font-medium'
-//                       >
-//                         Venue
-//                       </Label>
-//                       <div className='relative'>
-//                         <Input
-//                           id={`venue-${booking.id}`}
-//                           placeholder='Write here'
-//                           className='pr-16'
-//                         />
-//                         <span className='absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-primary'>
-//                           $500
-//                         </span>
-//                       </div>
-//                     </div>
-
-//                     {/* Location */}
-//                     <div className='space-y-2'>
-//                       <Label
-//                         htmlFor={`location-${booking.id}`}
-//                         className='font-medium'
-//                       >
-//                         Location
-//                       </Label>
-//                       <Input
-//                         id={`location-${booking.id}`}
-//                         placeholder='Write here'
-//                       />
-//                     </div>
-
-//                     {/* Date */}
-//                     <div className='space-y-2'>
-//                       <Label
-//                         htmlFor={`date-${booking.id}`}
-//                         className='font-medium'
-//                       >
-//                         Date
-//                       </Label>
-//                       <div className='relative'>
-//                         <Input
-//                           id={`date-${booking.id}`}
-//                           placeholder='Name'
-//                           className='pr-10'
-//                         />
-//                         <Calendar className='absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground' />
-//                       </div>
-//                     </div>
-
-//                     {/* Time */}
-//                     <div className='space-y-2'>
-//                       <Label
-//                         htmlFor={`time-${booking.id}`}
-//                         className='font-medium'
-//                       >
-//                         Time
-//                       </Label>
-//                       <div className='flex items-center gap-2'>
-//                         <Input
-//                           id={`time-${booking.id}`}
-//                           placeholder='Name'
-//                           className='flex-1'
-//                         />
-//                         <div className='flex items-center gap-1 rounded-md border border-input bg-background'>
-//                           <Input
-//                             type='number'
-//                             min='0'
-//                             max='12'
-//                             placeholder='09'
-//                             className='w-14 border-0 px-2 text-center'
-//                           />
-//                           <span className='text-muted-foreground'>:</span>
-//                           <Input
-//                             type='number'
-//                             min='0'
-//                             max='59'
-//                             placeholder='00'
-//                             className='w-14 border-0 px-2 text-center'
-//                           />
-//                         </div>
-//                         <div className='flex overflow-hidden rounded-md border border-input'>
-//                           <button
-//                             type='button'
-//                             className='bg-background px-3 py-2 text-sm font-medium transition-colors hover:bg-accent'
-//                           >
-//                             AM
-//                           </button>
-//                           <button
-//                             type='button'
-//                             className='bg-background px-3 py-2 text-sm font-medium transition-colors hover:bg-accent'
-//                           >
-//                             PM
-//                           </button>
-//                         </div>
-//                       </div>
-//                     </div>
-
-//                     {/* Total Amount */}
-//                     <div className='space-y-2'>
-//                       <Label
-//                         htmlFor={`total-${booking.id}`}
-//                         className='font-medium'
-//                       >
-//                         Total Amount
-//                       </Label>
-//                       <Input
-//                         id={`total-${booking.id}`}
-//                         placeholder='Write here'
-//                       />
-//                     </div>
-
-//                     {/* Upload Documents */}
-//                     <div className='space-y-2'>
-//                       <Label
-//                         htmlFor={`upload-${booking.id}`}
-//                         className='font-medium'
-//                       >
-//                         Upload Documents
-//                       </Label>
-//                       <div className='flex items-center justify-between rounded-md border border-input bg-background px-4 py-3'>
-//                         <span className='text-sm text-muted-foreground'>
-//                           xyz.pdf
-//                         </span>
-//                         <Upload className='h-5 w-5 text-muted-foreground' />
-//                       </div>
-//                     </div>
-
-//                     {/* Action Buttons */}
-//                     <div className='flex flex-col gap-3 pt-4 sm:flex-row sm:justify-end'>
-//                       <Button
-//                         type='button'
-//                         variant='outline'
-//                         className='w-full sm:w-auto bg-transparent'
-//                         onClick={() => setExpandedId(null)}
-//                       >
-//                         Cancel
-//                       </Button>
-//                       <Button
-//                         type='button'
-//                         variant='outline'
-//                         className='w-full sm:w-auto bg-transparent'
-//                         onClick={() => handleFormSubmit(booking.id, "download")}
-//                       >
-//                         Download
-//                       </Button>
-//                       <Button
-//                         type='button'
-//                         variant='outline'
-//                         className='w-full sm:w-auto bg-transparent'
-//                         onClick={() =>
-//                           handleFormSubmit(booking.id, "send-to-artist")
-//                         }
-//                       >
-//                         Send to Artist
-//                       </Button>
-//                       <Button type='submit' className='w-full sm:w-auto'>
-//                         Accept & Send
-//                       </Button>
-//                     </div>
-//                   </form>
-//                 </div>
-//               )}
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Empty State */}
-//         {filteredBookings.length === 0 && (
-//           <div className='rounded-lg border border-border bg-card p-12 text-center'>
-//             <p className='text-muted-foreground'>
-//               No bookings found in this category.
-//             </p>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }

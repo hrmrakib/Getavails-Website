@@ -189,6 +189,7 @@ export default function EventsList({ events, tab }: any) {
                     {event?.price}
                   </p>
                 </div>
+
                 {tab === "pending" && (
                   <div className='flex items-center gap-4'>
                     <button

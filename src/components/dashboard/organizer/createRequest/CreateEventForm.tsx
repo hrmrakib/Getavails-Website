@@ -30,6 +30,7 @@ import {
 import { set } from "date-fns";
 import Image from "next/image";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 export type Event = {
   id: string;
@@ -66,6 +67,7 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
   const [allUsers, setAllUsers] = useState([]);
   const [openListModal, setOpenListModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [search, setSearch] = useState<string>("");
   const { data } = useSearchUserByRoleQuery(
     {
       role: formData?.role,
@@ -180,7 +182,6 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
       {/* Select Agent */}
       <div>
         <label className='block text-sm font-semibold mb-2'>Select Agent</label>
-
         <button
           type='button'
           onClick={() => setOpenListModal(true)}
@@ -420,6 +421,16 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
             <DialogDescription>
               List of {formData.role} information
             </DialogDescription>
+
+            {allUsers?.length > 2 && (
+              <Input
+                type='text'
+                placeholder='Search'
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className='w-full px-4 py-3 border rounded-lg bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all'
+              />
+            )}
           </DialogHeader>
 
           <div className='flex flex-col gap-4 max-h-[400px] overflow-y-auto py-2'>

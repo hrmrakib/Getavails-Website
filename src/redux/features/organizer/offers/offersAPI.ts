@@ -3,8 +3,8 @@ import baseAPI from "@/redux/api/api";
 const offersAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     searchUserByRole: builder.query({
-      query: ({ role }) => ({
-        url: `/profile/other-users?role=${role}`,
+      query: ({ role, search }) => ({
+        url: `/profile/other-users?role=${role}&search=${search}`,
         method: "GET",
       }),
     }),
