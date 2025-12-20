@@ -51,7 +51,7 @@ export default function EventsList({ events, tab }: any) {
         </p>
       </div>
     );
-  }
+  } 
 
   const downloadFileFromUrl = async (fileUrl: string, fileName?: string) => {
     try {

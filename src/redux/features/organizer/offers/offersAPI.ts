@@ -31,6 +31,14 @@ const offersAPI = baseAPI.injectEndpoints({
         body: data,
       }),
     }),
+
+    assignOffer: builder.mutation({
+      query: (data) => ({
+        url: `/agent/offers/assign`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -39,5 +47,6 @@ export const {
   useCreateOfferMutation,
   useGetAllOffersQuery,
   useAcceptOfferMutation,
+  useAssignOfferMutation,
 } = offersAPI;
 export default offersAPI;

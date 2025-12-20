@@ -1,16 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Dialog,
   DialogClose,
@@ -23,11 +15,14 @@ import {
 } from "@/components/ui/dialog";
 import { Calendar, ChevronDown, ChevronUp, Loader } from "lucide-react";
 import {
+  useAcceptOfferMutation,
+  useAssignOfferMutation,
   useGetAllOffersQuery,
   useSearchUserByRoleQuery,
 } from "@/redux/features/organizer/offers/offersAPI";
 import Image from "next/image";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
 
 type Offer = {
   id: string;
@@ -39,6 +34,9 @@ type Offer = {
   artist_document_url: string | null;
   venue_document_url: string | null;
   agent_document_url: string | null;
+  organizer_id: string | null;
+  artist_id: string | null;
+  venue_id: string | null;
   organizer: {
     name: string;
     email: string;
@@ -58,7 +56,6 @@ export default function BookingsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState([]);
   const [openListModal, setOpenListModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [search, setSearch] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [document, setDocument] = useState<File | null>(null);
@@ -66,6 +63,11 @@ export default function BookingsPage() {
   const [assignments, setAssignments] = useState<Record<string, Assignment>>(
     {}
   );
+  const [downloadModal, setDownloadModal] = useState(false);
+  const [acceptOfferMutation, { isLoading: isAcceptLoading }] =
+    useAcceptOfferMutation();
+  const [assignOfferMutation, { isLoading: isAssignLoading }] =
+    useAssignOfferMutation();
 
   const tabMap: Record<typeof activeTab, string> = {
     total: "all",
@@ -74,11 +76,30 @@ export default function BookingsPage() {
     pending: "pending",
   };
 
-  const { data, isLoading } = useGetAllOffersQuery({
+  console.log(assignments);
+
+  const payload = Object.entries(assignments).map(([offer_id, assignment]) => {
+    const obj = {
+      offer_id,
+      venue_id: assignment.venue?.id,
+      artist_id: assignment.artist?.id,
+      organizer_id: assignment.organizer?.id,
+    };
+
+    return Object.fromEntries(
+      Object.entries(obj).filter(([_, value]) => value != null)
+    );
+  });
+
+  console.log(payload[0]);
+
+  const { data, isLoading, refetch } = useGetAllOffersQuery({
     page: 1,
     limit: 10,
     tab: tabMap[activeTab],
   });
+
+  console.log("all offers", data?.data);
 
   const { data: user, isFetching: isUserLoading } = useSearchUserByRoleQuery(
     {
@@ -92,9 +113,7 @@ export default function BookingsPage() {
     if (user?.data) {
       setAllUsers(user?.data);
     }
-  }, [user]);
-
-  console.log({ user });
+  }, [user, role]);
 
   const offers: Offer[] = data?.data ?? [];
 
@@ -129,7 +148,7 @@ export default function BookingsPage() {
   };
 
   const handleFetchRole = (role: string, offerId: string) => {
-    setAllUsers([]);
+    // setAllUsers([]);
     setRole(role);
     setActiveOfferId(offerId);
     setOpenListModal(true);
@@ -151,28 +170,88 @@ export default function BookingsPage() {
     setOpenListModal(false);
   };
 
+  const handleAcceptAndSend = async (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    // if (!activeOfferId) return;
+    if (!document) {
+      toast.warning("Please upload your document");
+      return;
+    }
+
+    try {
+      const offer_id = Object.keys(assignments);
+      const formData = new FormData();
+
+      const offerId = {
+        offer_id: offer_id[0],
+      };
+
+      formData.append("data", JSON.stringify(offerId));
+      if (document) {
+        formData.append("document", document);
+      }
+
+      const res = await acceptOfferMutation(formData).unwrap();
+
+      const data = payload[0];
+
+      if (res?.success) {
+        const response = await assignOfferMutation(data).unwrap();
+
+        if (response?.success) {
+          refetch();
+          toast.success("Offer accepted and sent successfully");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error accepting offer");
+    } finally {
+    }
+  };
+
+  const downloadFileFromUrl = async (fileUrl: string, fileName?: string) => {
+    try {
+      // Fetch as blob
+      const response = await fetch(fileUrl, { method: "GET", mode: "cors" });
+      const blob = await response.blob();
+
+      // Create object URL
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Create anchor element and download
+      const a = window.document.createElement("a");
+      a.href = blobUrl;
+      a.download = fileName || fileUrl.split("/").pop() || "download";
+      a.click();
+
+      // Cleanup
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Download failed", err);
+    }
+  };
+
   return (
     <div className='min-h-screen bg-background p-4 md:p-6 lg:p-8'>
       <div className='mx-auto max-w-5xl'>
         <div className='mb-6 flex flex-wrap gap-2'>
           <Button
-            variant={activeTab === "total" ? "default" : "secondary"}
-            onClick={() => setActiveTab("total")}
-            className='rounded-full'
-          >
-            Total
-          </Button>
-          <Button
             variant={activeTab === "new" ? "default" : "secondary"}
             onClick={() => setActiveTab("new")}
-            className='rounded-full'
+            className={`rounded-full ${
+              activeTab !== "new" ? "border-[.5px] border-gray-400" : ""
+            }`}
           >
             New
           </Button>
           <Button
             variant={activeTab === "completed" ? "default" : "secondary"}
             onClick={() => setActiveTab("completed")}
-            className='rounded-full'
+            className={`rounded-full ${
+              activeTab !== "completed" ? "border-[.5px] border-gray-400" : ""
+            }`}
           >
             Completed
           </Button>
@@ -323,102 +402,124 @@ export default function BookingsPage() {
                     <form className='space-y-5 pt-4'>
                       {/* select role to assign */}
                       <div className='flex items-center justify-between gap-5'>
-                        <div>
-                          <label className='block text-sm font-semibold mb-2'>
-                            Select Artist to assign
-                          </label>
-                          <button
-                            type='button'
-                            onClick={() => handleFetchRole("ARTIST", offer.id)}
-                            className='w-full h-11 flex items-center px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
-                          >
-                            {assignment.artist ? (
-                              <div className='flex items-center gap-3'>
-                                <Image
-                                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.artist.avatar}`}
-                                  alt={assignment.artist.name}
-                                  width={40}
-                                  height={40}
-                                  className='rounded-full border p-1'
-                                />
-                                <span className='font-medium'>
-                                  {assignment.artist.name}
+                        {offer?.artist_id && (
+                          <div>
+                            <label className='block text-sm font-semibold mb-2'>
+                              Select Artist to assign
+                            </label>
+                            <button
+                              type='button'
+                              onClick={() =>
+                                handleFetchRole("ARTIST", offer.id)
+                              }
+                              className='w-full h-11 flex items-center px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                            >
+                              {assignment.artist ? (
+                                <div className='flex items-center gap-3'>
+                                  <Image
+                                    src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.artist.avatar}`}
+                                    alt={assignment.artist.name}
+                                    width={40}
+                                    height={40}
+                                    className='rounded-full border p-1'
+                                  />
+                                  <span className='font-medium'>
+                                    {assignment.artist.name}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className='text-muted-foreground'>
+                                  Click to select an artist
                                 </span>
-                              </div>
-                            ) : (
-                              <span className='text-muted-foreground'>
-                                Click to select an artist
-                              </span>
-                            )}
-                          </button>
-                        </div>
+                              )}
+                            </button>
+                          </div>
+                        )}
 
-                        <div>
-                          <label className='block text-sm font-semibold mb-2'>
-                            Select Venue to assign
-                          </label>
-                          <button
-                            type='button'
-                            onClick={() => handleFetchRole("VENUE", offer.id)}
-                            className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
-                          >
-                            {assignment.venue ? (
-                              <div className='flex items-center gap-3'>
-                                <Image
-                                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.venue.avatar}`}
-                                  alt={assignment.venue.name}
-                                  width={40}
-                                  height={40}
-                                  className='rounded-full border p-1'
-                                />
-                                <span className='font-medium'>
-                                  {assignment.venue?.name}
+                        {offer?.venue_id && (
+                          <div>
+                            <label className='block text-sm font-semibold mb-2'>
+                              Select Venue to assign
+                            </label>
+                            <button
+                              type='button'
+                              onClick={() => handleFetchRole("VENUE", offer.id)}
+                              className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                            >
+                              {assignment.venue ? (
+                                <div className='flex items-center gap-3'>
+                                  <Image
+                                    src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.venue.avatar}`}
+                                    alt={assignment.venue.name}
+                                    width={40}
+                                    height={40}
+                                    className='rounded-full border p-1'
+                                  />
+                                  <span className='font-medium'>
+                                    {assignment.venue?.name}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className='text-muted-foreground'>
+                                  Click to select an venue
                                 </span>
-                              </div>
-                            ) : (
-                              <span className='text-muted-foreground'>
-                                Click to select an venue
-                              </span>
-                            )}
-                          </button>
-                        </div>
+                              )}
+                            </button>
+                          </div>
+                        )}
 
-                        <div>
-                          <label className='block text-sm font-semibold mb-2'>
-                            Select Organizer to assign
-                          </label>
-                          <button
-                            type='button'
-                            onClick={() =>
-                              handleFetchRole("ORGANIZER", offer.id)
-                            }
-                            className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
-                          >
-                            {assignment.organizer ? (
-                              <div className='flex items-center gap-3'>
-                                <Image
-                                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.organizer.avatar}`}
-                                  alt={assignment.organizer.name}
-                                  width={40}
-                                  height={40}
-                                  className='rounded-full border p-1'
-                                />
-                                <span className='font-medium'>
-                                  {assignment.organizer?.name}
+                        {offer?.organizer_id && (
+                          <div>
+                            <label className='block text-sm font-semibold mb-2'>
+                              Select Organizer to assign
+                            </label>
+                            <button
+                              type='button'
+                              onClick={() =>
+                                handleFetchRole("ORGANIZER", offer.id)
+                              }
+                              className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                            >
+                              {assignment.organizer ? (
+                                <div className='flex items-center gap-3'>
+                                  <Image
+                                    src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.organizer.avatar}`}
+                                    alt={assignment.organizer.name}
+                                    width={40}
+                                    height={40}
+                                    className='rounded-full border p-1'
+                                  />
+                                  <span className='font-medium'>
+                                    {assignment.organizer?.name}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className='text-muted-foreground'>
+                                  Click to select an organizer
                                 </span>
-                              </div>
-                            ) : (
-                              <span className='text-muted-foreground'>
-                                Click to select an organizer
-                              </span>
-                            )}
-                          </button>
-                        </div>
+                              )}
+                            </button>
+                          </div>
+                        )}
                       </div>
 
-                      <div className='flex items-center justify-end gap-3 pt-4'>
+                      <div className='flex flex-wrap items-center justify-end gap-3 pt-4'>
                         {/* Download Button */}
-                        <Button variant='outline'>Download</Button>
+
+                        <button
+                          // onClick={async () => {
+                          //   await downloadFileFromUrl(
+                          //     process.env.NEXT_PUBLIC_IMAGE_URL! +
+                          //       offer?.organizer_document_url
+                          //   );
+                          // }}
+
+                          onClick={() => setDownloadModal(true)}
+                          type='button'
+                          className='px-3 py-1 text-black cursor-pointer border border-gray-400 rounded-sm'
+                        >
+                          Download
+                        </button>
 
                         {/* Upload Button (Styled Like Button) */}
                         <label className='flex items-center gap-2 px-4 py-2 border border-dashed border-muted-foreground rounded-md cursor-pointer hover:bg-muted transition'>
@@ -449,7 +550,16 @@ export default function BookingsPage() {
                         </label>
 
                         {/* Accept Button */}
-                        <Button>Accept & Send</Button>
+                        <Button
+                          type='button'
+                          onClick={(e) => handleAcceptAndSend(e)}
+                          disabled={isAssignLoading || isAcceptLoading}
+                        >
+                          Accept & Send{" "}
+                          {isAssignLoading && (
+                            <Loader className='animate-spin' />
+                          )}
+                        </Button>
                       </div>
 
                       {/* Uploaded Files */}
@@ -475,6 +585,74 @@ export default function BookingsPage() {
                           </div>
                         </div>
                       )}
+
+                      <Dialog
+                        open={downloadModal}
+                        onOpenChange={setDownloadModal}
+                      >
+                        <DialogContent className='sm:max-w-[420px]'>
+                          <DialogHeader>
+                            <DialogTitle>Download Documents</DialogTitle>
+                            <DialogDescription>
+                              Click on a document to download it to your device.
+                            </DialogDescription>
+                          </DialogHeader>
+
+                          <div className='flex flex-col gap-5'>
+                            {[
+                              {
+                                label: "Organizer Document",
+                                url: offer?.organizer_document_url,
+                              },
+                              {
+                                label: "Agent Document",
+                                url: offer?.agent_document_url,
+                              },
+                              {
+                                label: "Artist Document",
+                                url: offer?.artist_document_url,
+                              },
+                              {
+                                label: "Venue Document",
+                                url: offer?.venue_document_url,
+                              },
+                            ].map(
+                              ({ label, url }) =>
+                                url && (
+                                  <div
+                                    key={label}
+                                    className='flex items-center justify-between gap-4'
+                                  >
+                                    <Label className='text-sm font-medium lg:text-base'>
+                                      {label}
+                                    </Label>
+
+                                    <Button
+                                      type='button'
+                                      variant='outline'
+                                      onClick={async () => {
+                                        await downloadFileFromUrl(
+                                          `${process.env.NEXT_PUBLIC_IMAGE_URL}${url}`
+                                        );
+                                      }}
+                                    >
+                                      Download
+                                    </Button>
+                                  </div>
+                                )
+                            )}
+
+                            {!offer?.organizer_document_url &&
+                              !offer?.agent_document_url &&
+                              !offer?.artist_document_url &&
+                              !offer?.venue_document_url && (
+                                <p className='text-center text-sm text-muted-foreground'>
+                                  No documents available for download.
+                                </p>
+                              )}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </form>
                   </div>
                 )}

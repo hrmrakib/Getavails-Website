@@ -68,14 +68,10 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
   const [openListModal, setOpenListModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [search, setSearch] = useState<string>("");
-  const { data } = useSearchUserByRoleQuery(
-    {
-      role: formData?.role,
-    },
-    {
-      skip: !formData?.role,
-    }
-  );
+  const { data } = useSearchUserByRoleQuery({
+    role: formData?.role,
+    search,
+  });
   const [createOfferMutation] = useCreateOfferMutation();
 
   useEffect(() => {
@@ -83,6 +79,8 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
       setAllUsers(data.data);
     }
   }, [data]);
+
+  console.log(allUsers);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
