@@ -26,7 +26,7 @@ const offersAPI = baseAPI.injectEndpoints({
 
     acceptOffer: builder.mutation({
       query: (data) => ({
-        url: `/offers/accept`,
+        url: `/offers/accept`, 
         method: "POST",
         body: data,
       }),

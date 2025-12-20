@@ -52,7 +52,7 @@ type Assignment = {
 export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState<
     "total" | "new" | "completed" | "pending"
-  >("new");
+  >("pending");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState([]);
   const [openListModal, setOpenListModal] = useState(false);
