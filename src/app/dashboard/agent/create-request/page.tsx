@@ -507,16 +507,9 @@ export default function BookingsPage() {
                         {/* Download Button */}
 
                         <button
-                          // onClick={async () => {
-                          //   await downloadFileFromUrl(
-                          //     process.env.NEXT_PUBLIC_IMAGE_URL! +
-                          //       offer?.organizer_document_url
-                          //   );
-                          // }}
-
                           onClick={() => setDownloadModal(true)}
                           type='button'
-                          className='px-3 py-1 text-black cursor-pointer border border-gray-400 rounded-sm'
+                          className='px-3 py-1.5 text-black cursor-pointer border border-gray-400 rounded-sm'
                         >
                           Download
                         </button>
