@@ -401,107 +401,111 @@ export default function BookingsPage() {
 
                     <form className='space-y-5 pt-4'>
                       {/* select role to assign */}
-                      <div className='flex items-center justify-between gap-5'>
-                        {offer?.artist_id && (
-                          <div>
-                            <label className='block text-sm font-semibold mb-2'>
-                              Select Artist to assign
-                            </label>
-                            <button
-                              type='button'
-                              onClick={() =>
-                                handleFetchRole("ARTIST", offer.id)
-                              }
-                              className='w-full h-11 flex items-center px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
-                            >
-                              {assignment.artist ? (
-                                <div className='flex items-center gap-3'>
-                                  <Image
-                                    src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.artist.avatar}`}
-                                    alt={assignment.artist.name}
-                                    width={40}
-                                    height={40}
-                                    className='rounded-full border p-1'
-                                  />
-                                  <span className='font-medium'>
-                                    {assignment.artist.name}
+                      {activeTab !== "completed" && (
+                        <div className='flex items-center justify-between gap-5'>
+                          {offer?.artist_id && (
+                            <div>
+                              <label className='block text-sm font-semibold mb-2'>
+                                Select Artist to assign
+                              </label>
+                              <button
+                                type='button'
+                                onClick={() =>
+                                  handleFetchRole("ARTIST", offer.id)
+                                }
+                                className='w-full h-11 flex items-center px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                              >
+                                {assignment.artist ? (
+                                  <div className='flex items-center gap-3'>
+                                    <Image
+                                      src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.artist.avatar}`}
+                                      alt={assignment.artist.name}
+                                      width={40}
+                                      height={40}
+                                      className='rounded-full border p-1'
+                                    />
+                                    <span className='font-medium'>
+                                      {assignment.artist.name}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className='text-muted-foreground'>
+                                    Click to select an artist
                                   </span>
-                                </div>
-                              ) : (
-                                <span className='text-muted-foreground'>
-                                  Click to select an artist
-                                </span>
-                              )}
-                            </button>
-                          </div>
-                        )}
+                                )}
+                              </button>
+                            </div>
+                          )}
 
-                        {offer?.venue_id && (
-                          <div>
-                            <label className='block text-sm font-semibold mb-2'>
-                              Select Venue to assign
-                            </label>
-                            <button
-                              type='button'
-                              onClick={() => handleFetchRole("VENUE", offer.id)}
-                              className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
-                            >
-                              {assignment.venue ? (
-                                <div className='flex items-center gap-3'>
-                                  <Image
-                                    src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.venue.avatar}`}
-                                    alt={assignment.venue.name}
-                                    width={40}
-                                    height={40}
-                                    className='rounded-full border p-1'
-                                  />
-                                  <span className='font-medium'>
-                                    {assignment.venue?.name}
+                          {offer?.venue_id && (
+                            <div>
+                              <label className='block text-sm font-semibold mb-2'>
+                                Select Venue to assign
+                              </label>
+                              <button
+                                type='button'
+                                onClick={() =>
+                                  handleFetchRole("VENUE", offer.id)
+                                }
+                                className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                              >
+                                {assignment.venue ? (
+                                  <div className='flex items-center gap-3'>
+                                    <Image
+                                      src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.venue.avatar}`}
+                                      alt={assignment.venue.name}
+                                      width={40}
+                                      height={40}
+                                      className='rounded-full border p-1'
+                                    />
+                                    <span className='font-medium'>
+                                      {assignment.venue?.name}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className='text-muted-foreground'>
+                                    Click to select an venue
                                   </span>
-                                </div>
-                              ) : (
-                                <span className='text-muted-foreground'>
-                                  Click to select an venue
-                                </span>
-                              )}
-                            </button>
-                          </div>
-                        )}
+                                )}
+                              </button>
+                            </div>
+                          )}
 
-                        {offer?.organizer_id && (
-                          <div>
-                            <label className='block text-sm font-semibold mb-2'>
-                              Select Organizer to assign
-                            </label>
-                            <button
-                              type='button'
-                              onClick={() =>
-                                handleFetchRole("ORGANIZER", offer.id)
-                              }
-                              className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
-                            >
-                              {assignment.organizer ? (
-                                <div className='flex items-center gap-3'>
-                                  <Image
-                                    src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.organizer.avatar}`}
-                                    alt={assignment.organizer.name}
-                                    width={40}
-                                    height={40}
-                                    className='rounded-full border p-1'
-                                  />
-                                  <span className='font-medium'>
-                                    {assignment.organizer?.name}
+                          {offer?.organizer_id && (
+                            <div>
+                              <label className='block text-sm font-semibold mb-2'>
+                                Select Organizer to assign
+                              </label>
+                              <button
+                                type='button'
+                                onClick={() =>
+                                  handleFetchRole("ORGANIZER", offer.id)
+                                }
+                                className='w-full h-11 flex items-center justify-between px-4 py-3 border rounded-lg bg-card hover:bg-muted transition'
+                              >
+                                {assignment.organizer ? (
+                                  <div className='flex items-center gap-3'>
+                                    <Image
+                                      src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${assignment.organizer.avatar}`}
+                                      alt={assignment.organizer.name}
+                                      width={40}
+                                      height={40}
+                                      className='rounded-full border p-1'
+                                    />
+                                    <span className='font-medium'>
+                                      {assignment.organizer?.name}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className='text-muted-foreground'>
+                                    Click to select an organizer
                                   </span>
-                                </div>
-                              ) : (
-                                <span className='text-muted-foreground'>
-                                  Click to select an organizer
-                                </span>
-                              )}
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                                )}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       <div className='flex flex-wrap items-center justify-end gap-3 pt-4'>
                         {/* Download Button */}
@@ -515,44 +519,48 @@ export default function BookingsPage() {
                         </button>
 
                         {/* Upload Button (Styled Like Button) */}
-                        <label className='flex items-center gap-2 px-4 py-2 border border-dashed border-muted-foreground rounded-md cursor-pointer hover:bg-muted transition'>
-                          <input
-                            type='file'
-                            multiple
-                            className='hidden'
-                            onChange={handleFileUpload}
-                          />
-
-                          <svg
-                            className='w-5 h-5 text-muted-foreground'
-                            fill='none'
-                            stroke='currentColor'
-                            viewBox='0 0 24 24'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'
+                        {activeTab !== "completed" && (
+                          <label className='flex items-center gap-2 px-4 py-2 border border-dashed border-muted-foreground rounded-md cursor-pointer hover:bg-muted transition'>
+                            <input
+                              type='file'
+                              multiple
+                              className='hidden'
+                              onChange={handleFileUpload}
                             />
-                          </svg>
 
-                          <span className='text-sm text-muted-foreground'>
-                            Upload file
-                          </span>
-                        </label>
+                            <svg
+                              className='w-5 h-5 text-muted-foreground'
+                              fill='none'
+                              stroke='currentColor'
+                              viewBox='0 0 24 24'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth={2}
+                                d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'
+                              />
+                            </svg>
+
+                            <span className='text-sm text-muted-foreground'>
+                              Upload file
+                            </span>
+                          </label>
+                        )}
 
                         {/* Accept Button */}
-                        <Button
-                          type='button'
-                          onClick={(e) => handleAcceptAndSend(e)}
-                          disabled={isAssignLoading || isAcceptLoading}
-                        >
-                          Accept & Send{" "}
-                          {isAssignLoading && (
-                            <Loader className='animate-spin' />
-                          )}
-                        </Button>
+                        {activeTab !== "completed" && (
+                          <Button
+                            type='button'
+                            onClick={(e) => handleAcceptAndSend(e)}
+                            disabled={isAssignLoading || isAcceptLoading}
+                          >
+                            Accept & Send{" "}
+                            {isAssignLoading && (
+                              <Loader className='animate-spin' />
+                            )}
+                          </Button>
+                        )}
                       </div>
 
                       {/* Uploaded Files */}
