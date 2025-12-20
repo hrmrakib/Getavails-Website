@@ -52,7 +52,7 @@ type Assignment = {
 export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState<
     "total" | "new" | "completed" | "pending"
-  >("pending");
+  >("new");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState([]);
   const [openListModal, setOpenListModal] = useState(false);
@@ -98,8 +98,6 @@ export default function BookingsPage() {
     limit: 10,
     tab: tabMap[activeTab],
   });
-
-  console.log("all offers", data?.data);
 
   const { data: user, isFetching: isUserLoading } = useSearchUserByRoleQuery(
     {
@@ -170,39 +168,34 @@ export default function BookingsPage() {
     setOpenListModal(false);
   };
 
-  const handleAcceptAndSend = async (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleAcceptAndSend = async (
+    e: React.FormEvent<HTMLButtonElement>,
+    offerId: string
+  ) => {
     e.preventDefault();
 
-    // if (!activeOfferId) return;
     if (!document) {
       toast.warning("Please upload your document");
       return;
     }
 
     try {
-      const offer_id = Object.keys(assignments);
       const formData = new FormData();
 
-      const offerId = {
-        offer_id: offer_id[0],
+      const offerObj = {
+        offer_id: offerId,
       };
 
-      formData.append("data", JSON.stringify(offerId));
+      formData.append("data", JSON.stringify(offerObj));
       if (document) {
         formData.append("document", document);
       }
 
       const res = await acceptOfferMutation(formData).unwrap();
 
-      const data = payload[0];
-
       if (res?.success) {
-        const response = await assignOfferMutation(data).unwrap();
-
-        if (response?.success) {
-          refetch();
-          toast.success("Offer accepted and sent successfully");
-        }
+        refetch();
+        toast.success("Offer accepted and sent successfully");
       }
     } catch (error) {
       console.error(error);
@@ -552,7 +545,7 @@ export default function BookingsPage() {
                         {activeTab !== "completed" && (
                           <Button
                             type='button'
-                            onClick={(e) => handleAcceptAndSend(e)}
+                            onClick={(e) => handleAcceptAndSend(e, offer.id)}
                             disabled={isAssignLoading || isAcceptLoading}
                           >
                             Accept & Send{" "}

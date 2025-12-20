@@ -170,7 +170,10 @@ export default function BookingsPage() {
     setOpenListModal(false);
   };
 
-  const handleAcceptAndSend = async (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleAcceptAndSend = async (
+    e: React.FormEvent<HTMLButtonElement>,
+    offerId: string
+  ) => {
     e.preventDefault();
 
     // if (!activeOfferId) return;
@@ -180,29 +183,22 @@ export default function BookingsPage() {
     }
 
     try {
-      const offer_id = Object.keys(assignments);
       const formData = new FormData();
 
-      const offerId = {
-        offer_id: offer_id[0],
+      const offerObj = {
+        offer_id: offerId,
       };
 
-      formData.append("data", JSON.stringify(offerId));
+      formData.append("data", JSON.stringify(offerObj));
       if (document) {
         formData.append("document", document);
       }
 
       const res = await acceptOfferMutation(formData).unwrap();
 
-      const data = payload[0];
-
       if (res?.success) {
-        const response = await assignOfferMutation(data).unwrap();
-
-        if (response?.success) {
-          refetch();
-          toast.success("Offer accepted and sent successfully");
-        }
+        refetch();
+        toast.success("Offer accepted and sent successfully");
       }
     } catch (error) {
       console.error(error);
@@ -552,7 +548,7 @@ export default function BookingsPage() {
                         {activeTab !== "completed" && (
                           <Button
                             type='button'
-                            onClick={(e) => handleAcceptAndSend(e)}
+                            onClick={(e) => handleAcceptAndSend(e, offer.id)}
                             disabled={isAssignLoading || isAcceptLoading}
                           >
                             Accept & Send{" "}
