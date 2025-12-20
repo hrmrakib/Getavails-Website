@@ -402,8 +402,8 @@ export default function BookingsPage() {
                     <form className='space-y-5 pt-4'>
                       {/* select role to assign */}
                       {activeTab !== "completed" && (
-                        <div className='flex items-center justify-between gap-5'>
-                          {offer?.artist_id && (
+                        <div className='flex items-center flex-wrap gap-5'>
+                          {!offer?.artist_id && (
                             <div>
                               <label className='block text-sm font-semibold mb-2'>
                                 Select Artist to assign
@@ -437,7 +437,7 @@ export default function BookingsPage() {
                             </div>
                           )}
 
-                          {offer?.venue_id && (
+                          {!offer?.venue_id && (
                             <div>
                               <label className='block text-sm font-semibold mb-2'>
                                 Select Venue to assign
@@ -471,7 +471,7 @@ export default function BookingsPage() {
                             </div>
                           )}
 
-                          {offer?.organizer_id && (
+                          {!offer?.organizer_id && (
                             <div>
                               <label className='block text-sm font-semibold mb-2'>
                                 Select Organizer to assign
