@@ -35,6 +35,7 @@ const AgentSidebar = () => {
               pathname.startsWith("/dashboard/agent/create-request/")
             }
           />
+
           <NavItem
             href='/dashboard/agent/artists-management'
             icon={Palette}

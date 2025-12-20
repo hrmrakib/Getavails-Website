@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   MapIcon,
   MessageCircleMore,
+  Palette,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { RoleRedirect } from "@/utils/makePrivate";
@@ -24,6 +25,16 @@ const VenueSidebar = () => {
             icon={LayoutDashboard}
             label='Overview'
             active={pathname === "/dashboard/venue"}
+          />
+
+          <NavItem
+            href='/dashboard/venue/create-request'
+            icon={Palette}
+            label='Create Request'
+            active={
+              pathname === "/dashboard/venue/create-request" ||
+              pathname.startsWith("/dashboard/venue/create-request/")
+            }
           />
 
           <NavItem

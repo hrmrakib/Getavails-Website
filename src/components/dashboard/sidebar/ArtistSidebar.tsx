@@ -7,6 +7,7 @@ import {
   CalendarDays,
   LayoutDashboard,
   MessageCircleMore,
+  Palette,
   SearchCheck,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -24,6 +25,16 @@ const ArtistSidebar = () => {
             icon={LayoutDashboard}
             label='Overview'
             active={pathname === "/dashboard/artist"}
+          />
+
+          <NavItem
+            href='/dashboard/artist/create-request'
+            icon={Palette}
+            label='Create Request'
+            active={
+              pathname === "/dashboard/artist/create-request" ||
+              pathname.startsWith("/dashboard/artist/create-request/")
+            }
           />
 
           <NavItem
