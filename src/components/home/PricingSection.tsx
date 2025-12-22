@@ -55,7 +55,6 @@ export function PricingSection() {
     }
 
     try {
-      console.log(plan.id);
       const res = await paySubscriptionMutation({
         subscriptionId: plan.id,
       }).unwrap();

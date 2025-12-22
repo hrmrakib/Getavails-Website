@@ -4,10 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AgentRevenueChart from "@/components/dashboard/chart/AgentRevenueChart";
 import EventChart from "@/components/dashboard/chart/EventChart";
 import { useGetOrganizerOverviewQuery } from "@/redux/features/organizer/organizerAPI";
-import { RoleRedirect } from "@/utils/makePrivate";
 
 export default function DashboardPage() {
   const { data: overview } = useGetOrganizerOverviewQuery("");
+
+  console.log({ overview });
+  console.log(overview?.data?.statusCode);
 
   return (
     // <RoleRedirect allowedRole='ORGANIZER'>

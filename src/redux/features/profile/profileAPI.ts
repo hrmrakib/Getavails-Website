@@ -6,22 +6,38 @@ const profileAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: `/profile`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+      }),
+    }),
+
+    connectToStripe: builder.mutation({
+      query: () => ({
+        url: `/profile/connect-stripe`,
+        method: "POST",
       }),
     }),
 
     updateProfile: builder.mutation({
       query: (data) => ({
-        url: `/profile/${data.id}`,
-        method: "PUT",
+        url: `/profile/edit`,
+        method: "PATCH",
         body: data,
+      }),
+    }),
+
+    deleteProfile: builder.mutation({
+      query: () => ({
+        url: `/profile/delete`,
+        method: "DELETE",
       }),
     }),
   }),
 });
 
-export const { useGetProfileQuery, useUpdateProfileMutation } = profileAPI;
+export const {
+  useGetProfileQuery,
+  useConnectToStripeMutation,
+  useUpdateProfileMutation,
+  useDeleteProfileMutation,
+} = profileAPI;
 
 export default profileAPI;

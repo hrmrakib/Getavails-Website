@@ -46,7 +46,7 @@ const AgentSidebar = () => {
             }
           />
 
-          <NavItem
+          {/* <NavItem
             href='/dashboard/agent/send-customer-offer'
             icon={NotebookPen}
             label='Send Customer Offer'
@@ -54,7 +54,7 @@ const AgentSidebar = () => {
               pathname === "/dashboard/agent/send-customer-offer" ||
               pathname.startsWith("/dashboard/agent/send-customer-offer/")
             }
-          />
+          /> */}
 
           <NavItem
             href='/dashboard/agent/message'

@@ -16,13 +16,21 @@ export function Navbar() {
   const [token, setToken] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage.getItem("access_token"));
+  }, []);
+
   const {
     data: profile,
     isLoading,
     refetch,
   } = useGetProfileQuery(undefined, {
-    skip: !localStorage.getItem("access_token"),
+    skip: !hasToken,
   });
+
   const userToggle = useSelector((state: any) => state.auth.userToggle);
 
   useEffect(() => {
@@ -91,7 +99,7 @@ export function Navbar() {
             </div>
 
             {/* Desktop Buttons */}
-            <div className='hidden md:flex items-center space-x-4'>
+            <div className='hidden lg:flex items-center space-x-4'>
               {isLoading ? (
                 <div className='flex items-center gap-6'>
                   <Skeleton className='w-10 h-10 rounded-full bg-gray-300' />
@@ -99,18 +107,20 @@ export function Navbar() {
                 </div>
               ) : profile?.data ? (
                 <div className='flex items-center gap-4'>
-                  <Avatar className='w-10 h-10' title={profile?.data?.name}>
-                    <AvatarImage
-                      src={
-                        process.env.NEXT_PUBLIC_IMAGE_URL +
-                          profile?.data?.avatar || "/placeholder.png"
-                      }
-                      width={48}
-                      height={48}
-                      alt='Avatar'
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
+                  <Link href={"/profile"}>
+                    <Avatar className='w-10 h-10' title={profile?.data?.name}>
+                      <AvatarImage
+                        src={
+                          process.env.NEXT_PUBLIC_IMAGE_URL +
+                            profile?.data?.avatar || "/placeholder.png"
+                        }
+                        width={48}
+                        height={48}
+                        alt='Avatar'
+                      />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </Link>
                   {profile?.data?.is_admin && (
                     <Link
                       href={`/dashboard/`}
@@ -157,7 +167,7 @@ export function Navbar() {
 
       {/* Mobile Navigation Overlay */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-opacity duration-300 ease-in-out ${
+        className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ease-in-out ${
           isMenuOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
