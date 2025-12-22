@@ -174,8 +174,7 @@ export default function ProfilePage() {
       const res = await connectToStripeMutation({}).unwrap();
 
       if (res?.success) {
-        refetch();
-        toast.success("Stripe connected successfully");
+        window.open(res?.data?.url, "_blank");
       }
     } catch (error: any) {
       toast.error(error?.data?.message || "Error connecting to Stripe");
