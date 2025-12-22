@@ -57,8 +57,7 @@ export function HeroSection() {
             </div>
 
             {/* Search form */}
-            <div className='bg-white border border-[#1E1E1ECC] rounded-2xl p-6 shadow-sm space-y-8'>
-              {/* Search for Artists dropdown */}
+            {/* <div className='bg-white border border-[#1E1E1ECC] rounded-2xl p-6 shadow-sm space-y-8'>
               <div className='space-y-2'>
                 <Select>
                   <SelectTrigger className='w-full !h-12 text-[#6B7280] border border-[#1E1E1E33] bg-transparent rounded-3xl'>
@@ -77,7 +76,6 @@ export function HeroSection() {
                 </Select>
               </div>
 
-              {/* Location and Date inputs */}
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div className='relative'>
                   <MapPinIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400' />
@@ -100,7 +98,6 @@ export function HeroSection() {
                 </div>
               </div>
 
-              {/* Search button */}
               <Button
                 disabled={!searchQuery || !location || !dateRange}
                 onClick={handleSearch}
@@ -109,7 +106,7 @@ export function HeroSection() {
                 <SearchIcon className='mr-2 h-5 w-5' />
                 Search Availability
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
 

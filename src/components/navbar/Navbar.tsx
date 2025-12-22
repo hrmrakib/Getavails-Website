@@ -61,6 +61,7 @@ export function Navbar() {
     pathname === "/signup/artist" ||
     pathname === "/signup/venue" ||
     pathname === "/signup/buyer" ||
+    pathname === "/signup/user" ||
     pathname === "/signup/organizer"
   ) {
     return null;

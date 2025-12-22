@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Linkedin, Twitter, Youtube } from "lucide-react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 const explore = [
   { name: "Home", href: "/" },
@@ -14,22 +15,24 @@ const explore = [
 ];
 
 const role = [
-  { name: "Agents", href: "/agents" },
-  { name: "Artists", href: "/artists" },
-  { name: "Venues", href: "/venues" },
-  { name: "Buyers", href: "/buyers" },
+  { name: "Agent", href: "/dashboard/agent" },
+  { name: "Artist", href: "/dashboard/artist" },
+  { name: "Venue", href: "/dashboard/venue" },
+  { name: "Organizer", href: "/dashboard/organizer" },
+  { name: "User", href: "/dashboard/user" },
 ];
 
 const company = [
-  { name: "About Us", href: "/about" },
-  { name: "Terms of Use", href: "/terms" },
-  { name: "Privacy Policy", href: "/privacy" },
+  { name: "About Us", href: "/" },
+  { name: "Terms of Use", href: "/" },
+  { name: "Privacy Policy", href: "/" },
 ];
 
 const contact = ["+1 (123) 456-7890", "support@getavails.com"];
 
 export function FooterSection() {
   const pathname = usePathname();
+  const router = useRouter();
 
   if (
     pathname === "/signup" ||
@@ -43,6 +46,7 @@ export function FooterSection() {
     pathname === "/signup/artist" ||
     pathname === "/signup/venue" ||
     pathname === "/signup/buyer" ||
+    pathname === "/signup/user" ||
     pathname === "/signup/organizer"
   ) {
     return null;
@@ -65,6 +69,7 @@ export function FooterSection() {
               <ArrowRight className='ml-2 h-4 w-4' />
             </Button>
             <Button
+              onClick={() => router.push("/how-it-works")}
               size='lg'
               variant='outline'
               className='border-[#FFFFFF] text-white hover:bg-gray-100 font-medium bg-transparent cursor-pointer'
@@ -88,12 +93,12 @@ export function FooterSection() {
               <ul className='space-y-3'>
                 {explore.map((item, index) => (
                   <li key={index}>
-                    <a
+                    <Link
                       href={item.href}
                       className='text-gray-400 hover:text-white transition-colors'
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -105,12 +110,12 @@ export function FooterSection() {
               <ul className='space-y-3'>
                 {role.map((item, index) => (
                   <li key={index}>
-                    <a
+                    <Link
                       href={item.href}
                       className='text-gray-400 hover:text-white transition-colors'
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -122,12 +127,12 @@ export function FooterSection() {
               <ul className='space-y-3'>
                 {company.map((item, index) => (
                   <li key={index}>
-                    <a
+                    <Link
                       href={item.href}
                       className='text-gray-400 hover:text-white transition-colors'
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -139,12 +144,12 @@ export function FooterSection() {
               <ul className='space-y-3'>
                 {contact.map((item, index) => (
                   <li key={index}>
-                    <a
+                    <Link
                       href={`tel:${item}`}
                       className='text-gray-400 hover:text-white transition-colors'
                     >
                       {item}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -162,27 +167,27 @@ export function FooterSection() {
           <div className='flex flex-col items-center justify-between gap-4 sm:flex-row'>
             <div className='flex flex-col items-center gap-4 sm:flex-row sm:gap-6'>
               <p className='text-sm text-gray-400'>
-                © 2024 Getavails.com. All rights reserved.
+                © {new Date().getFullYear()} Getavails.com. All rights reserved.
               </p>
               <div className='flex items-center gap-4 text-sm'>
-                <a
+                <Link
                   href='#'
                   className='text-gray-400 hover:text-white transition-colors'
                 >
                   Terms of Use
-                </a>
-                <a
+                </Link>
+                <Link
                   href='#'
                   className='text-gray-400 hover:text-white transition-colors'
                 >
                   Privacy Policy
-                </a>
-                <a
+                </Link>
+                <Link
                   href='#'
                   className='text-gray-400 hover:text-white transition-colors'
                 >
                   Cookie settings
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -198,24 +203,24 @@ export function FooterSection() {
                 Google security
               </div>
               <div className='flex items-center gap-3'>
-                <a
+                <Link
                   href='#'
                   className='text-gray-400 hover:text-white transition-colors'
                 >
                   <Linkedin className='h-5 w-5' />
-                </a>
-                <a
+                </Link>
+                <Link
                   href='#'
                   className='text-gray-400 hover:text-white transition-colors'
                 >
                   <Twitter className='h-5 w-5' />
-                </a>
-                <a
+                </Link>
+                <Link
                   href='#'
                   className='text-gray-400 hover:text-white transition-colors'
                 >
                   <Youtube className='h-5 w-5' />
-                </a>
+                </Link>
               </div>
             </div>
           </div>

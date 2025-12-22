@@ -174,7 +174,7 @@ export default function ContactFormSection({
                   onChange={handleInputChange}
                   placeholder='Jhon Smith'
                   required
-                  className='w-full h-12'
+                  className='w-full h-12 bg-transparent'
                 />
               </div>
 
@@ -194,7 +194,7 @@ export default function ContactFormSection({
                   onChange={handleInputChange}
                   placeholder='email@gmail.com'
                   required
-                  className='w-full h-12'
+                  className='w-full h-12 bg-transparent'
                 />
               </div>
 

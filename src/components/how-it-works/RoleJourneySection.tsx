@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const journeys = [
   {
@@ -50,7 +51,7 @@ const journeys = [
     buttonText: "Join as Venue",
   },
   {
-    id: "buyer",
+    id: "user",
     title: "Talent Buyer Journey:",
     icon: Handshake,
     details: [
@@ -65,9 +66,19 @@ const journeys = [
 
 export function RoleJourneySection() {
   const [expandedJourney, setExpandedJourney] = useState("agent");
+  const [selectRole, setSelectRole] = useState("artist");
+  const router = useRouter();
 
   const toggleJourney = (journeyId: string) => {
     setExpandedJourney(expandedJourney === journeyId ? "" : journeyId);
+  };
+
+  const handleSelectRole = (role: string) => {
+    setSelectRole(role);
+
+    setTimeout(() => {
+      router.push(`/signup/${role}`);
+    }, 1500);
   };
 
   return (
@@ -113,6 +124,7 @@ export function RoleJourneySection() {
                         ))}
                       </ul>
                       <Button
+                        onClick={() => handleSelectRole(journey.id)}
                         variant='outline'
                         className='text-[#235789] border-[#235789] hover:bg-blue-50 bg-transparent'
                       >

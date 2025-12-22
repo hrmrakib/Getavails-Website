@@ -28,22 +28,24 @@ const BlogHeroContent = () => {
         }`}
         onClick={() => handleCardClick("agent")}
       >
-        <div className='z-20 bg-[#F6FBFF] aspect-video relative overflow-hidden rounded-4xl p-6'>
-          <Image
-            width={500}
-            height={312}
-            src={blogs?.data[0].banner_url}
-            alt={blogs?.data[0].title}
-            className='w-full h-full object-cover rounded-4xl'
-          />
-        </div>
+        {blogs?.data[0]?.banner_url && (
+          <div className='z-20 bg-[#F6FBFF] aspect-video relative overflow-hidden rounded-4xl p-6'>
+            <Image
+              width={500}
+              height={312}
+              src={blogs?.data[0]?.banner_url}
+              alt={blogs?.data[0]?.title}
+              className='w-full h-full object-cover rounded-4xl'
+            />
+          </div>
+        )}
         <div className='px-6 pb-6'>
           <div className='text-[#2C73B8] text-base font-medium mb-2'>Agent</div>
           <h2 className='text-2xl md:text-[32px] font-semibold text-[#000000] mb-3'>
-            {blogs?.data[0].title}
+            {blogs?.data[0]?.title}
           </h2>
           <p className='text-[#4D4D4D] text-sm md:text-base leading-relaxed mb-4'>
-            {blogs?.data[0].description}
+            {blogs?.data[0]?.description}
           </p>
           <div className='flex items-center gap-3'>
             <Avatar className='w-10 h-10'>
@@ -52,10 +54,10 @@ const BlogHeroContent = () => {
             </Avatar>
             <div>
               <div className='text-sm lg:text-base font-medium text-[#000000]'>
-                {blogs?.data[0].admin.name}
+                {blogs?.data[0]?.admin?.name}
               </div>
               <div className='text-xs lg:text-sm text-[#838383]'>
-                {blogs?.data[0].published_at?.split("T")[0]}
+                {blogs?.data[0]?.published_at?.split("T")[0]}
               </div>
             </div>
           </div>
@@ -68,15 +70,17 @@ const BlogHeroContent = () => {
         }`}
         onClick={() => handleCardClick("artist")}
       >
-        <div className='bg-[#F6FBFF] aspect-video relative overflow-hidden rounded-4xl p-6'>
-          <Image
-            width={500}
-            height={312}
-            src={blogs?.data[1]?.banner_url}
-            alt={blogs?.data[1]?.title}
-            className='w-full h-full object-cover rounded-4xl'
-          />
-        </div>
+        {blogs?.data[0]?.banner_url && (
+          <div className='bg-[#F6FBFF] aspect-video relative overflow-hidden rounded-4xl p-6'>
+            <Image
+              width={500}
+              height={312}
+              src={blogs?.data[1]?.banner_url}
+              alt={blogs?.data[1]?.title}
+              className='w-full h-full object-cover rounded-4xl'
+            />
+          </div>
+        )}
         <div className='px-6 pb-6'>
           <div className='text-[#2C73B8] text-base font-medium mb-2'>
             Artist
@@ -94,7 +98,7 @@ const BlogHeroContent = () => {
             </Avatar>
             <div>
               <div className='text-sm lg:text-base font-medium text-[#000000]'>
-                {blogs?.data[1]?.admin.name}
+                {blogs?.data[1]?.admin?.name}
               </div>
               <div className='text-xs lg:text-sm text-[#838383]'>
                 {blogs?.data[1]?.published_at?.split("T")[0]}

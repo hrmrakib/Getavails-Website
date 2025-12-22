@@ -88,6 +88,16 @@ export default function JoinEvent() {
         {/* Events Section */}
         <section className='w-full px-4 md:px-8 pb-12'>
           <div className='relative'>
+            {/* if no data */}
+            {eventList?.data?.length === 0 && (
+              <div className='w-full flex items-center justify-center h-full text-center'>
+                <p className='text-lg font-semibold text-muted-foreground'>
+                  {" "}
+                  No events found
+                </p>
+              </div>
+            )}
+
             {/* Events Container */}
             <div
               id='events-container'

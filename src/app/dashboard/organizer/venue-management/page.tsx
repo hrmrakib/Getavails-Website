@@ -187,7 +187,7 @@ export default function VenueManagement() {
 
                       <div className='flex items-center gap-2'>
                         <Link
-                          href={`/dashboard/Organizer/message/`}
+                          href={`/dashboard/organizer/message/`}
                           className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white rounded-2xl'
                         >
                           <MessageCircleMore className='h-4 w-4' />
@@ -241,7 +241,7 @@ export default function VenueManagement() {
                         </button>
 
                         <Link
-                          href={`/dashboard/Organizer/message/`}
+                          href={`/dashboard/organizer/message/`}
                           className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white rounded-2xl'
                         >
                           <MessageCircleMore className='h-4 w-4' />

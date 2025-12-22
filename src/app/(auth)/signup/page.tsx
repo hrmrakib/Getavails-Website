@@ -15,8 +15,8 @@ import { useRouter } from "next/navigation";
 
 const journeys = [
   {
-    id: "buyer",
-    title: "Talent Buyer Journey:",
+    id: "user",
+    title: "Talent User Journey:",
     icon: Handshake,
     details: [
       "Search artists by genre, location, and budget",
@@ -24,7 +24,7 @@ const journeys = [
       "Streamline booking and contract processes",
       "Manage multiple events and relationships",
     ],
-    buttonText: "Join as Talent Buyer",
+    buttonText: "Join as Talent User",
   },
   {
     id: "agent",
