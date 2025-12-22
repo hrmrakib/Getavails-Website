@@ -102,7 +102,6 @@ export default function ProfilePage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
-  const [isConnectingStripe, setIsConnectingStripe] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -110,7 +109,8 @@ export default function ProfilePage() {
   const [uploadImage, setUploadImage] = useState<File | null>(null);
 
   const [withdrawMoneyMutation] = useWithdrawMoneyMutation();
-  const [connectToStripeMutation] = useConnectToStripeMutation();
+  const [connectToStripeMutation, { isLoading: isConnectingStripe }] =
+    useConnectToStripeMutation();
   const [deleteProfileMutation, { isLoading: isDeletingProfile }] =
     useDeleteProfileMutation();
   const { data: profile, refetch } = useGetProfileQuery({});
@@ -171,7 +171,6 @@ export default function ProfilePage() {
   };
 
   const handleConnectStripe = async () => {
-    setIsConnectingStripe(true);
     try {
       const res = await connectToStripeMutation({}).unwrap();
 
@@ -408,22 +407,9 @@ export default function ProfilePage() {
                       ${user?.balance.toFixed(2)}
                     </p>
                   </div>
-
-                  {/* <div>
-                    <Button
-                      onClick={handleWithdraw}
-                      disabled={isWithdrawing}
-                      className='w-auto bg-[#235789] hover:bg-[#235789]/90'
-                    >
-                      {isWithdrawing && (
-                        <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                      )}
-                      Withdraw
-                    </Button>
-                  </div> */}
                 </div>
 
-                {!user?.is_stripe_connected ? (
+                {user?.is_stripe_connected ? (
                   <div className='space-y-3'>
                     <div className='flex items-start gap-3 rounded-lg bg-blue-50 p-4'>
                       <AlertTriangle className='mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600' />
@@ -498,9 +484,6 @@ export default function ProfilePage() {
                     {user?.is_active ? "Active" : "Inactive"}
                   </Badge>
                 </div>
-                {/* <Button variant='outline' className='w-full bg-transparent'>
-                  Manage Subscription
-                </Button> */}
               </CardContent>
             </Card>
 
