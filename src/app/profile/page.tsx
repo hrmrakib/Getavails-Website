@@ -55,6 +55,7 @@ import {
   useDeleteProfileMutation,
   useGetProfileQuery,
   useUpdateProfileMutation,
+  useWithdrawMoneyMutation,
 } from "@/redux/features/profile/profileAPI";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -108,6 +109,7 @@ export default function ProfilePage() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [uploadImage, setUploadImage] = useState<File | null>(null);
 
+  const [withdrawMoneyMutation] = useWithdrawMoneyMutation();
   const [connectToStripeMutation] = useConnectToStripeMutation();
   const [deleteProfileMutation, { isLoading: isDeletingProfile }] =
     useDeleteProfileMutation();
@@ -187,25 +189,24 @@ export default function ProfilePage() {
       return;
     }
 
-    // if (amount > user.balance) {
-    //   return;
-    // }
+    if (amount > user.balance) {
+      return;
+    }
 
-    setIsWithdrawing(true);
     try {
-      // Replace with your actual API endpoint
-      // const response = await fetch('/api/stripe/withdraw', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ amount }),
-      // })
+      const res = await withdrawMoneyMutation({
+        amount,
+      }).unwrap();
 
-      //   setUser({ ...user, balance: user.balance - amount });
-
-      setShowWithdrawDialog(false);
-      setWithdrawAmount("");
-    } catch (error) {
+      if (res?.success) {
+        refetch();
+        toast.success("Money withdrawn successfully");
+      }
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Error withdrawing money");
     } finally {
+      setWithdrawAmount("");
+      setShowWithdrawDialog(false);
       setIsWithdrawing(false);
     }
   };

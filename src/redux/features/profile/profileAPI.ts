@@ -24,6 +24,14 @@ const profileAPI = baseAPI.injectEndpoints({
       }),
     }),
 
+    withdrawMoney: builder.mutation({
+      query: (data) => ({
+        url: `/payments/withdraw`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
     deleteProfile: builder.mutation({
       query: () => ({
         url: `/profile/delete`,
@@ -37,6 +45,7 @@ export const {
   useGetProfileQuery,
   useConnectToStripeMutation,
   useUpdateProfileMutation,
+  useWithdrawMoneyMutation,
   useDeleteProfileMutation,
 } = profileAPI;
 
