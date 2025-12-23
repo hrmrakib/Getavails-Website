@@ -39,6 +39,7 @@ export default function MessagePage() {
   const { id: chat_id } = useParams<{ id: string }>();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedContact, setSelectedContact] = useState<IChat | null>(null);
   const [messageInput, setMessageInput] = useState("");
   const [activeTab, setActiveTab] = useState<boolean>(false);
@@ -51,7 +52,7 @@ export default function MessagePage() {
       data: TMessagesResponse;
     }>({ page: 1, limit: 10, chat_id, search: undefined }, { skip: !chat_id });
 
-  const { data: inboxChats } = useGetInboxChatsQuery(
+  const { data: inboxChats, refetch: inboxRefetch } = useGetInboxChatsQuery(
     {
       page: 1,
       limit: 10,
@@ -62,6 +63,17 @@ export default function MessagePage() {
   );
 
   const messages = messagesResponse?.data || [];
+
+  /* =======================
+     🔥 5s DEBOUNCE LOGIC
+     ======================= */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   useEffect(() => {
     setUserInfo({
@@ -159,6 +171,8 @@ export default function MessagePage() {
   }, [socket, chat_id, refetchMessages]);
 
   const handleSelectContact = async (contact: IChat) => {
+    inboxRefetch(); // force refetch
+
     setSelectedContact(contact);
     if (window.innerWidth < 640) {
       setIsMobileView(true);
@@ -188,7 +202,7 @@ export default function MessagePage() {
               <Input
                 placeholder='Search messages or contacts...'
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => setDebouncedSearch(e.target.value)}
                 className='pl-10 bg-gray-50 border-gray-200'
               />
             </div>
@@ -255,7 +269,7 @@ export default function MessagePage() {
                       <span>{formatTime(contact.timestamp)}</span>
                     </div>
                     <p className='text-gray-600 truncate text-sm mt-1'>
-                      {contact.last_message.slice(0, 30)}
+                      {contact?.last_message?.slice(0, 30)}
                     </p>
                   </div>
 

@@ -79,14 +79,14 @@ export function Navbar() {
     <>
       <nav className='sticky top-0 z-50 w-full bg-[#FFFFFF] backdrop-blur supports-[backdrop-filter]:bg-background/60'>
         <div className='container mx-auto'>
-          <div className='h-16 lg:h-24 flex justify-between items-center'>
+          <div className='h-16 lg:h-24 flex justify-between items-center flex-wrap'>
             {/* Logo */}
             <Link href='/' className='flex items-center space-x-2'>
               <Image src='/logo.png' alt='Logo' width={56} height={56} />
             </Link>
 
             {/* Desktop Navigation */}
-            <div className='hidden md:flex items-center space-x-8'>
+            <div className='hidden lg:flex items-center space-x-8'>
               {navItems.map((item) => (
                 <Link
                   key={item.name}
@@ -147,7 +147,7 @@ export function Navbar() {
             </div>
 
             {/* Mobile menu button */}
-            <div className='md:hidden'>
+            <div className='lg:hidden'>
               <Button
                 variant='ghost'
                 size='sm'

@@ -3,6 +3,7 @@ import baseAPI, { TList } from "@/redux/api/api";
 const chatAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
     getMessages: builder.query({
+      keepUnusedDataFor: 0,
       query: ({
         page,
         limit,
@@ -24,6 +25,7 @@ const chatAPI = baseAPI.injectEndpoints({
     }),
 
     getInboxChats: builder.query({
+      keepUnusedDataFor: 0,
       query: ({ page, limit, search, unread }: TList & { unread: boolean }) => {
         const query = new URLSearchParams({});
 
@@ -37,8 +39,16 @@ const chatAPI = baseAPI.injectEndpoints({
         };
       },
     }),
+
+    newChat: builder.mutation({
+      query: (data: { user_id: string }) => ({
+        url: `/inbox/new-chat`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetMessagesQuery, useGetInboxChatsQuery } = chatAPI;
+export const { useGetMessagesQuery, useGetInboxChatsQuery, useNewChatMutation } = chatAPI;
 export default chatAPI;

@@ -5,6 +5,8 @@ import { MessageCircleMore } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useGetNewArtistByAgentPageQuery } from "@/redux/features/agent/agentAPI";
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
+import { useRouter } from "next/navigation";
 
 interface IAgent {
   id: string;
@@ -40,6 +42,17 @@ export function NewArtistTableInAgentPage({
   const agents = data?.data || [];
   const totalItems = data?.meta?.total || 0; // assume your backend sends meta info
   const totalPages = Math.ceil(totalItems / limit);
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
+
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/agent/message/${chatId}`);
+  };
 
   if (isLoading)
     return (
@@ -111,12 +124,13 @@ export function NewArtistTableInAgentPage({
                 <td className='px-6 py-4 text-sm font-medium'>{agent.price}</td>
                 <td className='px-6 py-4'>
                   <div className='flex items-center gap-3'>
-                    <Link
-                      href={`/dashboard/artist/message/${agent.id}`}
+                    <button
+                      onClick={() => handleMessageCreate(agent.id)}
+                      type='button'
                       className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors'
                     >
                       <MessageCircleMore className='h-4 w-4' />
-                    </Link>
+                    </button>
                   </div>
                 </td>
               </tr>

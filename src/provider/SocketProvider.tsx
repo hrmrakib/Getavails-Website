@@ -40,35 +40,30 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const socket_url = process.env.NEXT_PUBLIC_SOCKET_URL;
 
-    //? make socket singleton
-    if (!window.socketInstance) {
-      const newSocket = io(`${socket_url}/message`, {
-        withCredentials: true,
-        transports: ["websocket", "polling"],
-        reconnectionAttempts: Number.MAX_SAFE_INTEGER, //? infinite
-        reconnectionDelay: 3_000, //? 3 seconds
-        auth: { token }, //? 1st try
-        extraHeaders: {
-          Authorization: `Bearer ${token}`, //? 2nd try
-        },
+    const newSocket = io(`${socket_url}/message`, {
+      withCredentials: true,
+      transports: ["websocket", "polling"],
+      reconnectionAttempts: Number.MAX_SAFE_INTEGER, //? infinite
+      reconnectionDelay: 3_000, //? 3 seconds
+      auth: { token }, //? 1st try
+      extraHeaders: {
+        Authorization: `Bearer ${token}`, //? 2nd try
+      },
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Socket connected:", newSocket.id);
+
+      newSocket.on("online_users", (users: string[]) => {
+        setOnlineUsers(users);
       });
+    });
 
-      newSocket.on("connect", () => {
-        console.log("Socket connected:", newSocket.id);
+    newSocket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
 
-        newSocket.on("online_users", (users: string[]) => {
-          setOnlineUsers(users);
-        });
-      });
-
-      newSocket.on("disconnect", () => {
-        console.log("Socket disconnected");
-      });
-
-      window.socketInstance = newSocket;
-    }
-
-    setSocket(window.socketInstance);
+    setSocket(newSocket);
   }, [token]);
 
   //? clean up
