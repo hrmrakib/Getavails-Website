@@ -82,11 +82,19 @@ export function NewArtistTableInAgentPage({
     return (
       <div className='text-center py-10 text-muted-foreground'>Loading...</div>
     );
+
   if (isError)
     return (
       <div className='text-center py-10 text-red-500'>
         Failed to load agents.
       </div>
+    );
+
+  if (agents?.length === 0)
+    return (
+      <p className='text-center text-muted-foreground py-6'>
+        No artists requests found.
+      </p>
     );
 
   return (

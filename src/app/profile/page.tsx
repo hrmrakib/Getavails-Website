@@ -113,7 +113,20 @@ export default function ProfilePage() {
     useConnectToStripeMutation();
   const [deleteProfileMutation, { isLoading: isDeletingProfile }] =
     useDeleteProfileMutation();
-  const { data: profile, refetch } = useGetProfileQuery({});
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage.getItem("access_token"));
+  }, []);
+
+  const {
+    data: profile,
+    isLoading,
+    refetch,
+  } = useGetProfileQuery(undefined, {
+    skip: !hasToken,
+  });
+
   const [updateProfileMutation, { isLoading: isUpdatingProfile }] =
     useUpdateProfileMutation();
 

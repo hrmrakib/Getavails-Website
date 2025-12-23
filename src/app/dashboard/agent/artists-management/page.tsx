@@ -134,6 +134,11 @@ export default function ArtistBooking() {
       <p className='text-center text-muted-foreground py-6'>Loading ...</p>
     );
 
+  if (myArtists?.data?.length === 0)
+    return (
+      <p className='text-center text-muted-foreground py-6'>No artist found.</p>
+    );
+
   return (
     <RoleRedirect allowedRole='AGENT'>
       <div className='min-h-screen bg-background'>
@@ -273,6 +278,33 @@ export default function ArtistBooking() {
                   ))}
                 </div>
               )}
+
+              {/* Pagination */}
+              <div className='flex items-center justify-center gap-2 p-6'>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={handlePrev}
+                  disabled={page === 1}
+                  className='flex items-center gap-1'
+                >
+                  <ChevronLeft className='h-4 w-4' /> Previous
+                </Button>
+
+                <span className='text-sm text-muted-foreground'>
+                  Page {page} of {totalPages || 1}
+                </span>
+
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={handleNext}
+                  disabled={page === totalPages}
+                  className='flex items-center gap-1'
+                >
+                  Next <ChevronRight className='h-4 w-4' />
+                </Button>
+              </div>
             </div>
           )}
 
@@ -283,33 +315,6 @@ export default function ArtistBooking() {
             <NewArtistTableInAgentPage searchQuery={searchQuery} />
           )}
         </main>
-
-        {/* Pagination */}
-        <div className='flex items-center justify-center gap-2 p-6'>
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={handlePrev}
-            disabled={page === 1}
-            className='flex items-center gap-1'
-          >
-            <ChevronLeft className='h-4 w-4' /> Previous
-          </Button>
-
-          <span className='text-sm text-muted-foreground'>
-            Page {page} of {totalPages || 1}
-          </span>
-
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={handleNext}
-            disabled={page === totalPages}
-            className='flex items-center gap-1'
-          >
-            Next <ChevronRight className='h-4 w-4' />
-          </Button>
-        </div>
 
         <AddArtistModal open={showAddModal} onOpenChange={setShowAddModal} />
         <BookingDrawer

@@ -31,6 +31,8 @@ export function Navbar() {
     skip: !hasToken,
   });
 
+  console.log({ hasToken });
+
   const userToggle = useSelector((state: any) => state.auth.userToggle);
 
   useEffect(() => {

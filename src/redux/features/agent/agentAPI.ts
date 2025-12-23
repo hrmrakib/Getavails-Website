@@ -39,18 +39,18 @@ const agentAPI = baseAPI.injectEndpoints({
     }),
 
     acceptArtistByAgent: builder.mutation({
-      query: (id) => ({
+      query: (data) => ({
         url: `/agent/approve-artist`,
         method: "POST",
-        body: id,
+        body: data,
       }),
     }),
 
     rejectArtistByAgent: builder.mutation({
-      query: (id) => ({
+      query: (data) => ({
         url: `/agent/reject-artist`,
         method: "POST",
-        body: id,
+        body: data,
       }),
     }),
 

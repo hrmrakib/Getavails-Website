@@ -37,9 +37,20 @@ interface IEvent {
 export default function JoinEvent() {
   const router = useRouter();
   const [user, setUser] = useState<null | any>(null);
-  const { data: profile } = useGetProfileQuery(undefined, {
-    skip: !localStorage.getItem("access_token"),
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage.getItem("access_token"));
+  }, []);
+
+  const {
+    data: profile,
+    isLoading,
+    refetch,
+  } = useGetProfileQuery(undefined, {
+    skip: !hasToken,
   });
+
   const { data: eventList } = useGetEventListQuery({
     page: 1,
     limit: 3,

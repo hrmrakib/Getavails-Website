@@ -66,7 +66,7 @@ export function ArtistRequestsInAgentPage({
 
   const {
     data: agentRequest,
-    refetch, 
+    refetch,
     isLoading,
   } = useGetMyArtistRequestsQuery({
     page: currentPage,
@@ -82,10 +82,11 @@ export function ArtistRequestsInAgentPage({
   }, [currentPage]);
 
   const totalPages = agentRequest?.meta?.totalPages || 1;
+  const totalRequests = agentRequest?.meta?.pagination?.total || 0;
 
   const handleApproveAgent = async (artist_id: string) => {
     try {
-      const res = await approveAgentMutation(artist_id).unwrap();
+      const res = await approveAgentMutation({ artist_id }).unwrap();
       if (res?.success) {
         toast.success("Agent approved successfully!");
         refetch();
@@ -103,7 +104,7 @@ export function ArtistRequestsInAgentPage({
 
   const handleDeclineAgent = async (artist_id: string) => {
     try {
-      await rejectAgentMutation(artist_id).unwrap();
+      await rejectAgentMutation({ artist_id }).unwrap();
       toast.success("Agent declined successfully!");
       refetch();
     } catch (error) {
@@ -119,10 +120,10 @@ export function ArtistRequestsInAgentPage({
       </p>
     );
 
-  if (!agentRequest?.data?.length)
+  if (agentRequest?.data?.length === 0)
     return (
       <p className='text-center text-muted-foreground py-6'>
-        No agent requests found.
+        No artists requests found.
       </p>
     );
 
@@ -223,37 +224,39 @@ export function ArtistRequestsInAgentPage({
       </div>
 
       {/* Pagination */}
-      <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage(currentPage - 1)}
-          className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
-        >
-          ← Previous
-        </button>
-
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      {totalRequests > 8 && (
+        <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
           <button
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              currentPage === page
-                ? "bg-primary text-primary-foreground"
-                : "border border-border hover:bg-muted"
-            }`}
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
           >
-            {page}
+            ← Previous
           </button>
-        ))}
 
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage(currentPage + 1)}
-          className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
-        >
-          Next →
-        </button>
-      </div>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+                currentPage === page
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border hover:bg-muted"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
+          >
+            Next →
+          </button>
+        </div>
+      )}
 
       <BookingDrawer
         open={showBookingDrawer}

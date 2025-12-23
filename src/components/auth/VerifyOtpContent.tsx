@@ -9,21 +9,24 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
+  useResendOtpMutation,
   useVerifyForgetPasswordOtpMutation,
   useVerifyOtpMutation,
 } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
 
 export default function VerifyOtpContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(100);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [verifyOtpMutation] = useVerifyOtpMutation();
   const [verifyForgetPasswordOtpMutation] =
     useVerifyForgetPasswordOtpMutation();
+  const [resendOtpMutation] = useResendOtpMutation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
@@ -145,16 +148,18 @@ export default function VerifyOtpContent() {
   };
 
   const handleResend = async () => {
-    setTimeLeft(60);
-    setCanResend(false);
+    // setTimeLeft(60);
+    // setCanResend(false);
     setError("");
     setOtp(["", "", "", "", "", ""]);
     inputRefs.current[0]?.focus();
 
     try {
-      // Simulate resend API call
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      console.log("OTP resent successfully");
+      const res = await resendOtpMutation({ email }).unwrap();
+
+      if (res?.success) {
+        toast.success(res?.message);
+      }
     } catch (err) {
       setError("Failed to resend OTP. Please try again." + err);
     }
@@ -272,7 +277,7 @@ export default function VerifyOtpContent() {
                 </span>
                 <button
                   onClick={handleResend}
-                  disabled={!canResend || isLoading}
+                  // disabled={!canResend || isLoading}
                   className='flex items-center gap-2 text-primary font-semibold hover:text-primary/80 transition-colors disabled:text-muted-foreground disabled:cursor-not-allowed'
                 >
                   <RotateCw className='w-4 h-4' />

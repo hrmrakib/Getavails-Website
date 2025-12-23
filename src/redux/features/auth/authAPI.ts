@@ -14,8 +14,8 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
         const { data } = await queryFulfilled;
         dispatch(setUser({ user: data.data, token: data.access_token }));
       },
-      
-      invalidatesTags: ["auth"]
+
+      invalidatesTags: ["auth"],
     }),
 
     agentRegister: builder.mutation({
@@ -76,7 +76,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
     resendOtp: builder.mutation({
       query: (body) => ({
-        url: "api/auth/resend-otp/",
+        url: "/auth/account-verify/otp-send",
         method: "POST",
         body,
       }),
