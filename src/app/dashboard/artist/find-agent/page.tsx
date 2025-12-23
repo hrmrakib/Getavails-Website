@@ -190,9 +190,9 @@ export default function BookingRequestsPage() {
               <div className='overflow-x-auto rounded-lg'>
                 <table className='w-full'>
                   {!agentRequest?.data?.length ? (
-                    <p className='text-center text-muted-foreground py-6'>
+                    <td className='text-center text-muted-foreground py-6'>
                       No agent requests found.
-                    </p>
+                    </td>
                   ) : (
                     <thead className='bg-[#235789] text-white p-4 font-medium'>
                       <tr>

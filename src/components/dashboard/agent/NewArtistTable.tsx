@@ -106,7 +106,7 @@ export function NewArtistTableInAgentPage({
                 </td>
                 <td className='px-6 py-4 text-sm'>{agent.location}</td>
                 <td className='px-6 py-4 text-sm'>
-                  {agent.availability[0].split("T")[0]}
+                  {agent?.availability[0]?.split("T")[0]}
                 </td>
                 <td className='px-6 py-4 text-sm font-medium'>{agent.price}</td>
                 <td className='px-6 py-4'>
