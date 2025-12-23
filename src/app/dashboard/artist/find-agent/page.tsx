@@ -11,14 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  Search,
-  Trash2,
-  Eye,
-  MapPin,
-  MessageCircle,
-  MessageCircleMore,
-} from "lucide-react";
+import { Search, MapPin, MessageCircleMore } from "lucide-react";
 import { RequestsTable } from "@/components/dashboard/artist/RequestsTable";
 import { AgentsTable } from "@/components/dashboard/artist/AgentsTable";
 import {
@@ -189,7 +182,7 @@ export default function BookingRequestsPage() {
             {activeTab === "" && (
               <div className='overflow-x-auto rounded-lg'>
                 <table className='w-full'>
-                  {!agentRequest?.data?.length ? (
+                  {agentRequest?.data?.length ? (
                     <td className='text-center text-muted-foreground py-6'>
                       No agent requests found.
                     </td>

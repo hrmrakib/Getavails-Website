@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircleMore } from "lucide-react";
+import { MessageCircleMore, UserRoundPlus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useGetNewArtistByAgentPageQuery } from "@/redux/features/agent/agentAPI";
+import {
+  useGetNewArtistByAgentPageQuery,
+  useInviteArtistByAgentMutation,
+} from "@/redux/features/agent/agentAPI";
 import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface IAgent {
   id: string;
@@ -31,16 +35,19 @@ export function NewArtistTableInAgentPage({
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
 
+  const [inviteArtistByAgentMutation] = useInviteArtistByAgentMutation();
+
   // ✅ Fetch paginated data from backend
-  const { data, isLoading, isError } = useGetNewArtistByAgentPageQuery({
-    page: currentPage,
-    limit,
-    search: searchQuery,
-  });
-  console.log(data);
+  const { data, isLoading, isError, refetch } = useGetNewArtistByAgentPageQuery(
+    {
+      page: currentPage,
+      limit,
+      search: searchQuery,
+    }
+  );
 
   const agents = data?.data || [];
-  const totalItems = data?.meta?.total || 0; // assume your backend sends meta info
+  const totalItems = data?.meta?.total || 0; //? assume your backend sends meta info
   const totalPages = Math.ceil(totalItems / limit);
   const [newChat] = useNewChatMutation();
   const router = useRouter();
@@ -52,6 +59,22 @@ export function NewArtistTableInAgentPage({
     if (!chatId) return; //? skip
 
     router.push(`/dashboard/agent/message/${chatId}`);
+  };
+  const handleArtistInvite = async (artistId: string) => {
+    try {
+      const res = await inviteArtistByAgentMutation({
+        artist_id: artistId,
+      }).unwrap();
+
+      //? handle success
+      if (res?.success) {
+        refetch();
+        toast.success("Artist invited successfully!");
+      }
+    } catch (error: any) {
+      console.error("Error inviting artist:", error);
+      toast.error(error?.data?.message || "Failed to invite artist");
+    }
   };
 
   if (isLoading)
@@ -125,9 +148,17 @@ export function NewArtistTableInAgentPage({
                 <td className='px-6 py-4'>
                   <div className='flex items-center gap-3'>
                     <button
+                      title='Invite Artist'
+                      onClick={() => handleArtistInvite(agent.id)}
+                      type='button'
+                      className='h-8 w-8 flex items-center justify-center bg-[#1fa026] text-white hover:bg-[#1fa026]/80 rounded-2xl transition-colors cursor-pointer'
+                    >
+                      <UserRoundPlus className='h-4 w-4' />
+                    </button>
+                    <button
                       onClick={() => handleMessageCreate(agent.id)}
                       type='button'
-                      className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors'
+                      className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors cursor-pointer'
                     >
                       <MessageCircleMore className='h-4 w-4' />
                     </button>

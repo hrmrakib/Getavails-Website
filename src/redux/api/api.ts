@@ -29,10 +29,12 @@ const customBaseQuery: BaseQueryFn<
   if (result.error && result.error.status === 401) {
     localStorage.removeItem("access_token");
     window.location.href = "/login";
-  } else if (result.error && result.error.status === 403) {
-    localStorage.removeItem("access_token");
-    window.location.href = "/login";
-  } else if (result.error && result.error.status === 402) {
+  }
+  // else if (result.error && result.error.status === 403) {
+  //   localStorage.removeItem("access_token");
+  //   window.location.href = "/login";
+  // }
+  else if (result.error && result.error.status === 402) {
     alert("You need to upgrade your plan to use this feature.");
     window.location.href = "/";
   }

@@ -42,7 +42,7 @@ export interface IUser extends IProfile {
 interface BookingDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  artist?: IUser | null;
+  artist?: IUser | null | any;
 }
 
 export function BookingDrawer({

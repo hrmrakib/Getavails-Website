@@ -6,9 +6,6 @@ const agentAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "/agent/overview",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -16,9 +13,6 @@ const agentAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/agent/artists?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -26,9 +20,6 @@ const agentAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/artists?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -36,9 +27,14 @@ const agentAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/agent/artist-requests?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
+      }),
+    }),
+
+    inviteArtistByAgent: builder.mutation({
+      query: (data) => ({
+        url: `/agent/invite-artist`,
+        method: "POST",
+        body: data,
       }),
     }),
 
@@ -47,9 +43,6 @@ const agentAPI = baseAPI.injectEndpoints({
         url: `/agent/approve-artist`,
         method: "POST",
         body: id,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -58,9 +51,6 @@ const agentAPI = baseAPI.injectEndpoints({
         url: `/agent/reject-artist`,
         method: "POST",
         body: id,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -69,9 +59,6 @@ const agentAPI = baseAPI.injectEndpoints({
         url: `/agent/delete-artist`,
         method: "DELETE",
         body: id,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),
@@ -82,6 +69,7 @@ export const {
   useGetMyArtistsQuery,
   useGetNewArtistByAgentPageQuery,
   useGetMyArtistRequestsQuery,
+  useInviteArtistByAgentMutation,
   useAcceptArtistByAgentMutation,
   useRejectArtistByAgentMutation,
   useDeleteArtistByAgentMutation,

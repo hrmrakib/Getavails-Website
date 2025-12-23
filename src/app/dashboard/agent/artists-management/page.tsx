@@ -29,11 +29,12 @@ import {
   useGetMyArtistRequestsQuery,
   useGetMyArtistsQuery,
 } from "@/redux/features/agent/agentAPI";
-import Link from "next/link";
 import { toast } from "sonner";
 import { ArtistRequestsInAgentPage } from "@/components/dashboard/agent/RequestsTable";
 import { NewArtistTableInAgentPage } from "@/components/dashboard/agent/NewArtistTable";
 import { RoleRedirect } from "@/utils/makePrivate";
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
+import { useRouter } from "next/navigation";
 
 interface IArtist {
   id: string;
@@ -72,12 +73,24 @@ export default function ArtistBooking() {
     limit,
     search: searchQuery,
   });
-  const { data: agentRequest } = useGetMyArtistRequestsQuery({});
 
-  console.log(myArtists);
+  // ? it used to get artist requests length
+  const { data: agentRequest } = useGetMyArtistRequestsQuery({});
 
   const totalArtists = myArtists?.meta?.total || 0;
   const totalPages = Math.ceil(totalArtists / limit);
+
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
+
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/agent/message/${chatId}`);
+  };
 
   const handleBookArtist = (artist: IArtist) => {
     setSelectedArtist(artist);
@@ -119,13 +132,6 @@ export default function ArtistBooking() {
   if (isFetching)
     return (
       <p className='text-center text-muted-foreground py-6'>Loading ...</p>
-    );
-
-  if (!myArtists?.data?.length)
-    return (
-      <p className='text-center text-muted-foreground py-6'>
-        No agent requests found.
-      </p>
     );
 
   return (
@@ -175,7 +181,7 @@ export default function ArtistBooking() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              See New Agent
+              See New Artists
             </button>
             <button
               onClick={() => setActiveTab("")}
@@ -187,7 +193,7 @@ export default function ArtistBooking() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Default
+              My Artists
             </button>
           </div>
         </div>
@@ -245,20 +251,13 @@ export default function ArtistBooking() {
                         </div>
                         <div>{artist.price}</div>
                         <div className='flex items-center gap-2 lg:gap-4'>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            onClick={() => handleBookArtist(artist)}
-                            className='h-8 w-8 text-primary hover:text-primary bg-green-200 hover:bg-primary/10'
-                          >
-                            <User className='h-6 w-6' />
-                          </Button>
-                          <Link
-                            href={`/dashboard/artist/message/`}
-                            className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
+                          <button
+                            onClick={() => handleMessageCreate(artist.id)}
+                            type='button'
+                            className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors'
                           >
                             <MessageCircleMore className='h-4 w-4' />
-                          </Link>
+                          </button>
                           <Button
                             title='Reject '
                             variant='ghost'

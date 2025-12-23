@@ -21,6 +21,8 @@ import {
   useRejectArtistByAgentMutation,
 } from "@/redux/features/agent/agentAPI";
 import { BookingDrawer } from "./BookingDrawer";
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
+import { useRouter } from "next/navigation";
 
 interface IAgent {
   id: string;
@@ -50,9 +52,21 @@ export function ArtistRequestsInAgentPage({
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
 
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
+
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/agent/message/${chatId}`);
+  };
+
   const {
     data: agentRequest,
-    refetch,
+    refetch, 
     isLoading,
   } = useGetMyArtistRequestsQuery({
     page: currentPage,
@@ -173,13 +187,13 @@ export function ArtistRequestsInAgentPage({
                 </td>
                 <td className='px-6 py-4'>
                   <div className='flex items-center justify-center gap-3 lg:gap-5'>
-                    <Link
-                      href={`/dashboard/artist/message/${request.id}`}
-                      className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition'
-                      title='Message'
+                    <button
+                      onClick={() => handleMessageCreate(request.id)}
+                      type='button'
+                      className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors'
                     >
                       <MessageCircleMore className='h-4 w-4' />
-                    </Link>
+                    </button>
                     <button
                       onClick={() => {
                         setSelectedArtistId(request.id);
