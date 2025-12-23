@@ -18,7 +18,7 @@ const agentAPI = baseAPI.injectEndpoints({
 
     getNewArtistByAgentPage: builder.query({
       query: ({ page = 1, limit = 10, search = "" }) => ({
-        url: `/artists?page=${page}&limit=${limit}&search=${search}`,
+        url: `/artists/new-artists?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
     }),

@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircleMore } from "lucide-react";
+import { MessageCircleMore, UserRoundPlus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useGetNewAgentsQuery } from "@/redux/features/artist/artistAPI";
+import {
+  useGetNewAgentsQuery,
+  useInviteAgentByArtistMutation,
+} from "@/redux/features/artist/artistAPI";
 import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
 import { useRouter } from "next/navigation";
+import { useInviteArtistByAgentMutation } from "@/redux/features/agent/agentAPI";
+import { toast } from "sonner";
 
 interface IAgent {
   id: string;
@@ -28,7 +33,7 @@ export function AgentsTable({ searchQuery }: { searchQuery: string }) {
   const limit = 10;
 
   // ✅ Fetch paginated data from backend
-  const { data, isLoading, isError } = useGetNewAgentsQuery({
+  const { data, isLoading, isError, refetch } = useGetNewAgentsQuery({
     page: currentPage,
     limit,
     search: searchQuery,
@@ -40,6 +45,24 @@ export function AgentsTable({ searchQuery }: { searchQuery: string }) {
   const totalPages = Math.ceil(totalItems / limit);
   const [newChat] = useNewChatMutation();
   const router = useRouter();
+  const [inviteAgentByArtistMutation] = useInviteAgentByArtistMutation();
+
+  const handleArtistInvite = async (agentId: string) => {
+    try {
+      const res = await inviteAgentByArtistMutation({
+        agent_id: agentId,
+      }).unwrap();
+
+      //? handle success
+      if (res?.success) {
+        refetch();
+        toast.success("Artist invited successfully!");
+      }
+    } catch (error: any) {
+      console.error("Error inviting artist:", error);
+      toast.error(error?.data?.message || "Failed to invite artist");
+    }
+  };
 
   const handleMessageCreate = async (opponentId: string) => {
     const data = await newChat({ user_id: opponentId }).unwrap();
@@ -120,6 +143,14 @@ export function AgentsTable({ searchQuery }: { searchQuery: string }) {
                 <td className='px-6 py-4 text-sm font-medium'>{agent.price}</td>
                 <td className='px-6 py-4'>
                   <div className='flex items-center gap-3'>
+                    <button
+                      title='Invite Artist'
+                      onClick={() => handleArtistInvite(agent.id)}
+                      type='button'
+                      className='h-8 w-8 flex items-center justify-center bg-[#1fa026] text-white hover:bg-[#1fa026]/80 rounded-2xl transition-colors cursor-pointer!'
+                    >
+                      <UserRoundPlus className='h-4 w-4' />
+                    </button>
                     <button
                       onClick={() => handleMessageCreate(agent.id)}
                       type='button'

@@ -55,7 +55,7 @@ export function BookingDrawer({
   const artistAvailableDates = useMemo(() => {
     if (!artist?.availability) return [];
     return artist.availability.map(
-      (iso) => new Date(iso).toISOString().split("T")[0]
+      (iso: any) => new Date(iso).toISOString().split("T")[0]
     );
   }, [artist?.availability]);
 
@@ -122,7 +122,7 @@ export function BookingDrawer({
                 <AvatarFallback>
                   {artist.name
                     .split(" ")
-                    .map((n) => n[0])
+                    .map((n: any) => n[0])
                     .join("")}
                 </AvatarFallback>
               </Avatar>
@@ -236,7 +236,7 @@ export function BookingDrawer({
 
             {artist.availability && artist.availability.length > 0 ? (
               <div className='space-y-2'>
-                {artist.availability.map((iso, index) => {
+                {artist.availability.map((iso: any, index: number) => {
                   const start = new Date(iso);
                   const end = new Date(start);
                   end.setHours(end.getHours() + 8); // ⏱ example: 8-hour duration

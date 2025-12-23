@@ -10,6 +10,8 @@ import {
   useApproveAgentMutation,
   useRejectAgentMutation,
 } from "@/redux/features/artist/artistAPI";
+import { useRouter } from "next/navigation";
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
 
 interface IAgent {
   id: string;
@@ -29,6 +31,8 @@ interface IAgent {
 export function RequestsTable({ searchQuery }: { searchQuery: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
 
   // ✅ Fetch paginated data from backend
   const {
@@ -49,6 +53,16 @@ export function RequestsTable({ searchQuery }: { searchQuery: string }) {
   }, [currentPage]);
 
   const totalPages = agentRequest?.meta?.totalPages || 1;
+  const totalRequests = agentRequest?.meta?.pagination?.total || 0;
+
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/artist/message/${chatId}`);
+  };
 
   const handleApproveAgent = async (agent_id: string) => {
     try {
@@ -79,7 +93,7 @@ export function RequestsTable({ searchQuery }: { searchQuery: string }) {
       </p>
     );
 
-  if (!agentRequest?.data?.length)
+  if (totalRequests === 0)
     return (
       <p className='text-center text-muted-foreground py-6'>
         No agent requests found.
@@ -142,13 +156,13 @@ export function RequestsTable({ searchQuery }: { searchQuery: string }) {
                 </td>
                 <td className='px-6 py-4'>
                   <div className='flex items-center justify-center gap-3 lg:gap-5'>
-                    <Link
-                      href={`/dashboard/artist/message/${request.id}`}
-                      className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition'
-                      title='Message'
+                    <button
+                      onClick={() => handleMessageCreate(request.id)}
+                      type='button'
+                      className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors cursor-pointer'
                     >
                       <MessageCircleMore className='h-4 w-4' />
-                    </Link>
+                    </button>
                     <button
                       onClick={() => handleDeclineAgent(request.id)}
                       className='p-1 border border-red-500 hover:bg-muted rounded-lg transition-colors'
@@ -172,37 +186,39 @@ export function RequestsTable({ searchQuery }: { searchQuery: string }) {
       </div>
 
       {/* Pagination */}
-      <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage(currentPage - 1)}
-          className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
-        >
-          ← Previous
-        </button>
-
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      {totalRequests > 0 && (
+        <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
           <button
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              currentPage === page
-                ? "bg-primary text-primary-foreground"
-                : "border border-border hover:bg-muted"
-            }`}
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
           >
-            {page}
+            ← Previous
           </button>
-        ))}
 
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage(currentPage + 1)}
-          className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
-        >
-          Next →
-        </button>
-      </div>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+                currentPage === page
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border hover:bg-muted"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
+          >
+            Next →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

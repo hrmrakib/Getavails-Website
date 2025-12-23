@@ -11,7 +11,8 @@ const artistAPI = baseAPI.injectEndpoints({
         },
       }),
     }),
-    getArtists: builder.query({
+
+    getMyAgents: builder.query({
       query: () => ({
         url: "/artist/agents",
         method: "GET",
@@ -23,11 +24,19 @@ const artistAPI = baseAPI.injectEndpoints({
 
     getNewAgents: builder.query({
       query: ({ page = 1, limit = 10, search }) => ({
-        url: `/agents?page=${page}&limit=${limit}&search=${search}`,
+        url: `/agents/new-agents?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
+      }),
+    }),
+
+    inviteAgentByArtist: builder.mutation({
+      query: (data) => ({
+        url: `/artist/invite-agent`,
+        method: "POST",
+        body: data,
       }),
     }),
 
@@ -78,8 +87,9 @@ const artistAPI = baseAPI.injectEndpoints({
 
 export const {
   useGetOverviewQuery,
-  useGetArtistsQuery,
+  useGetMyAgentsQuery,
   useGetNewAgentsQuery,
+  useInviteAgentByArtistMutation,
   useAgentRequestQuery,
   useApproveAgentMutation,
   useRejectAgentMutation,

@@ -60,6 +60,7 @@ export function NewArtistTableInAgentPage({
 
     router.push(`/dashboard/agent/message/${chatId}`);
   };
+
   const handleArtistInvite = async (artistId: string) => {
     try {
       const res = await inviteArtistByAgentMutation({

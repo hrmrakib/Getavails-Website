@@ -11,17 +11,20 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Search, MapPin, MessageCircleMore } from "lucide-react";
+import { Search, MapPin, MessageCircleMore, UserRoundPlus } from "lucide-react";
 import { RequestsTable } from "@/components/dashboard/artist/RequestsTable";
-import { AgentsTable } from "@/components/dashboard/artist/AgentsTable";
+import { AgentsTable } from "@/components/dashboard/artist/NewAgentsTable";
 import {
   useAgentRequestQuery,
-  useGetArtistsQuery,
+  useGetMyAgentsQuery,
 } from "@/redux/features/artist/artistAPI";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AvailabilityModal } from "@/components/dashboard/artist/AvailabilityModal";
 import Link from "next/link";
 import { RoleRedirect } from "@/utils/makePrivate";
+import { toast } from "sonner";
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
+import { useRouter } from "next/navigation";
 
 interface BookingRequest {
   id: string;
@@ -54,6 +57,7 @@ interface IAgent {
 }
 
 export default function BookingRequestsPage() {
+  const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState<"requests" | "agents" | "">("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<BookingRequest | null>(
@@ -61,43 +65,31 @@ export default function BookingRequestsPage() {
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   //   const [currentPage, setCurrentPage] = useState(1);
-  const { data: artists, isLoading } = useGetArtistsQuery("");
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
+
+  const { data: artists, isLoading } = useGetMyAgentsQuery("");
   const {
     data: agentRequest,
     isLoading: agentRequestLoading,
     refetch,
   } = useAgentRequestQuery("");
 
-  console.log(artists?.data);
+  const totalPages = artists?.meta?.totalPages || 1;
+  const totalAgents = artists?.meta?.pagination?.total || 0;
 
   const handleViewDetails = (booking: BookingRequest) => {
     setSelectedBooking(booking);
     setIsDrawerOpen(true);
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Open":
-        return (
-          <Badge
-            variant='secondary'
-            className='bg-green-300 text-gray-900 hover:bg-yellow-100'
-          >
-            Open
-          </Badge>
-        );
-      case "Full":
-        return (
-          <Badge
-            variant='secondary'
-            className='bg-red-400 text-gray-100 hover:bg-red-100'
-          >
-            Full
-          </Badge>
-        );
-      default:
-        return <Badge variant='secondary'>Unknown</Badge>;
-    }
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/artist/message/${chatId}`);
   };
 
   if (agentRequestLoading)
@@ -170,7 +162,7 @@ export default function BookingRequestsPage() {
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    Default
+                    My Agents
                   </button>
                 </div>
               </div>
@@ -292,18 +284,53 @@ export default function BookingRequestsPage() {
                             </td>
                             <td className='px-4 py-3'>
                               <div className='flex items-center pl-4'>
-                                <Link
-                                  href={`/dashboard/artist/message/${agent.id}`}
-                                  className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
+                                <button
+                                  onClick={() => handleMessageCreate(agent.id)}
+                                  type='button'
+                                  className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors cursor-pointer'
                                 >
                                   <MessageCircleMore className='h-4 w-4' />
-                                </Link>
+                                </button>
                               </div>
                             </td>
                           </tr>
                         ))}
                   </tbody>
                 </table>
+
+                <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
+                  >
+                    ← Previous
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+                          currentPage === page
+                            ? "bg-primary text-primary-foreground"
+                            : "border border-border hover:bg-muted"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
+
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
+                  >
+                    Next →
+                  </button>
+                </div>
               </div>
             )}
 
@@ -314,31 +341,6 @@ export default function BookingRequestsPage() {
               <AgentsTable searchQuery={searchQuery} />
             )}
           </main>
-
-          {/* Pagination */}
-          {/* <div className='flex items-center justify-center gap-2 p-4 border-t'>
-          <Button variant='ghost' size='sm'>
-            ← Previous
-          </Button>
-          <div className='flex gap-1'>
-            <Button variant='ghost' size='sm'>
-              1
-            </Button>
-            <Button variant='ghost' size='sm'>
-              2
-            </Button>
-            <Button variant='default' size='sm'>
-              3
-            </Button>
-            <span className='px-2 text-sm text-gray-500'>...</span>
-            <Button variant='ghost' size='sm'>
-              10
-            </Button>
-          </div>
-          <Button variant='ghost' size='sm'>
-            Next →
-          </Button>
-        </div> */}
         </div>
 
         {/* Drawer */}
