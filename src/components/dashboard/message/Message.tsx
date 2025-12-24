@@ -111,7 +111,7 @@ export default function MessagePage() {
         (msg) => !prev.some((p) => p.id === msg.id)
       );
 
-      return [...prev, ...newItems];
+      return [...newItems, ...prev];
     });
   }, [messagesData]);
 
