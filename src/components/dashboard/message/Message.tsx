@@ -76,7 +76,7 @@ export default function MessagePage() {
     {
       page: 1,
       limit: 10,
-      search: searchTerm,
+      search: debouncedSearch,
       unread: activeTab,
     },
     { skip: false }
@@ -142,11 +142,11 @@ export default function MessagePage() {
      ======================= */
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(searchTerm);
+      setDebouncedSearch(debouncedSearch);
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     setUserInfo({
@@ -290,7 +290,7 @@ export default function MessagePage() {
               <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400' />
               <Input
                 placeholder='Search messages or contacts...'
-                value={searchTerm}
+                value={debouncedSearch}
                 onChange={(e) => setDebouncedSearch(e.target.value)}
                 className='pl-10 bg-gray-50 border-gray-200'
               />
