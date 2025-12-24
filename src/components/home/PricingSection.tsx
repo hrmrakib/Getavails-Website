@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  User,
-  Rocket,
-  Crown,
-  Check,
-  DollarSign,
-  DollarSignIcon,
-} from "lucide-react";
+import { Check, DollarSignIcon, Loader, Loader2 } from "lucide-react";
 import {
   useGetSubscriptionInfoQuery,
   usePaySubscriptionMutation,
@@ -35,10 +28,9 @@ export function PricingSection() {
   const router = useRouter();
   const [isAnnual, setIsAnnual] = useState(false);
   const { data: subscriptions } = useGetSubscriptionInfoQuery({});
-  const [paySubscriptionMutation] = usePaySubscriptionMutation();
+  const [paySubscriptionMutation, { isLoading: isPaying }] =
+    usePaySubscriptionMutation();
   const { data: profile } = useGetProfileQuery(undefined);
-
-  console.log(subscriptions);
 
   const user = profile?.data;
 
@@ -48,9 +40,6 @@ export function PricingSection() {
       return;
     } else if (!profile?.data?.is_verified) {
       toast.error("Please verify your profile first");
-      return;
-    } else if (profile?.data?.role !== "user") {
-      toast.error("You are not a user, login as a user to book an event");
       return;
     }
 
@@ -62,7 +51,7 @@ export function PricingSection() {
       console.log(res);
 
       if (res?.success && res?.data?.url) {
-        window.open(res.data.url, "_blank"); // ✅ Open in new tab
+        window.open(res.data.url, "_blank"); //? Open in new tab
       }
     } catch (error) {
       toast.error("Error accepting offer");
@@ -71,7 +60,7 @@ export function PricingSection() {
   };
 
   return (
-    <section className='py-16 px-4 bg-gray-50'>
+    <section className='py-16 px-4 bg-gray-50' id='upgrade-plan'>
       <div className='container mx-auto'>
         {/* Header */}
         <div className='text-center mb-12'>
@@ -112,7 +101,6 @@ export function PricingSection() {
         {/* Pricing Cards */}
         <div className='grid md:grid-cols-3 gap-8 container mx-auto'>
           {subscriptions?.data?.map((plan: SubscriptionPlan) => {
-            // const Icon = plan.icon;
             const currentPrice = isAnnual ? plan.price : plan.price;
             // const isMiddleCard = index === 1;
 
@@ -133,15 +121,6 @@ export function PricingSection() {
                     </div>
                   </div>
                 )}
-
-                {/* Savings Badge */}
-                {/* {plan.savings && isAnnual && (
-                  <div className='absolute top-4 right-4'>
-                    <div className='bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium'>
-                      Save {plan.savings}
-                    </div>
-                  </div>
-                )} */}
 
                 {/* Icon */}
                 <div className='mb-6'>
@@ -199,16 +178,8 @@ export function PricingSection() {
                   }`}
                   size='lg'
                 >
-                  Try now
+                  Try now {isPaying && <Loader2 className='animate-spin' />}
                 </Button>
-
-                {/* Money Back Guarantee */}
-                {/* {plan.name !== "Personal" && (
-                  <div className='flex items-center justify-center mt-4 text-sm text-white/80'>
-                    <DollarSign className='w-4 h-4 mr-2 bg-white rounded-full text-black' />
-                    30-day money back guarantee
-                  </div>
-                )} */}
               </div>
             );
           })}

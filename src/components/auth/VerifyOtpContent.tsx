@@ -26,7 +26,8 @@ export default function VerifyOtpContent() {
   const [verifyOtpMutation] = useVerifyOtpMutation();
   const [verifyForgetPasswordOtpMutation] =
     useVerifyForgetPasswordOtpMutation();
-  const [resendOtpMutation] = useResendOtpMutation();
+  const [resendOtpMutation, { isLoading: isResendLoading }] =
+    useResendOtpMutation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
@@ -128,7 +129,8 @@ export default function VerifyOtpContent() {
         res = await verifyOtpMutation({ email, otp: otpCode }).unwrap();
 
         if (res?.success) {
-          setSuccess(true);
+          toast.success(res?.message);
+          // setSuccess(true);
           setTimeout(() => {
             router.push("/login");
             setSuccess(false);
@@ -139,6 +141,8 @@ export default function VerifyOtpContent() {
           inputRefs.current[0]?.focus();
         }
       }
+
+      console.log({ res });
     } catch (err) {
       setError("Verification failed. Please try again.");
       console.error("Error during OTP verification:", err);
@@ -277,8 +281,8 @@ export default function VerifyOtpContent() {
                 </span>
                 <button
                   onClick={handleResend}
-                  // disabled={!canResend || isLoading}
-                  className='flex items-center gap-2 text-primary font-semibold hover:text-primary/80 transition-colors disabled:text-muted-foreground disabled:cursor-not-allowed'
+                  disabled={!canResend || isResendLoading}
+                  className='flex items-center gap-2 text-primary font-semibold hover:text-primary/80 transition-colors disabled:text-muted-foreground cursor-pointer disabled:cursor-not-allowed'
                 >
                   <RotateCw className='w-4 h-4' />
                   {/* Resend OTP */}

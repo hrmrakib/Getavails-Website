@@ -48,6 +48,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Loader2,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -59,6 +60,7 @@ import {
 } from "@/redux/features/profile/profileAPI";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface IUserProfile {
   id: string;
@@ -293,11 +295,17 @@ export default function ProfilePage() {
                 </h1>
                 <p className='mt-1 text-sm text-slate-600'>{user?.email}</p>
                 <div className='mt-3 flex flex-wrap items-center justify-center gap-2 sm:justify-start'>
-                  {user?.is_verified && (
+                  {user?.is_verified ? (
                     <Badge className='bg-green-100 text-green-700 hover:bg-green-100'>
                       <CheckCircle className='mr-1 h-3 w-3' />
                       Verified
                     </Badge>
+                  ) : (
+                    <Link href={`/verify-otp?email=${user?.email}`}>
+                      <Badge className='bg-red-100 text-red-700 hover:bg-red-100'>
+                        Not Verified
+                      </Badge>
+                    </Link>
                   )}
                   {user?.is_admin && (
                     <Badge className='bg-purple-100 text-purple-700 hover:bg-purple-100'>
@@ -307,6 +315,14 @@ export default function ProfilePage() {
                   <Badge variant='secondary' className='capitalize'>
                     {user?.role}
                   </Badge>
+
+                  {!user?.is_verified && (
+                    <Link href={`/verify-otp?email=${user?.email}`}>
+                      <Badge className='bg-red-100 text-red-700 hover:bg-red-100'>
+                        Click to Verify <ArrowRight className='ml-1 h-3 w-3' />
+                      </Badge>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

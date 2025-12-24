@@ -11,7 +11,7 @@ import { TestimonialsSection } from "@/components/services/TestimonialsSection";
 const HomePage = async () => {
   return (
     <div className='bg-white'>
-      <HeroSection /> 
+      <HeroSection />
       <JoinEvent />
       <FeaturesSection />
       <RoleJourneySection />

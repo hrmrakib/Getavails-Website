@@ -15,7 +15,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
         dispatch(setUser({ user: data.data, token: data.access_token }));
       },
 
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["auth", "Profile"],
     }),
 
     agentRegister: builder.mutation({

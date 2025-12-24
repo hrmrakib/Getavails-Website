@@ -33,9 +33,12 @@ const customBaseQuery: BaseQueryFn<
       localStorage.removeItem("access_token");
       window.location.href = "/login";
     }
+  } else if (result.error && result.error.status === 403) {
+    alert("You need to verify your email to use this feature.");
+    window.location.href = "/profile";
   } else if (result.error && result.error.status === 402) {
     alert("You need to upgrade your plan to use this feature.");
-    window.location.href = "/";
+    window.location.href = "/#upgrade-plan";
   }
 
   return result;
@@ -44,7 +47,7 @@ const customBaseQuery: BaseQueryFn<
 export const baseAPI = createApi({
   reducerPath: "api",
   baseQuery: customBaseQuery,
-  tagTypes: ["auth", "Blog"],
+  tagTypes: ["auth", "Blog", "Profile"],
   endpoints: () => ({}),
 });
 

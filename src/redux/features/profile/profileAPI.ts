@@ -7,6 +7,7 @@ const profileAPI = baseAPI.injectEndpoints({
         url: `/profile`,
         method: "GET",
       }),
+      providesTags: ["Profile"],
     }),
 
     connectToStripe: builder.mutation({
