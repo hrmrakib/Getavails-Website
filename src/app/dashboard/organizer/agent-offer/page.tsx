@@ -29,6 +29,8 @@ import { useGetAllAgentQuery } from "@/redux/features/organizer/organizerAPI";
 import ConfirmedRequestPage from "@/components/dashboard/organizer/agentOffer/ConfirmedAgentRequest";
 import OfferRequest from "@/components/dashboard/organizer/agentOffer/OfferAgentRequest";
 import { RoleRedirect } from "@/utils/makePrivate";
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
+import { useRouter } from "next/navigation";
 
 interface IAgent {
   id: string;
@@ -62,6 +64,8 @@ export default function ArtistBooking() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
 
   const { data: agentOffer, isFetching } = useGetAllAgentQuery({
     page,
@@ -81,6 +85,15 @@ export default function ArtistBooking() {
   const handleBookArtist = (artist: IAgent) => {
     setSelectedArtist(artist);
     setShowBookingDrawer(true);
+  };
+
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/organizer/message/${chatId}`);
   };
 
   const handleDeleteArtistConfirm = async () => {
@@ -244,12 +257,13 @@ export default function ArtistBooking() {
                           </div>
                           <div>{artist.price}</div>
                           <div className='flex items-center gap-2 lg:gap-4'>
-                            <Link
-                              href={`/dashboard/organizer/message/`}
-                              className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 transform transition-colors duration-200 ease-in-out rounded-2xl'
+                            <button
+                              onClick={() => handleMessageCreate(artist.id)}
+                              type='button'
+                              className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors cursor-pointer'
                             >
                               <MessageCircleMore className='h-4 w-4' />
-                            </Link>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -264,7 +278,7 @@ export default function ArtistBooking() {
                   variant='ghost'
                   size='sm'
                   onClick={handlePrev}
-                  disabled={page === 1} 
+                  disabled={page === 1}
                   className='flex items-center gap-1'
                 >
                   <ChevronLeft className='h-4 w-4' /> Previous

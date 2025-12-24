@@ -52,7 +52,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
     organizerRegister: builder.mutation({
       query: (data) => ({
-        url: "/auth/register",
+        url: "/auth/organizer-register",
         method: "POST",
         body: data,
       }),

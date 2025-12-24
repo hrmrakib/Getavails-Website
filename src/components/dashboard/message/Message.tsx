@@ -251,10 +251,10 @@ export default function MessagePage() {
                         src={process.env.NEXT_PUBLIC_IMAGE_URL + contact.avatar}
                       />
                       <AvatarFallback>
-                        {contact.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
+                        {contact?.name
+                          ?.split(" ")
+                          ?.map((n) => n[0])
+                          ?.join("")}
                       </AvatarFallback>
                     </Avatar>
 
@@ -265,7 +265,7 @@ export default function MessagePage() {
 
                   <div className='flex-1 min-w-0'>
                     <div className='flex justify-between text-sm'>
-                      <p className='font-medium truncate'>{contact.name}</p>
+                      <p className='font-medium truncate'>{contact?.name}</p>
                       <span>{formatTime(contact.timestamp)}</span>
                     </div>
                     <p className='text-gray-600 truncate text-sm mt-1'>
@@ -310,15 +310,15 @@ export default function MessagePage() {
                 <Avatar>
                   <AvatarImage src={selectedContact.avatar} />
                   <AvatarFallback>
-                    {selectedContact.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                    {selectedContact?.name
+                      ?.split(" ")
+                      ?.map((n) => n[0])
+                      ?.join("")}
                   </AvatarFallback>
                 </Avatar>
 
                 <div>
-                  <p className='font-medium'>{selectedContact.name}</p>
+                  <p className='font-medium'>{selectedContact?.name}</p>
                   <p className='text-sm text-gray-500'>
                     Last seen {formatTime(selectedContact.timestamp)}
                   </p>

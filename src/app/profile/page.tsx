@@ -49,6 +49,7 @@ import {
   CheckCircle,
   Loader2,
   ArrowRight,
+  LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -61,6 +62,7 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { logout } from "@/service/authService";
 
 interface IUserProfile {
   id: string;
@@ -141,7 +143,12 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
-  console.log(user);
+  const handleLogout = async () => {
+    await logout();
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    router.push("/login");
+  };
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -236,7 +243,7 @@ export default function ProfilePage() {
       if (res?.success) {
         toast.success("Account deleted successfully");
         setTimeout(() => {
-          router.push("/");
+          router.push("/login");
         }, 2000);
       }
     } catch (error: any) {
@@ -400,16 +407,24 @@ export default function ProfilePage() {
                   </Select>
                 </div>
 
-                <Button
-                  onClick={handleUpdateProfile}
-                  disabled={isUpdatingProfile}
-                  className='w-full sm:w-auto bg-[#235789] hover:bg-[#235789]/90'
-                >
-                  {isUpdatingProfile && (
-                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  )}
-                  Save Changes
-                </Button>
+                <div className='flex flex-row justify-between flex-wrap gap-5'>
+                  <Button
+                    onClick={handleUpdateProfile}
+                    disabled={isUpdatingProfile}
+                    className='w-full sm:w-auto bg-[#235789] hover:bg-[#235789]/90'
+                  >
+                    {isUpdatingProfile && (
+                      <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                    )}
+                    Save Changes
+                  </Button>
+                  <Button
+                    onClick={handleLogout}
+                    className='w-full sm:w-auto bg-[#d35a2a] hover:bg-[#bb3d0b]/90'
+                  >
+                    Logout <LogOut />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 

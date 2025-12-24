@@ -167,7 +167,7 @@ export function AgentsTable({ searchQuery }: { searchQuery: string }) {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {totalPages > 10 && (
         <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
           <button
             disabled={currentPage === 1}

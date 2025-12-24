@@ -186,7 +186,7 @@ export function RequestsTable({ searchQuery }: { searchQuery: string }) {
       </div>
 
       {/* Pagination */}
-      {totalRequests > 0 && (
+      {totalRequests > 10 && (
         <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
           <button
             disabled={currentPage === 1}

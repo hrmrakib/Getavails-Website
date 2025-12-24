@@ -1,9 +1,12 @@
 "use client";
 
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
 import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 import { useUpdateVenueMutation } from "@/redux/features/venue/venueAPI";
 import { RoleRedirect } from "@/utils/makePrivate";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface Venue {
   id: string;
@@ -42,6 +45,8 @@ export default function VenueForm() {
     skip: !localStorage.getItem("access_token"),
   });
   const [updateVenue] = useUpdateVenueMutation();
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
 
   useEffect(() => {
     if (profile?.data) {
@@ -80,15 +85,25 @@ export default function VenueForm() {
       newErrors.email = "Invalid email format";
     if (!formData.venueType.trim())
       newErrors.venueType = "Venue type is required";
-    if (!formData.capacity.trim()) newErrors.capacity = "Capacity is required";
+    if (!formData.capacity) newErrors.capacity = "Capacity is required";
     if (!formData.cost.trim()) newErrors.cost = "Cost is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/venue/message/${chatId}`);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     console.log("first");
+
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -106,6 +121,7 @@ export default function VenueForm() {
     try {
       const res = await updateVenue(data).unwrap();
       if (res?.success) {
+        toast.success(res?.message);
         setSuccessMessage("Changes saved successfully!");
         setTimeout(() => setSuccessMessage(""), 3000);
       }

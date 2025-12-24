@@ -174,7 +174,7 @@ export default function BookingRequestsPage() {
             {activeTab === "" && (
               <div className='overflow-x-auto rounded-lg'>
                 <table className='w-full'>
-                  {agentRequest?.data?.length ? (
+                  {artists?.data?.length === 0 ? (
                     <td className='text-center text-muted-foreground py-6'>
                       No agent requests found.
                     </td>
@@ -233,10 +233,10 @@ export default function BookingRequestsPage() {
                                   <Skeleton className='h-6 w-6 rounded-full' />
                                 </div>
                               </td>
-                            </tr>
+                            </tr> 
                           ))
                       : artists?.data?.map((agent: IAgent) => (
-                          <tr key={agent.id} className='hover:bg-gray-50'>
+                          <tr key={agent.id} className='hover:bg-gray-50 border'>
                             <td className='px-4 py-3'>
                               <div className='flex items-center gap-2'>
                                 <Avatar className='h-6 w-6'>
@@ -298,39 +298,41 @@ export default function BookingRequestsPage() {
                   </tbody>
                 </table>
 
-                <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
-                  >
-                    ← Previous
-                  </button>
+                {agentRequest?.data?.length > 10 && (
+                  <div className='flex flex-wrap items-center justify-center gap-2 pt-4'>
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
+                    >
+                      ← Previous
+                    </button>
 
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-                          currentPage === page
-                            ? "bg-primary text-primary-foreground"
-                            : "border border-border hover:bg-muted"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    )
-                  )}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+                            currentPage === page
+                              ? "bg-primary text-primary-foreground"
+                              : "border border-border hover:bg-muted"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      )
+                    )}
 
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
-                  >
-                    Next →
-                  </button>
-                </div>
+                    <button
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      className='flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed text-sm'
+                    >
+                      Next →
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

@@ -17,6 +17,8 @@ import { useGetAllVenueQuery } from "@/redux/features/organizer/organizerAPI";
 import OfferRequest from "@/components/dashboard/organizer/agentOffer/OfferAgentRequest";
 import VenueConfirmedRequest from "@/components/dashboard/organizer/venueManage/VenueConfirmedRequest";
 import { RoleRedirect } from "@/utils/makePrivate";
+import { useRouter } from "next/navigation";
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
 
 interface IVenue {
   id: string;
@@ -44,6 +46,8 @@ export default function VenueManagement() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [page, setPage] = useState(1);
   const limit = 10;
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
 
   const { data: agentOffer, isFetching } = useGetAllVenueQuery({
     page,
@@ -59,6 +63,15 @@ export default function VenueManagement() {
 
   const totalArtists = agentOffer?.meta?.total || 0;
   const totalPages = Math.ceil(totalArtists / limit);
+
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/organizer/message/${chatId}`);
+  };
 
   const handleBookArtist = (artist: IVenue) => {
     setSelectedArtist(artist);
@@ -148,6 +161,14 @@ export default function VenueManagement() {
         <main>
           {activeTab === "new" && (
             <>
+              <div className='hidden md:grid md:grid-cols-6 bg-[#235789] text-primary-foreground p-4 font-medium'>
+                <div>Venue</div>
+                <div>Email</div>
+                <div>Location</div>
+                <div>Availability</div>
+                <div>Price/Rate</div>
+                <div>Actions</div>
+              </div>
               <div className='bg-card rounded-lg border border-border overflow-hidden'>
                 {agentOffer?.data?.map((artist: IVenue) => (
                   <div
@@ -170,7 +191,7 @@ export default function VenueManagement() {
                               .join("")}
                           </AvatarFallback>
                         </Avatar>
-                        <span className='font-medium'>{artist.name}</span>
+                        <span className='font-medium'>{artist.name} </span>
                       </div>
 
                       <div>{artist.email}</div>
@@ -186,12 +207,13 @@ export default function VenueManagement() {
                       <div>{artist.price || "N/A"}</div>
 
                       <div className='flex items-center gap-2'>
-                        <Link
-                          href={`/dashboard/organizer/message/`}
-                          className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white rounded-2xl'
+                        <button
+                          onClick={() => handleMessageCreate(artist.id)}
+                          type='button'
+                          className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors cursor-pointer'
                         >
                           <MessageCircleMore className='h-4 w-4' />
-                        </Link>
+                        </button>
                       </div>
                     </div>
 

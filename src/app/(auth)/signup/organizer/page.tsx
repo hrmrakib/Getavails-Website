@@ -19,6 +19,7 @@ export default function OrganizerPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [lookingFor, setLookingFor] = useState("");
+  const [location, setLocation] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -175,6 +176,25 @@ export default function OrganizerPage() {
                   placeholder="Enter organizer's category"
                   value={lookingFor}
                   onChange={(e) => setLookingFor(e.target.value)}
+                  required
+                  className='h-12'
+                />
+              </div>
+
+              {/* Location */}
+              <div className='space-y-2'>
+                <Label
+                  htmlFor='location'
+                  className='text-sm font-medium text-muted-foreground'
+                >
+                  Location
+                </Label>
+                <Input
+                  id='location'
+                  type='text'
+                  placeholder="Enter organizer's location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
                   required
                   className='h-12'
                 />

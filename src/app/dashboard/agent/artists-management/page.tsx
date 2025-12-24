@@ -210,13 +210,11 @@ export default function ArtistBooking() {
           {activeTab === "" && (
             <>
               {myArtists?.data?.length === 0 ? (
-                <>
-                  <p className='text-center text-muted-foreground py-6'>
-                    No artist found.
-                  </p>
-                </>
+                <p className='text-center text-muted-foreground py-6'>
+                  No artist found.
+                </p>
               ) : (
-                <div className='bg-card rounded-lg border border-border overflow-hidden'>
+                <div className='bg-card rounded-lg overflow-hidden'>
                   <div className='hidden md:grid md:grid-cols-6 bg-[#235789] text-primary-foreground p-4 font-medium'>
                     <div>Artist</div>
                     <div>Genre</div>
@@ -242,7 +240,7 @@ export default function ArtistBooking() {
                         myArtists?.data?.map((artist: IArtist) => (
                           <div
                             key={artist.id}
-                            className='p-4 hover:bg-muted/50 transition-colors'
+                            className='p-4 hover:bg-muted/50 transition-colors border'
                           >
                             <div className='hidden md:grid md:grid-cols-6 items-center'>
                               <div className='flex items-center gap-3'>
