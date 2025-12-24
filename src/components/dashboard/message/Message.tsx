@@ -2,7 +2,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -30,11 +30,26 @@ interface IChat {
   unread_count: number;
 }
 
+interface IMessage {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  chat_id: string;
+  parent_id: string | null;
+  user_id: string;
+  text: string;
+  media_urls: string[];
+  isDeleted: boolean;
+  seen_by: string[];
+  isOwner: boolean;
+}
+
 export default function MessagePage() {
   const [userInfo, setUserInfo] = useState({
     isAdmin: false,
     role: "",
   });
+  const bottomRef = useRef<HTMLDivElement | null>(null);
   const { socket, onlineUsers } = useSocket();
   const { id: chat_id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -47,10 +62,15 @@ export default function MessagePage() {
   const { data: profile, isFetching } = useGetProfileQuery(undefined, {
     skip: !localStorage.getItem("access_token"),
   });
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [page, setPage] = useState(1);
+  const limit = 15;
+
   const { data: messagesResponse, refetch: refetchMessages } =
     useGetMessagesQuery<{
       data: TMessagesResponse;
-    }>({ page: 1, limit: 10, chat_id, search: undefined }, { skip: !chat_id });
+    }>({ page, limit, chat_id, search: undefined }, { skip: !chat_id });
 
   const { data: inboxChats, refetch: inboxRefetch } = useGetInboxChatsQuery(
     {
@@ -62,7 +82,60 @@ export default function MessagePage() {
     { skip: false }
   );
 
-  const messages = messagesResponse?.data || [];
+  const messagesData = messagesResponse?.data || [];
+  const totalPages = messagesResponse?.meta?.pagination?.totalPages;
+
+  // ?scroll bottom
+  const scrollToBottom = (smooth = true) => {
+    bottomRef.current?.scrollIntoView({
+      behavior: smooth ? "smooth" : "auto",
+    });
+  };
+
+  const prevLengthRef = useRef(0);
+
+  useEffect(() => {
+    // New message added (not pagination)
+    if (messages.length > prevLengthRef.current) {
+      scrollToBottom(true);
+    }
+
+    prevLengthRef.current = messages.length;
+  }, [messages]);
+
+  useEffect(() => {
+    if (!messagesData?.length) return;
+
+    setMessages((prev) => {
+      const newItems = messagesData.filter(
+        (msg) => !prev.some((p) => p.id === msg.id)
+      );
+
+      return [...prev, ...newItems];
+    });
+  }, [messagesData]);
+
+  // Smoothest Infinity Scroll — IntersectionObserver
+  useEffect(() => {
+    if (isFetching) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && page < totalPages) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "20px", // preload early
+        threshold: 0.1,
+      }
+    );
+
+    if (loaderRef.current) observer.observe(loaderRef.current);
+
+    return () => observer.disconnect();
+  }, [isFetching, messages]);
 
   /* =======================
      🔥 5s DEBOUNCE LOGIC
@@ -91,28 +164,6 @@ export default function MessagePage() {
     }
   }, [chat_id, inboxChats]);
 
-  // get role base path
-  const roleBasePath = async () => {
-    if (userInfo?.isAdmin) {
-      return "/dashboard/message";
-    }
-
-    const role = userInfo?.role?.toLowerCase();
-
-    switch (role) {
-      case "artist":
-        return "/dashboard/artist/message";
-      case "agent":
-        return "/dashboard/agent/message";
-      case "organizer":
-        return "/dashboard/organizer/message";
-      case "venue":
-        return "/dashboard/venue/message";
-      case "user":
-        return "/dashboard/user/message";
-    }
-  };
-
   // ✅ Always returns a valid path (never undefined)
   const getRoleBasePath = () => {
     const isAdmin = profile?.data?.is_admin;
@@ -131,7 +182,7 @@ export default function MessagePage() {
     return map[role] || "/dashboard/user/message";
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessageOLD = () => {
     if (!messageInput.trim()) return;
 
     socket?.emit(
@@ -142,6 +193,33 @@ export default function MessagePage() {
       },
       () => refetchMessages()
     );
+
+    setMessageInput("");
+  };
+  const handleSendMessage = () => {
+    if (!messageInput.trim()) return;
+    if (!socket || !chat_id) return;
+
+    const tempMessage: IMessage = {
+      id: crypto.randomUUID(),
+      chat_id: String(chat_id),
+      text: messageInput,
+      user_id: profile?.data?.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      parent_id: null,
+      media_urls: [],
+      isDeleted: false,
+      seen_by: [],
+      isOwner: true,
+    };
+
+    setMessages((prev) => [...prev, tempMessage]);
+
+    socket.emit("send_message", {
+      chat_id: String(chat_id),
+      text: messageInput,
+    });
 
     setMessageInput("");
   };
@@ -156,11 +234,22 @@ export default function MessagePage() {
   useEffect(() => {
     if (!socket) return;
 
+    // const handler = (payload: any) => {
+    //   const message = JSON.parse(payload).data;
+    //   if (message.chat_id === chat_id) {
+    //     refetchMessages();
+    //   }
+    // };
+
     const handler = (payload: any) => {
       const message = JSON.parse(payload).data;
-      if (message.chat_id === chat_id) {
-        refetchMessages();
-      }
+
+      if (message.chat_id !== chat_id) return;
+
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === message.id)) return prev;
+        return [...prev, message]; // ✅ NEW MESSAGE BELOW
+      });
     };
 
     socket.on("new_message", handler);
@@ -355,6 +444,12 @@ export default function MessagePage() {
                     </div>
                   </div>
                 ))}
+
+                {/* 🔥 AUTO SCROLL TARGET */}
+                <div ref={bottomRef} />
+
+                {/* 🔥 Invisible Trigger for Smooth Infinite Scroll */}
+                <div ref={loaderRef} className='h-10'></div>
               </div>
 
               {/* Input */}
