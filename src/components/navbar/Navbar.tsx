@@ -31,8 +31,6 @@ export function Navbar() {
     skip: !hasToken,
   });
 
-  console.log({ hasToken });
-
   const userToggle = useSelector((state: any) => state.auth.userToggle);
 
   useEffect(() => {
@@ -40,7 +38,7 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (token) {
+    if (hasToken) {
       refetch();
     }
   }, [userToggle, refetch, token]);
