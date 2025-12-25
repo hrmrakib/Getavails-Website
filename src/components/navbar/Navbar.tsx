@@ -29,7 +29,6 @@ export function Navbar() {
     refetch,
   } = useGetProfileQuery(undefined, {
     skip: !hasToken,
-    
   });
 
   console.log({ hasToken });

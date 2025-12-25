@@ -1,5 +1,6 @@
 import baseAPI from "@/redux/api/api";
 import { setUser } from "./authSlice";
+import profileAPI from "../profile/profileAPI";
 
 const AuthenticationAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,9 +11,26 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
         body,
       }),
 
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      //   const { data } = await queryFulfilled;
+      //   dispatch(setUser({ user: data.data, token: data.access_token }));
+      // },
+
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         const { data } = await queryFulfilled;
-        dispatch(setUser({ user: data.data, token: data.access_token }));
+
+        dispatch(
+          setUser({
+            user: data.data,
+            token: data.access_token,
+          })
+        );
+
+        dispatch(
+          profileAPI.endpoints.getProfile.initiate(undefined, {
+            forceRefetch: true,
+          })
+        );
       },
 
       invalidatesTags: ["auth", "Profile"],
