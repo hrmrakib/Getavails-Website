@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         hostname: "images.pexels.com",
       },
       {
+        protocol: "https",
+        hostname: "api.getavails.com",
+      },
+      {
         protocol: "http",
         hostname: "10.10.12.126",
       },

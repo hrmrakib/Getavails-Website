@@ -246,6 +246,7 @@ export default function ProfilePage() {
           router.push("/login");
         }, 2000);
       }
+      
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to delete account");
     }
