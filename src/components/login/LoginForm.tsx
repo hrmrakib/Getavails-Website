@@ -253,7 +253,7 @@ export function LoginForm() {
           /> */}
 
           {/* ===== Custom Google Login (Professional) ===== */}
-          <div className='relative w-full h-12'>
+          <div className='relative w-full h-12 mt-6'>
             {/* Your custom UI */}
             <button
               type='button'
@@ -264,7 +264,7 @@ export function LoginForm() {
                 alt='Google'
                 width={20}
                 height={20}
-                className='bg-white rounded-full p-0.5'
+                className='bg-transparent rounded-full p-0.5'
               />
               Continue with Google
             </button>
