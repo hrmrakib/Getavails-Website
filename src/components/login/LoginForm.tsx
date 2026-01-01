@@ -36,16 +36,16 @@ export function LoginForm() {
 
       if (res?.success) {
         await saveTokens(res?.data?.access_token);
-        localStorage.setItem("access_token", res?.data?.access_token);
-        localStorage.setItem("getavails_user", JSON.stringify(res?.data?.user));
+        localStorage?.setItem("access_token", res?.data?.access_token);
+        localStorage?.setItem("getavails_user", JSON.stringify(res?.data?.user));
         dispatch(userTrack());
 
         if (rememberMe) {
-          localStorage.setItem("email", email);
-          localStorage.setItem("password", password);
+          localStorage?.setItem("email", email);
+          localStorage?.setItem("password", password);
         } else {
-          localStorage.removeItem("email");
-          localStorage.removeItem("password");
+          localStorage?.removeItem("email");
+          localStorage?.removeItem("password");
         }
         router.push("/");
       }

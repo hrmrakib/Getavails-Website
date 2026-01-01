@@ -120,7 +120,7 @@ export default function ProfilePage() {
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    setHasToken(!!localStorage.getItem("access_token"));
+    setHasToken(!!localStorage?.getItem("access_token"));
   }, []);
 
   const {
@@ -145,8 +145,8 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     await logout();
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    localStorage?.removeItem("access_token");
+    localStorage?.removeItem("refresh_token");
     router.push("/login");
   };
 

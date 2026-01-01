@@ -60,7 +60,7 @@ export default function MessagePage() {
   const [activeTab, setActiveTab] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const { data: profile, isFetching } = useGetProfileQuery(undefined, {
-    skip: !localStorage.getItem("access_token"),
+    skip: !localStorage?.getItem("access_token"),
   });
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);

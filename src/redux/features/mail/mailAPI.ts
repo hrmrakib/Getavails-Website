@@ -25,7 +25,7 @@ const mailAPI = baseAPI.injectEndpoints({
           url: `/admin/mails?page=${page}&limit=${limit}&search=${search}&unread=${unread}&remarks=${remarks}`,
           method: "GET",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            Authorization: `Bearer ${localStorage?.getItem("access_token")}`,
           },
         };
       },

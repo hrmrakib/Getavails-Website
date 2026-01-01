@@ -68,14 +68,14 @@ const customBaseQuery: BaseQueryFn<
   return result;
 };
 
-export const baseAPI = createApi({
+export const baseAPIExample = createApi({
   reducerPath: "api",
   baseQuery: customBaseQuery,
   tagTypes: ["auth", "Blog", "Profile"],
   endpoints: () => ({}),
 });
 
-export default baseAPI;
+export default baseAPIExample;
 
 export type TList = {
   page?: number;

@@ -111,7 +111,7 @@ export default function VerifyOtpContent() {
         }).unwrap();
 
         if (res?.success) {
-          localStorage.setItem(
+          localStorage?.setItem(
             "reset_token",
             JSON.stringify(res?.data?.reset_token)
           );

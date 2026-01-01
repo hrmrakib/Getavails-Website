@@ -5,20 +5,16 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../store";
-import { setUser } from "../features/auth/authSlice";
 import { toast } from "sonner";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   credentials: "include",
   prepareHeaders: (headers) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("access_token");
+    const token = localStorage?.getItem("access_token");
 
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
     }
 
     return headers;

@@ -19,7 +19,6 @@ import {
   useTicketPurchaseMutation,
 } from "@/redux/features/user/userAPI";
 import { useState } from "react";
-import page from "@/app/temp/page";
 import { RoleRedirect } from "@/utils/makePrivate";
 
 interface IEvent {

@@ -20,7 +20,7 @@ export function Navbar() {
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    setHasToken(!!localStorage.getItem("access_token"));
+    setHasToken(!!localStorage?.getItem("access_token"));
   }, []);
 
   const {
@@ -34,7 +34,7 @@ export function Navbar() {
   const userToggle = useSelector((state: any) => state.auth.userToggle);
 
   // useEffect(() => {
-  //   setToken(localStorage.getItem("access_token"));
+  //   setToken(localStorage?.getItem("access_token"));
   // }, []);
 
   // useEffect(() => {
