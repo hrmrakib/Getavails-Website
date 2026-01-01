@@ -25,7 +25,7 @@ const mailAPI = baseAPI.injectEndpoints({
           url: `/admin/mails?page=${page}&limit=${limit}&search=${search}&unread=${unread}&remarks=${remarks}`,
           method: "GET",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         };
       },
@@ -36,7 +36,7 @@ const mailAPI = baseAPI.injectEndpoints({
         url: `/admin/mails/${id}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -47,7 +47,7 @@ const mailAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -58,7 +58,7 @@ const mailAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -69,7 +69,7 @@ const mailAPI = baseAPI.injectEndpoints({
         method: "DELETE",
         body: id,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),

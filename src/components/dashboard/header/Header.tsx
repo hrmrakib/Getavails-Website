@@ -11,7 +11,7 @@ const Header = () => {
   const [headerTitle, setHeaderTitle] = useState("Dashboard");
   const pathname = usePathname();
   const { data: profile } = useGetProfileQuery(undefined, {
-    skip: !localStorage.getItem("accessToken"),
+    skip: !localStorage.getItem("access_token"),
   });
 
   const segments = pathname.split("/");

@@ -13,7 +13,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
       // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
       //   const { data } = await queryFulfilled;
-      //   dispatch(setUser({ user: data.data, token: data.accessToken }));
+      //   dispatch(setUser({ user: data.data, token: data.access_token }));
       // },
 
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
@@ -22,7 +22,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
         dispatch(
           setUser({
             user: data.data,
-            token: data.accessToken,
+            token: data.access_token,
           })
         );
 
@@ -36,7 +36,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
       invalidatesTags: ["auth", "Profile"],
     }),
 
-    getNewAccessToken: builder.mutation({
+    getNewaccess_token: builder.mutation({
       query: (body) => ({
         url: "/auth/refresh-token",
         method: "POST",
@@ -139,7 +139,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
 export const {
   useLoginMutation,
-  useGetNewAccessTokenMutation,
+  useGetNewaccess_tokenMutation,
   useAgentRegisterMutation,
   useArtistRegisterMutation,
   useVenueRegisterMutation,

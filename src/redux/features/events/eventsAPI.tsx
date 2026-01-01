@@ -7,7 +7,7 @@ const eventsAPI = baseAPI.injectEndpoints({
         url: `/organizer/events?status=${status}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -18,7 +18,7 @@ const eventsAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -29,7 +29,7 @@ const eventsAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -40,7 +40,7 @@ const eventsAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -50,7 +50,7 @@ const eventsAPI = baseAPI.injectEndpoints({
         url: `/organizer/tickets?page=${page}&limit=${limit}&status=${status}&search=${search}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),

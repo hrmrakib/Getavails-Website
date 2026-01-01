@@ -40,7 +40,7 @@ export default function JoinEvent() {
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    setHasToken(!!localStorage.getItem("accessToken"));
+    setHasToken(!!localStorage.getItem("access_token"));
   }, []);
 
   const {

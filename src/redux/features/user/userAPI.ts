@@ -7,7 +7,7 @@ const userAPI = baseAPI.injectEndpoints({
         url: `/events?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -17,7 +17,7 @@ const userAPI = baseAPI.injectEndpoints({
         url: `/events/upcoming-events?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -27,7 +27,7 @@ const userAPI = baseAPI.injectEndpoints({
         url: `/events/${eventId}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -38,7 +38,7 @@ const userAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),

@@ -7,7 +7,7 @@ const artistAPI = baseAPI.injectEndpoints({
         url: "/artist/overview",
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -17,7 +17,7 @@ const artistAPI = baseAPI.injectEndpoints({
         url: "/artist/agents",
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -27,7 +27,7 @@ const artistAPI = baseAPI.injectEndpoints({
         url: `/agents/new-agents?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -45,7 +45,7 @@ const artistAPI = baseAPI.injectEndpoints({
         url: `/artist/agent-requests?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -56,7 +56,7 @@ const artistAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: { agent_id },
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -67,7 +67,7 @@ const artistAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: { agent_id },
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),
@@ -78,7 +78,7 @@ const artistAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       }),
     }),

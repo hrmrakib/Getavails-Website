@@ -14,7 +14,7 @@ const baseQuery = fetchBaseQuery({
   credentials: "include",
   prepareHeaders: (headers) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("access_token");
 
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
@@ -36,7 +36,6 @@ const customBaseQuery: BaseQueryFn<
     toast.error("Session expired. Please login again.");
 
     if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
       window.location.href = "/login";
     }
   } else if (result.error && result.error.status === 403) {
