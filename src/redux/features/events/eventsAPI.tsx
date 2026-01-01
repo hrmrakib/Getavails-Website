@@ -6,9 +6,6 @@ const eventsAPI = baseAPI.injectEndpoints({
       query: ({ status = "" }) => ({
         url: `/organizer/events?status=${status}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -17,9 +14,6 @@ const eventsAPI = baseAPI.injectEndpoints({
         url: `/organizer/events/complete-event`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -28,9 +22,6 @@ const eventsAPI = baseAPI.injectEndpoints({
         url: `/organizer/events/create-event`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -39,9 +30,6 @@ const eventsAPI = baseAPI.injectEndpoints({
         url: `/organizer/events/update-event`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -49,9 +37,6 @@ const eventsAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, status = "", search = "" }) => ({
         url: `/organizer/tickets?page=${page}&limit=${limit}&status=${status}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

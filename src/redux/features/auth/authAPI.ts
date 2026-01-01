@@ -119,9 +119,6 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
     resetPassword: builder.mutation({
       query: (body) => ({
         url: "/auth/reset-password",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("reset_token")}`,
-        },
         method: "POST",
         body,
       }),

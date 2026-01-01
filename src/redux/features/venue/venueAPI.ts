@@ -6,9 +6,6 @@ const venueAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "/venue/overview",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -17,9 +14,6 @@ const venueAPI = baseAPI.injectEndpoints({
         url: `/profile/update-availability`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -28,9 +22,6 @@ const venueAPI = baseAPI.injectEndpoints({
         url: `/venue/edit`,
         method: "PATCH",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

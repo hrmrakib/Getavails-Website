@@ -35,9 +35,6 @@ const mailAPI = baseAPI.injectEndpoints({
       query: (id) => ({
         url: `/admin/mails/${id}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -46,9 +43,6 @@ const mailAPI = baseAPI.injectEndpoints({
         url: `/admin/mails/mark-as-read`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -57,9 +51,6 @@ const mailAPI = baseAPI.injectEndpoints({
         url: `/admin/mails/mark-as-unread`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -68,9 +59,6 @@ const mailAPI = baseAPI.injectEndpoints({
         url: `/admin/mails/delete-single-mail`,
         method: "DELETE",
         body: id,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

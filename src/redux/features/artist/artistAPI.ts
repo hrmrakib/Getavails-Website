@@ -6,9 +6,6 @@ const artistAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "/artist/overview",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -16,9 +13,6 @@ const artistAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "/artist/agents",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -26,9 +20,6 @@ const artistAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search }) => ({
         url: `/agents/new-agents?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -44,9 +35,6 @@ const artistAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search }) => ({
         url: `/artist/agent-requests?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -55,9 +43,6 @@ const artistAPI = baseAPI.injectEndpoints({
         url: `/artist/approve-agent`,
         method: "POST",
         body: { agent_id },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -66,9 +51,6 @@ const artistAPI = baseAPI.injectEndpoints({
         url: `/artist/reject-agent`,
         method: "POST",
         body: { agent_id },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -77,9 +59,6 @@ const artistAPI = baseAPI.injectEndpoints({
         url: `/profile/update-availability`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

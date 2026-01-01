@@ -43,7 +43,7 @@ const profileAPI = baseAPI.injectEndpoints({
 });
 
 export const {
-  useGetProfileQuery,
+  useGetProfileQuery, 
   useConnectToStripeMutation,
   useUpdateProfileMutation,
   useWithdrawMoneyMutation,

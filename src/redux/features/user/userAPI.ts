@@ -6,9 +6,6 @@ const userAPI = baseAPI.injectEndpoints({
       query: ({ page, limit, search = "" }) => ({
         url: `/events?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -16,9 +13,6 @@ const userAPI = baseAPI.injectEndpoints({
       query: ({ page, limit, search = "" }) => ({
         url: `/events/upcoming-events?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -26,9 +20,6 @@ const userAPI = baseAPI.injectEndpoints({
       query: (eventId) => ({
         url: `/events/${eventId}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -37,9 +28,6 @@ const userAPI = baseAPI.injectEndpoints({
         url: `/tickets/purchase-ticket`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

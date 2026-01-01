@@ -6,9 +6,6 @@ const organizerAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "/organizer/overview",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -16,9 +13,6 @@ const organizerAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/agents?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -26,9 +20,6 @@ const organizerAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/organizer/agent-offers?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -36,9 +27,6 @@ const organizerAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/organizer/active-artists?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -47,9 +35,6 @@ const organizerAPI = baseAPI.injectEndpoints({
         url: `/organizer/accept-agent-offer`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -58,9 +43,6 @@ const organizerAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/venues?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -68,18 +50,12 @@ const organizerAPI = baseAPI.injectEndpoints({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/organizer/active-venues?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
     getVenueOfferRequest: builder.query({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: `/organizer/venue-offers?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),

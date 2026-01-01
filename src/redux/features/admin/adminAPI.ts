@@ -8,9 +8,6 @@ const adminAPI = baseAPI.injectEndpoints({
       query: () => ({
         url: "/admin/overview",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -18,9 +15,6 @@ const adminAPI = baseAPI.injectEndpoints({
       query: ({ role = "", page = 1, limit = 10, search = "" }) => ({
         url: `/admin/users?role=${role}&page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -28,9 +22,6 @@ const adminAPI = baseAPI.injectEndpoints({
       query: ({ userId }) => ({
         url: `/admin/users/${userId}/delete`,
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -45,9 +36,6 @@ const adminAPI = baseAPI.injectEndpoints({
       query: (id) => ({
         url: `/subscriptions/${id}`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -56,9 +44,6 @@ const adminAPI = baseAPI.injectEndpoints({
         url: `/admin/subscriptions`,
         method: "POST",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -67,9 +52,6 @@ const adminAPI = baseAPI.injectEndpoints({
         url: `/admin/subscriptions`,
         method: "PATCH",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -78,9 +60,6 @@ const adminAPI = baseAPI.injectEndpoints({
         url: `/admin/subscriptions`,
         method: "DELETE",
         body: data,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
 
@@ -88,9 +67,6 @@ const adminAPI = baseAPI.injectEndpoints({
       query: ({ subscriptionId }) => ({
         url: `/subscriptions/${subscriptionId}/subscribe`,
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       }),
     }),
   }),
