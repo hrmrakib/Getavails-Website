@@ -13,6 +13,8 @@ const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   credentials: "include",
   prepareHeaders: (headers) => {
+    console.log("Preparing headers for API request", window?.location?.href);
+
     if (typeof window !== "undefined") {
       const token = localStorage?.getItem("access_token");
       if (token) {
@@ -31,8 +33,13 @@ const customBaseQuery: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
+    localStorage?.removeItem("access_token"); // Clear invalid token
     toast.error("Session expired. Please login again.");
-    if (window?.location?.href) window.location.href = "/login";
+    if (window?.location?.href) {
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 300);
+    }
   } else if (result.error && result.error.status === 403) {
     alert("You need to verify your email to use this feature.");
     if (window?.location?.href) window.location.href = "/profile";

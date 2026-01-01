@@ -14,9 +14,26 @@ import { useSelector } from "react-redux";
 
 export function Navbar() {
   // const [token, setToken] = useState<string | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  if (
+    pathname === "/signup" ||
+    pathname === "/login" ||
+    pathname === "/forgot-password" ||
+    pathname === "/verify-password" ||
+    pathname === "/verify-otp" ||
+    pathname === "/reset-password" ||
+    pathname.split("/")[1] === "dashboard" ||
+    pathname === "/signup/agent" ||
+    pathname === "/signup/artist" ||
+    pathname === "/signup/venue" ||
+    pathname === "/signup/buyer" ||
+    pathname === "/signup/user" ||
+    pathname === "/signup/organizer"
+  ) {
+    return null;
+  }
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
@@ -56,24 +73,6 @@ export function Navbar() {
     { name: "Blog", href: "/blog" },
     { name: "Contact Us", href: "/contact" },
   ];
-
-  if (
-    pathname === "/signup" ||
-    pathname === "/login" ||
-    pathname === "/forgot-password" ||
-    pathname === "/verify-password" ||
-    pathname === "/verify-otp" ||
-    pathname === "/reset-password" ||
-    pathname.split("/")[1] === "dashboard" ||
-    pathname === "/signup/agent" ||
-    pathname === "/signup/artist" ||
-    pathname === "/signup/venue" ||
-    pathname === "/signup/buyer" ||
-    pathname === "/signup/user" ||
-    pathname === "/signup/organizer"
-  ) {
-    return null;
-  }
 
   return (
     <>

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
+// @ts-ignore
 import "./globals.css";
-import { Navbar } from "@/components/navbar/Navbar";
+// import { Navbar } from "@/components/navbar/Navbar";
 import { FooterSection } from "@/components/footer/Footer";
 import { Toaster } from "sonner";
 import Providers from "@/redux/features/Providers";
@@ -36,7 +37,7 @@ export default function RootLayout({
       >
         <Providers>
           <Toaster position='top-center' />
-          <Navbar />
+          {/* <Navbar /> */}
           {children}
           <FooterSection />
         </Providers>

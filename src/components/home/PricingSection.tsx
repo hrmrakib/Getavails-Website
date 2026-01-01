@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check, DollarSignIcon, Loader, Loader2 } from "lucide-react";
 import {
@@ -30,7 +30,15 @@ export function PricingSection() {
   const { data: subscriptions } = useGetSubscriptionInfoQuery({});
   const [paySubscriptionMutation, { isLoading: isPaying }] =
     usePaySubscriptionMutation();
-  const { data: profile } = useGetProfileQuery(undefined);
+
+  const [hasToken, setHasToken] = useState(false);
+  useEffect(() => {
+    setHasToken(!!localStorage?.getItem("access_token"));
+  }, []);
+
+  const { data: profile } = useGetProfileQuery(undefined, {
+    skip: !hasToken,
+  });
 
   const user = profile?.data;
 
