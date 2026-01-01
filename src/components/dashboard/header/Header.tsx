@@ -11,7 +11,7 @@ const Header = () => {
   const [headerTitle, setHeaderTitle] = useState("Dashboard");
   const pathname = usePathname();
   const { data: profile } = useGetProfileQuery(undefined, {
-    skip: !localStorage.getItem("access_token"),
+    skip: !localStorage.getItem("accessToken"),
   });
 
   const segments = pathname.split("/");
@@ -72,7 +72,9 @@ const Header = () => {
                 </p>
                 <p className='text-sm text-[#606060]'>
                   {profile?.data?.role}{" "}
-                  <span className='text-[#606060] font-medium'>{profile?.data?.is_admin ? "(Admin)" : ""}</span>
+                  <span className='text-[#606060] font-medium'>
+                    {profile?.data?.is_admin ? "(Admin)" : ""}
+                  </span>
                 </p>
               </div>
             </div>

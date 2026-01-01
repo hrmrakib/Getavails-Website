@@ -9,7 +9,7 @@ const adminAPI = baseAPI.injectEndpoints({
         url: "/admin/overview",
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),
@@ -19,7 +19,7 @@ const adminAPI = baseAPI.injectEndpoints({
         url: `/admin/users?role=${role}&page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),
@@ -29,7 +29,7 @@ const adminAPI = baseAPI.injectEndpoints({
         url: `/admin/users/${userId}/delete`,
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),
@@ -46,7 +46,7 @@ const adminAPI = baseAPI.injectEndpoints({
         url: `/subscriptions/${id}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),
@@ -57,7 +57,7 @@ const adminAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),
@@ -68,7 +68,7 @@ const adminAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),
@@ -79,7 +79,7 @@ const adminAPI = baseAPI.injectEndpoints({
         method: "DELETE",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),
@@ -89,7 +89,7 @@ const adminAPI = baseAPI.injectEndpoints({
         url: `/subscriptions/${subscriptionId}/subscribe`,
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),

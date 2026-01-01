@@ -120,7 +120,7 @@ export default function ProfilePage() {
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    setHasToken(!!localStorage.getItem("access_token"));
+    setHasToken(!!localStorage.getItem("accessToken"));
   }, []);
 
   const {
@@ -145,7 +145,7 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     await logout();
-    localStorage.removeItem("access_token");
+    localStorage.removeItem("accessToken");
     localStorage.removeItem("refresh_token");
     router.push("/login");
   };
@@ -246,7 +246,6 @@ export default function ProfilePage() {
           router.push("/login");
         }, 2000);
       }
-      
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to delete account");
     }

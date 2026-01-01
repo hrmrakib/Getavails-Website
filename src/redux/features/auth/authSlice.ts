@@ -1,18 +1,26 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+type AuthState = {
+  userToggle: boolean;
+  user: any | null;
+  token: any | null;
+};
+
+const initialState = {
+  userToggle: false,
+  user: null,
+  token: null,
+};
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    userToggle: false,
-    user: null,
-    token: null,
-  },
+  initialState,
   reducers: {
     userTrack: (state) => {
       state.userToggle = !state.userToggle;
     },
 
-    setUser: (state, action) => {
+    setUser: (state, action: PayloadAction<{ user: any; token: any }>) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
     },

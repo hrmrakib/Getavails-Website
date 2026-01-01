@@ -42,7 +42,7 @@ export default function VenueForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const { data: profile, isLoading } = useGetProfileQuery(undefined, {
-    skip: !localStorage.getItem("access_token"),
+    skip: !localStorage.getItem("accessToken"),
   });
   const [updateVenue] = useUpdateVenueMutation();
   const [newChat] = useNewChatMutation();

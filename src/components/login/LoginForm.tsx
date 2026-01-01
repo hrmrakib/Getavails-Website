@@ -35,8 +35,8 @@ export function LoginForm() {
       const res = await loginMutation({ email, password }).unwrap();
 
       if (res?.success) {
-        await saveTokens(res?.data?.access_token);
-        localStorage.setItem("access_token", res?.data?.access_token);
+        await saveTokens(res?.data?.accessToken);
+        localStorage.setItem("accessToken", res?.data?.accessToken);
         localStorage.setItem("getavails_user", JSON.stringify(res?.data?.user));
         dispatch(userTrack());
 

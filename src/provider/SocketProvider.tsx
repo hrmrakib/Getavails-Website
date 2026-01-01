@@ -26,7 +26,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   //? get token
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accessToken");
     if (token) {
       setToken(token);
     } else {

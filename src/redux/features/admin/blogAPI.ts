@@ -8,7 +8,7 @@ const blogAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
     }),
@@ -18,7 +18,7 @@ const blogAPI = baseAPI.injectEndpoints({
         url: `/blogs?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
       providesTags: ["Blog"],
@@ -29,7 +29,7 @@ const blogAPI = baseAPI.injectEndpoints({
         url: `/blogs/${blogId}`,
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
       providesTags: ["Blog"],
@@ -41,7 +41,7 @@ const blogAPI = baseAPI.injectEndpoints({
         method: "DELETE",
         body: blogId,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
       invalidatesTags: ["Blog"],
@@ -53,7 +53,7 @@ const blogAPI = baseAPI.injectEndpoints({
         method: "POST",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
       invalidatesTags: ["Blog"],
@@ -65,7 +65,7 @@ const blogAPI = baseAPI.injectEndpoints({
         method: "PATCH",
         body: data,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }),
       invalidatesTags: ["Blog"],

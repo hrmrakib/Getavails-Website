@@ -13,14 +13,14 @@ import { Skeleton } from "../ui/skeleton";
 import { useSelector } from "react-redux";
 
 export function Navbar() {
-  const [token, setToken] = useState<string | null>(null);
+  // const [token, setToken] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    setHasToken(!!localStorage.getItem("access_token"));
+    setHasToken(!!localStorage.getItem("accessToken"));
   }, []);
 
   const {
@@ -33,15 +33,15 @@ export function Navbar() {
 
   const userToggle = useSelector((state: any) => state.auth.userToggle);
 
-  useEffect(() => {
-    setToken(localStorage.getItem("access_token"));
-  }, []);
+  // useEffect(() => {
+  //   setToken(localStorage.getItem("accessToken"));
+  // }, []);
 
-  useEffect(() => {
-    if (hasToken) {
-      refetch();
-    }
-  }, [userToggle, refetch, token]);
+  // useEffect(() => {
+  //   if (hasToken) {
+  //     refetch();
+  //   }
+  // }, [userToggle, refetch, token]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

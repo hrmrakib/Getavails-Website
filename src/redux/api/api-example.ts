@@ -12,18 +12,33 @@ import { toast } from "sonner";
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   credentials: "include",
-  prepareHeaders: (headers) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("accessToken");
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.token;
 
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
     }
 
     return headers;
   },
 });
+
+// ? Refresh token request
+const refreshToken = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  );
+
+  if (!res.ok) {
+    return null;
+  }
+
+  return res.json();
+};
 
 const customBaseQuery: BaseQueryFn<
   FetchArgs | string,
@@ -33,12 +48,15 @@ const customBaseQuery: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
-    toast.error("Session expired. Please login again.");
-
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
-      window.location.href = "/login";
-    }
+    toast.error(
+      (
+        result?.error as {
+          data?: {
+            message?: string;
+          };
+        }
+      ).data?.message ?? "Something went wrong!"
+    );
   } else if (result.error && result.error.status === 403) {
     alert("You need to verify your email to use this feature.");
     window.location.href = "/profile";
