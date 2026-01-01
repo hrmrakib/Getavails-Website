@@ -36,6 +36,14 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
       invalidatesTags: ["auth", "Profile"],
     }),
 
+    googleLogin: builder.mutation({
+      query: (body) => ({
+        url: "/auth/google-login",
+        method: "POST",
+        body,
+      }),
+    }),
+
     getNewaccess_token: builder.mutation({
       query: (body) => ({
         url: "/auth/refresh-token",
@@ -136,6 +144,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
 export const {
   useLoginMutation,
+  useGoogleLoginMutation,
   useGetNewaccess_tokenMutation,
   useAgentRegisterMutation,
   useArtistRegisterMutation,

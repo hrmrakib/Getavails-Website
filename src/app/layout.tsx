@@ -6,6 +6,7 @@ import { Navbar } from "@/components/navbar/Navbar";
 import { FooterSection } from "@/components/footer/Footer";
 import { Toaster } from "sonner";
 import Providers from "@/redux/features/Providers";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -35,12 +36,16 @@ export default function RootLayout({
           fontFamily: "Inter, sans-serif",
         }}
       >
-        <Providers>
-          <Toaster position='top-center' />
-          <Navbar />
-          {children}
-          <FooterSection />
-        </Providers>
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_API_KEY_CLIENT_ID || ""}
+        >
+          <Providers>
+            <Toaster position='top-center' />
+            <Navbar />
+            {children}
+            <FooterSection />
+          </Providers>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
