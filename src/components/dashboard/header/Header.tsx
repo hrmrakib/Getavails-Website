@@ -10,8 +10,15 @@ import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 const Header = () => {
   const [headerTitle, setHeaderTitle] = useState("Dashboard");
   const pathname = usePathname();
+
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage?.getItem("access_token"));
+  }, []);
+
   const { data: profile } = useGetProfileQuery(undefined, {
-    skip: !localStorage?.getItem("access_token"),
+    skip: hasToken === false,
   });
 
   const segments = pathname.split("/");

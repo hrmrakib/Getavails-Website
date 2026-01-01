@@ -59,8 +59,14 @@ export default function MessagePage() {
   const [messageInput, setMessageInput] = useState("");
   const [activeTab, setActiveTab] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage?.getItem("access_token"));
+  }, []);
+
   const { data: profile, isFetching } = useGetProfileQuery(undefined, {
-    skip: !localStorage?.getItem("access_token"),
+    skip: hasToken === false,
   });
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);

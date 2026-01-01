@@ -196,7 +196,7 @@ export default function AddSubscriptionPage() {
                   <Button
                     type='button'
                     onClick={() => addFeature(featureInput)}
-                    className="!h-12"
+                    className='!h-12'
                   >
                     <Plus className='w-4 h-4 mr-1' />
                     Add

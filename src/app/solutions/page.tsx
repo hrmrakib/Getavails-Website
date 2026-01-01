@@ -10,7 +10,7 @@ const SolutionsPage = () => {
       <PlatformFeaturesSection />
       <CorePlatformSection />
     </div>
-  );
+  );   
 };
 
 export default SolutionsPage;

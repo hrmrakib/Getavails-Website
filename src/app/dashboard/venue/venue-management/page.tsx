@@ -41,12 +41,18 @@ export default function VenueForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const { data: profile, isLoading } = useGetProfileQuery(undefined, {
-    skip: !localStorage?.getItem("access_token"),
-  });
   const [updateVenue] = useUpdateVenueMutation();
   const [newChat] = useNewChatMutation();
   const router = useRouter();
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage?.getItem("access_token"));
+  }, []);
+
+  const { data: profile, isLoading } = useGetProfileQuery(undefined, {
+    skip: hasToken === false,
+  });
 
   useEffect(() => {
     if (profile?.data) {

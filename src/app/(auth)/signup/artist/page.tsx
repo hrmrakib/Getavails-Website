@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useArtistRegisterMutation } from "@/redux/features/auth/authAPI";
-import { toast } from "sonner";
+import { useArtistRegisterMutation } from "@/redux/features/auth/authAPI";  
+import { toast } from "sonner"; 
 import { useRouter } from "next/navigation";
 
 export default function SignUpFormForArtist() {
