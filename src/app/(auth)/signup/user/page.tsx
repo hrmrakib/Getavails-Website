@@ -44,7 +44,10 @@ export default function SignUpFormForAgent() {
 
     setIsLoading(true);
 
-    const data = {};
+    const data = {
+      password,
+      email,
+    };
 
     try {
       const res = await buyerRegisterMutation(data).unwrap();
