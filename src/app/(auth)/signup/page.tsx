@@ -78,7 +78,7 @@ const journeys = [
 
 export default function SignUpPage() {
   const [expandedJourney, setExpandedJourney] = useState("agent");
-  const [selectRole, setSelectRole] = useState("artist");
+  const [selectRole, setSelectRole] = useState("");
   const toggleJourney = (journeyId: string) => {
     setExpandedJourney(expandedJourney === journeyId ? "" : journeyId);
   };

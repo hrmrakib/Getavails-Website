@@ -25,6 +25,8 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
+let isLoggingOut = false;
+
 const customBaseQuery: BaseQueryFn<
   FetchArgs | string,
   unknown,
@@ -32,13 +34,24 @@ const customBaseQuery: BaseQueryFn<
 > = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
 
+  if (typeof window === "undefined") {
+    return result;
+  }
+
+  const pathname = window?.location?.pathname || "";
+
   if (result.error && result.error.status === 401) {
-    localStorage?.removeItem("access_token"); // Clear invalid token
-    toast.error("Session expired. Please login again.");
-    if (window?.location?.href) {
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 300);
+    if (!isLoggingOut && pathname !== "/login") {
+      isLoggingOut = true;
+      localStorage?.removeItem("access_token"); // Clear invalid token
+
+      toast.error("Session expired. Please login again.");
+
+      if (window?.location?.replace) {
+        setTimeout(() => {
+          window.location.replace("/login");
+        }, 400);
+      }
     }
   } else if (result.error && result.error.status === 403) {
     alert("You need to verify your email to use this feature.");

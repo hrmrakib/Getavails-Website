@@ -45,6 +45,7 @@ export default function SignUpFormForAgent() {
     setIsLoading(true);
 
     const data = {
+      name: fullName,
       password,
       email,
     };
@@ -109,7 +110,7 @@ export default function SignUpFormForAgent() {
             {/* Header */}
             <div className='space-y-2'>
               <h1 className='text-2xl font-bold text-foreground'>
-                Start Your Journey as an Buyer.
+                Start Your Journey as an User.
               </h1>
               <p className='text-muted-foreground text-sm'>
                 Join as an agent and simplify artist management with our
@@ -158,7 +159,7 @@ export default function SignUpFormForAgent() {
               </div>
 
               {/* What's You're Looking For?  Field */}
-              <div className='space-y-2'>
+              {/* <div className='space-y-2'>
                 <Label
                   htmlFor='lookingFor'
                   className='text-sm font-medium text-muted-foreground'
@@ -174,7 +175,7 @@ export default function SignUpFormForAgent() {
                   required
                   className='h-12'
                 />
-              </div>
+              </div> */}
 
               {/* Password Field */}
               <div className='space-y-2'>
