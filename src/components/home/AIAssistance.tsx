@@ -90,6 +90,7 @@ export function AIAssistantInterface() {
               type='text'
               placeholder='Need to find talent, check availability, confirm a venue, or send a contract?'
               value={inputValue}
+              disabled
               onChange={(e) => setInputValue(e.target.value)}
               className='w-full h-16 px-6 pr-16 text-lg lg:text-xl rounded-2xl border-2 border-[#1602114D] bg-background/80 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 placeholder:text-[#A4A4A4] placeholder:text-lg'
             />
