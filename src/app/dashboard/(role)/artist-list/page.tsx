@@ -21,6 +21,8 @@ import {
 } from "@/redux/features/admin/adminAPI";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
+import { useRouter } from "next/navigation";
 
 interface IArtist {
   id: string;
@@ -55,6 +57,8 @@ export default function UserListPage() {
   const [deleteUserMutation, { isLoading: isDeleting }] =
     useDeleteUserMutation();
   const limit = 10;
+  const [newChat] = useNewChatMutation();
+  const router = useRouter();
 
   const { data: users, refetch } = useGetUsersQuery({
     role: "ARTIST",
@@ -71,6 +75,15 @@ export default function UserListPage() {
   const handleActionClick = (user: IArtist) => {
     setSelectedUser(user);
     setActionModalOpen(true);
+  };
+
+  const handleMessageCreate = async (opponentId: string) => {
+    const data = await newChat({ user_id: opponentId }).unwrap();
+    const chatId = data?.data?.id;
+
+    if (!chatId) return; //? skip
+
+    router.push(`/dashboard/message/${chatId}`);
   };
 
   const handleUserDelete = async () => {
@@ -187,12 +200,13 @@ export default function UserListPage() {
                       >
                         <Info className='h-6 w-6 text-[#235789]' />
                       </button>
-                      <Link
-                        href={`/dashboard/artist/message/${user.id}`}
-                        className=' flex items-center justify-center transform transition-colors duration-200 ease-in-out rounded-2xl'
+                      <button
+                        onClick={() => handleMessageCreate(user.id)}
+                        type='button'
+                        className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors'
                       >
-                        <MessageCircleMore className='h-6 w-6 text-[#235789]' />
-                      </Link>
+                        <MessageCircleMore className='h-4 w-4' />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -241,6 +255,13 @@ export default function UserListPage() {
                         >
                           <Info className='h-4 w-4 text-gray-400' />
                         </Button>
+                        <button
+                          onClick={() => handleMessageCreate(user.id)}
+                          type='button'
+                          className='h-8 w-8 flex items-center justify-center bg-[#235789] text-white hover:bg-[#235789]/80 rounded-2xl transition-colors'
+                        >
+                          <MessageCircleMore className='h-4 w-4' />
+                        </button>
                       </div>
                     </div>
                   </div>
