@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { saveTokens } from "@/service/authService";
 import { useDispatch } from "react-redux";
 import { userTrack } from "@/redux/features/auth/authSlice";
-import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,20 +32,55 @@ export function LoginForm() {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const handleGoogleLogin = useGoogleLogin({
+    scope:
+      "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+    onSuccess: async (tokenResponse) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            access_token: tokenResponse.access_token,
+          }),
+        }
+      ).then((res) => res.json());
+
+      if (res.success) {
+        await saveTokens(res?.data?.access_token);
+        localStorage.setItem("access_token", res?.data?.access_token);
+        toast.success("Google login successful!");
+        router.push("/");
+      }
+    },
+    onError: () => {
+      console.log("Login Failed");
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const res = await loginMutation({ email, password }).unwrap();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      }).then((res) => res.json());
 
       if (res?.success) {
         await saveTokens(res?.data?.access_token);
         localStorage?.setItem("access_token", res?.data?.access_token);
-        // localStorage?.setItem(
-        //   "getavails_user",
-        //   JSON.stringify(res?.data?.user)
-        // );
+
         dispatch(userTrack());
 
         if (rememberMe) {
@@ -77,12 +112,14 @@ export function LoginForm() {
     credential?: string;
   }) => {
     try {
+      console.log("{{credentialResponse}}", credentialResponse);
+
       if (!credentialResponse.credential) {
         throw new Error("No credential received from Google");
       }
 
       // Decode the JWT to get user info
-      const GoogleJwtPayload = credentialResponse.credential;
+      const GoogleJwtPayload = credentialResponse;
       console.log("Google user info:", GoogleJwtPayload);
 
       // Send to backend
@@ -123,11 +160,6 @@ export function LoginForm() {
   const handleGoogleError = () => {
     console.log("Google login failed");
     toast.error("Google login failed. Please try again.");
-  };
-
-  const handleGoogleLogin = () => {
-    console.log("Google login clicked");
-    // Implement Google OAuth here
   };
 
   return (
@@ -257,6 +289,7 @@ export function LoginForm() {
             {/* Your custom UI */}
             <button
               type='button'
+              onClick={() => handleGoogleLogin()}
               className='w-full h-12 flex items-center justify-center gap-3 bg-[#1E1E1E] hover:bg-black text-white font-medium rounded-lg transition'
             >
               <Image
@@ -268,16 +301,6 @@ export function LoginForm() {
               />
               Continue with Google
             </button>
-
-            {/* REAL Google Button (Invisible, Required) */}
-            <div className='absolute inset-0 opacity-0'>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                useOneTap={false}
-                width='100%'
-              />
-            </div>
           </div>
 
           {/* <Button
