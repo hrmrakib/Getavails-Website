@@ -21,11 +21,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 
-interface AddBlogPageProps {
-  onBack?: () => void;
-}
-
-export default function AddBlogPage({ onBack }: AddBlogPageProps) {
+export default function AddBlogPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -142,7 +138,6 @@ export default function AddBlogPage({ onBack }: AddBlogPageProps) {
     }
 
     if (!fileURL) {
-        
       toast.error("Please upload an image or video or enter a URL");
       return;
     }
@@ -186,7 +181,7 @@ export default function AddBlogPage({ onBack }: AddBlogPageProps) {
           <Button
             variant='ghost'
             size='sm'
-            onClick={onBack}
+            onClick={() => router.back()}
             className='p-2 hover:bg-muted'
           >
             <ArrowLeft className='h-5 w-5 text-[#000000]' />
