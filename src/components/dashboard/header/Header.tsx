@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
+import Link from "next/link";
 
 const Header = () => {
   const [headerTitle, setHeaderTitle] = useState("Dashboard");
@@ -61,18 +62,22 @@ const Header = () => {
               <span className='absolute -top-1 -right-1 h-3 w-3 bg-red-500 shadow rounded-full'></span>
             </Button> */}
             <div className='flex items-center gap-3'>
-              <Avatar className='h-12 w-12 !rounded-full'>
-                <AvatarImage
-                  className='h-12 w-12 !rounded-full'
-                  width={55}
-                  height={55}
-                  src={
-                    process.env.NEXT_PUBLIC_IMAGE_URL + profile?.data?.avatar
-                  }
-                  alt='Daissy'
-                />
-                <AvatarFallback>{profile?.data?.name.charAt(0)}</AvatarFallback>
-              </Avatar>
+              <Link href='/profile'>
+                <Avatar className='h-12 w-12 !rounded-full'>
+                  <AvatarImage
+                    className='h-12 w-12 !rounded-full'
+                    width={55}
+                    height={55}
+                    src={
+                      process.env.NEXT_PUBLIC_IMAGE_URL + profile?.data?.avatar
+                    }
+                    alt='Daissy'
+                  />
+                  <AvatarFallback>
+                    {profile?.data?.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
               <div className='hidden sm:block'>
                 <p className='text-base font-medium text-[#1E1E1E]'>
                   {profile?.data?.name}
