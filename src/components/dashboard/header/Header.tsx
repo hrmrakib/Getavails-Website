@@ -40,8 +40,6 @@ const Header = () => {
     return null;
   }
 
-  console.log(pathname.split("/")[1]);
-
   return (
     <div className='bg-white mb-6'>
       <div className='max-w-8xl mx-auto'>

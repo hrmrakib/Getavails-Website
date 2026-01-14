@@ -87,7 +87,6 @@ export default function BookingsPage() {
   };
 
   const handleFormSubmit = (id: number, action: string) => {
-    console.log(`${action} booking ${id}`);
     // Handle form submission logic here
   };
 

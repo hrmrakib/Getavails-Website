@@ -114,9 +114,7 @@ export default function ConfirmBooking() {
     setIsDrawerOpen(true);
   };
 
-  const handleMessageBuyer = () => {
-    console.log("Message buyer clicked");
-  };
+  const handleMessageBuyer = () => {};
 
   const SidebarContent = () => (
     <Card className='border border-gray-200 bg-white'>

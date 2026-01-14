@@ -8,9 +8,6 @@ import { useGetOrganizerOverviewQuery } from "@/redux/features/organizer/organiz
 export default function DashboardPage() {
   const { data: overview } = useGetOrganizerOverviewQuery("");
 
-  console.log({ overview });
-  console.log(overview?.data?.statusCode);
-
   return (
     // <RoleRedirect allowedRole='ORGANIZER'>
     <div className='min-h-screen bg-transparent p-4 md:p-6'>

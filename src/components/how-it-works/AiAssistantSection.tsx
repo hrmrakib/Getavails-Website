@@ -26,7 +26,6 @@ export function AIAssistantSection() {
     e.preventDefault();
     if (inputValue.trim()) {
       // Simulate AI response
-      console.log("[v0] AI Assistant query:", inputValue);
       setInputValue("");
       setSelectedQuery("");
     }

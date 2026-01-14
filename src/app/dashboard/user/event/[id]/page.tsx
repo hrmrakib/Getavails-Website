@@ -56,8 +56,6 @@ export default function Home() {
   const { data: event, isLoading: isEventLoading } =
     useGetASingleEventQuery(id);
 
-  console.log(event?.data);
-
   const formatDate = (date?: string) => {
     if (!date) return "Invalid date";
 
@@ -89,17 +87,13 @@ export default function Home() {
       quantity: ticketQuantity,
     };
 
-    console.log(data);
-
     try {
       const res = await ticketPurchaseMutation(data).unwrap();
-      console.log("res => ", res?.data?.url);
 
       if (res?.data?.url) {
         window.open(res?.data?.url, "_blank");
       }
     } catch (error) {
-      console.error("Error signing up:", error);
       alert("Failed to sign up. Please try again.");
     }
   };

@@ -144,7 +144,7 @@ export default function MessagePage() {
   }, [isFetching, messages]);
 
   /* =======================
-     🔥 5s DEBOUNCE LOGIC
+     5s DEBOUNCE LOGIC
      ======================= */
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -202,6 +202,7 @@ export default function MessagePage() {
 
     setMessageInput("");
   };
+  
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;
     if (!socket || !chat_id) return;

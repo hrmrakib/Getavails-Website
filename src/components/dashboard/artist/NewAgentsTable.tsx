@@ -38,7 +38,6 @@ export function AgentsTable({ searchQuery }: { searchQuery: string }) {
     limit,
     search: searchQuery,
   });
-  console.log(data);
 
   const agents = data?.data || [];
   const totalItems = data?.meta?.total || 0; // assume your backend sends meta info
@@ -59,7 +58,6 @@ export function AgentsTable({ searchQuery }: { searchQuery: string }) {
         toast.success("Artist invited successfully!");
       }
     } catch (error: any) {
-      console.error("Error inviting artist:", error);
       toast.error(error?.data?.message || "Failed to invite artist");
     }
   };

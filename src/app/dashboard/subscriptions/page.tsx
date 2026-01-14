@@ -63,14 +63,11 @@ export default function SubscriptionsPage() {
         subscription_id: deleteSubscriptionId,
       }).unwrap();
 
-      console.log(res);
-
       if (res?.success) {
         toast.success("Subscription deleted successfully!");
         refetch();
       }
     } catch (error) {
-      console.error("Error deleting subscription:", error);
       toast.error("Error deleting subscription");
     } finally {
       setDeleteModalOpen(false);

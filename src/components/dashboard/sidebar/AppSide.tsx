@@ -58,9 +58,6 @@ export default function DashboardSidebar() {
     return null;
   }
 
-  console.log(pathname);
-  console.log(sidebarView);
-
   return (
     <>
       <div className='!bg-sidebar-bg md:!bg-sidebar-bg'>

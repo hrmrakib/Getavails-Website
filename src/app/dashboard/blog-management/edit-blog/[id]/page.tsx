@@ -109,7 +109,7 @@ export default function EditBlogPage() {
       } else if (selectedFile.type.startsWith("video")) {
         formData.append("videos", selectedFile);
       } else {
-        console.error("Unsupported file type");
+        toast.error("Unsupported file type");
         return;
       }
 
@@ -120,8 +120,8 @@ export default function EditBlogPage() {
         } else if (selectedFile.type.startsWith("video")) {
           setFileURL(res?.data?.videos?.[0]);
         }
-      } catch (error) {
-        console.error("Error uploading media:", error);
+      } catch (error: any) {
+        toast.error("Error uploading media:", error?.data?.message);
       }
     };
 
@@ -180,7 +180,6 @@ export default function EditBlogPage() {
         router.push("/dashboard/blog-management");
       }
     } catch (error: any) {
-      console.error("Error updating blog:", error);
       toast.error(error?.data?.message || "Failed to update blog");
     } finally {
       setIsSubmitting(false);

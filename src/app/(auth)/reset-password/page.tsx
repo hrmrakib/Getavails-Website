@@ -48,8 +48,8 @@ export default function SignUpFormForAgent() {
         toast.success("Password reset successfully.");
         router.push(`/login`);
       }
-    } catch (error) {
-      console.error("Error signing up:", error);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setIsLoading(false);
     }

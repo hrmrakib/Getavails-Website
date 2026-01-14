@@ -49,13 +49,12 @@ export default function AddBlogPage() {
       } else if (selectedFile.type.startsWith("video")) {
         formData.append("videos", selectedFile);
       } else {
-        console.error("Unsupported file type");
+        toast.error("Unsupported file type");
         return;
       }
 
       try {
         const res = await uploadMediaMutation(formData).unwrap();
-        console.log("Asset:", res);
 
         if (selectedFile.type.startsWith("image")) {
           setFileURL(res?.data?.images?.[0]);
@@ -63,7 +62,7 @@ export default function AddBlogPage() {
           setFileURL(res?.data?.videos?.[0]);
         }
       } catch (error) {
-        console.error("Error uploading media:", error);
+        toast.error("Error uploading media");
       }
     };
 
@@ -160,7 +159,6 @@ export default function AddBlogPage() {
         router.push("/dashboard/blog-management");
       }
     } catch (error: any) {
-      console.error("Error creating blog:", error);
       toast.error(error?.data?.message || "Failed to create blog");
     } finally {
       setIsSubmitting(false);

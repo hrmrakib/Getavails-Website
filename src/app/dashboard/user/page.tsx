@@ -80,17 +80,13 @@ export default function Home() {
       quantity: ticketQuantity,
     };
 
-    console.log(data);
-
     try {
       const res = await ticketPurchaseMutation(data).unwrap();
-      console.log("res => ", res?.data?.url);
 
       if (res?.data?.url) {
         window.open(res?.data?.url, "_blank");
       }
     } catch (error) {
-      console.error("Error signing up:", error);
       alert("Failed to sign up. Please try again.");
     }
   };
@@ -105,9 +101,7 @@ export default function Home() {
 
           {eventList?.data?.length === 0 && (
             <div className='flex items-center justify-center h-40'>
-              <div className='flex items-center space-x-2'>
-                No Events Found
-              </div>
+              <div className='flex items-center space-x-2'>No Events Found</div>
             </div>
           )}
 

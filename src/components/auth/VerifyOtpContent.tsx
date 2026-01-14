@@ -141,11 +141,8 @@ export default function VerifyOtpContent() {
           inputRefs.current[0]?.focus();
         }
       }
-
-      console.log({ res });
     } catch (err) {
       setError("Verification failed. Please try again.");
-      console.error("Error during OTP verification:", err);
     } finally {
       setIsLoading(false);
     }

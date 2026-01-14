@@ -55,14 +55,13 @@ export default function OrganizerPage() {
 
     try {
       const res = await organizerRegisterMutation(data).unwrap();
-      console.log(res);
 
       if (res?.success) {
         toast.success("Verification OTP sent successfully.");
         router.push(`/verify-otp?email=${email}`);
       }
-    } catch (error) {
-      console.error("Error signing up:", error);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setIsLoading(false);
     }

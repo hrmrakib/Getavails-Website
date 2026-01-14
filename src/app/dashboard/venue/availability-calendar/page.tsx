@@ -36,8 +36,6 @@ export default function AvailabilityCalendar() {
   const { data: availability } = useGetProfileQuery("");
   const [availabilityDateMutation] = useAvailabilityDateMutation();
 
-  console.log(availability?.data);
-
   const monthNames = [
     "January",
     "February",
@@ -128,20 +126,13 @@ export default function AvailabilityCalendar() {
     }
 
     try {
-      console.log("🕒 Sending to backend:", {
-        availability: selectedDates,
-        time: timeSlot,
-      });
-
       const { data } = await availabilityDateMutation({
         availability: selectedDates,
         timeSlot,
       });
 
       toast("✅ Availability successfully updated!");
-      console.log("✅ Response:", data);
     } catch (error) {
-      console.error("❌ Error sending availability:", error);
       alert("❌ Failed to update availability. Please try again.");
     }
   };

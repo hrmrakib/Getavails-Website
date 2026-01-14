@@ -181,7 +181,6 @@ export default function ProfilePage() {
       formData.append("location", user.location || "");
 
       const res = await updateProfileMutation(formData).unwrap();
-      console.log(res);
       if (res?.success) {
         refetch();
         toast.success("Profile updated successfully");

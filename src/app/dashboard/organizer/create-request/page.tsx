@@ -93,8 +93,6 @@ export default function Home() {
   const events = data?.data || [];
   const count = data?.meta?.total;
 
-  console.log("count", events?.length);
-
   const handleCreateEvent = (newEvent: Omit<Event, "id" | "status">) => {
     const event: Event = {
       ...newEvent,

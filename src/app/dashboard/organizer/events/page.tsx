@@ -156,13 +156,10 @@ export default function Home() {
     }
     formDataToSend.append("data", JSON.stringify(payload));
 
-    console.log("FORM DATA:", payload);
-
     try {
       const res = await createNewEventMutation(formDataToSend).unwrap();
-      console.log(res);
-    } catch (error) {
-      console.error("Error signing up:", error);
+    } catch (error: any) {
+      toast.error("Error signing up:", error?.data?.message);
     }
   };
 
@@ -213,33 +210,27 @@ export default function Home() {
     try {
       const res = await updateEventMutation(formDataToSend).unwrap();
 
-      console.log(res);
       if (res?.success) {
         refetch();
         setActiveTab("event-list");
         toast.success("Event updated successfully");
       }
-    } catch (error) {
-      console.error("Error updating event:", error);
-    } finally {
-      console.log("finally");
+    } catch (error: any) {
+      toast.error("Error updating event:", error?.data?.message);
     }
   };
 
   const handleEndEvent = async () => {
-    console.log(eventId);
     try {
       const res = await endEventMutation({
         event_id: eventId,
       }).unwrap();
 
-      console.log(res);
       if (res?.success) {
         refetch();
         toast.success("Event ended successfully");
       }
     } catch (error) {
-      console.error("Error ending event:", error);
       toast.error("Error ending event");
     } finally {
       setOpenModal(false);

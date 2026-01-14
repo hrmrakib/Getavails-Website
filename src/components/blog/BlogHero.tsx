@@ -28,7 +28,6 @@ export default function BlogHero() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Blog submitted:", formData);
     handleCloseModal();
   };
 

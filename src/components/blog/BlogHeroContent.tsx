@@ -15,8 +15,6 @@ const BlogHeroContent = () => {
     search: "",
   });
 
-  console.log(blogs);
-
   const handleCardClick = (cardId: string) => {
     setSelectedCard(cardId === selectedCard ? null : cardId);
   };

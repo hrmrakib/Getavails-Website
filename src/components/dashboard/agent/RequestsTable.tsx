@@ -93,7 +93,6 @@ export function ArtistRequestsInAgentPage({
       }
     } catch (error) {
       toast.error("Error approving agent");
-      console.error("Error approving agent:", error);
     }
   };
 
@@ -109,7 +108,6 @@ export function ArtistRequestsInAgentPage({
       refetch();
     } catch (error) {
       toast.error("Error declining agent");
-      console.error("Error declining agent:", error);
     }
   };
 

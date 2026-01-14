@@ -78,7 +78,6 @@ export default function Home() {
 
   const handleBookedTicket = (event: IEvent) => {
     setBookedTickets(event);
-    console.log(event);
     setOpen(true);
   };
 
@@ -92,7 +91,9 @@ export default function Home() {
 
           {eventList?.data?.length === 0 && (
             <div className='flex items-center justify-center h-40'>
-              <div className='flex items-center space-x-2'>No Upcoming Events Found</div>
+              <div className='flex items-center space-x-2'>
+                No Upcoming Events Found
+              </div>
             </div>
           )}
 

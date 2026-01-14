@@ -57,8 +57,8 @@ export default function SignUpFormForAgent() {
         toast.success("Verification OTP sent successfully.");
         router.push(`/verify-otp?email=${email}`);
       }
-    } catch (error) {
-      console.error("Error signing up:", error);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setIsLoading(false);
     }

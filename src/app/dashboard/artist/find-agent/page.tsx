@@ -233,10 +233,13 @@ export default function BookingRequestsPage() {
                                   <Skeleton className='h-6 w-6 rounded-full' />
                                 </div>
                               </td>
-                            </tr> 
+                            </tr>
                           ))
                       : artists?.data?.map((agent: IAgent) => (
-                          <tr key={agent.id} className='hover:bg-gray-50 border'>
+                          <tr
+                            key={agent.id}
+                            className='hover:bg-gray-50 border'
+                          >
                             <td className='px-4 py-3'>
                               <div className='flex items-center gap-2'>
                                 <Avatar className='h-6 w-6'>
@@ -268,9 +271,7 @@ export default function BookingRequestsPage() {
                               agent.availability.length > 0 ? (
                                 <AvailabilityModal
                                   availability={agent.availability}
-                                  onSelect={(iso) => {
-                                    console.log("picked:", iso);
-                                  }}
+                                  onSelect={(iso) => {}}
                                 />
                               ) : (
                                 <span className='text-gray-400'>

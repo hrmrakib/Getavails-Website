@@ -126,20 +126,14 @@ export default function AvailabilityCalendar() {
     }
 
     try {
-      console.log("🕒 Sending to backend:", {
-        availability: selectedDates,
-        time: timeSlot,
-      });
-
       const { data } = await availabilityDateMutation({
         availability: selectedDates,
         timeSlot,
       });
 
       toast("✅ Availability successfully updated!");
-      console.log("✅ Response:", data);
-    } catch (error) {
-      console.error("❌ Error sending availability:", error);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
       alert("❌ Failed to update availability. Please try again.");
     }
   };

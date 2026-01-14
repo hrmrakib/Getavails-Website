@@ -51,7 +51,7 @@ export default function EventsList({ events, tab }: any) {
         </p>
       </div>
     );
-  } 
+  }
 
   const downloadFileFromUrl = async (fileUrl: string, fileName?: string) => {
     try {
@@ -70,8 +70,8 @@ export default function EventsList({ events, tab }: any) {
 
       // Cleanup
       window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.error("Download failed", err);
+    } catch (err: any) {
+      toast.error("Download failed", err?.data?.message);
     }
   };
 
@@ -87,8 +87,6 @@ export default function EventsList({ events, tab }: any) {
     const event = selectedEventRef.current;
     if (!event) return;
 
-    console.log("event", event);
-
     try {
       const data = {
         offer_id: event?.id,
@@ -100,13 +98,11 @@ export default function EventsList({ events, tab }: any) {
       formData.append("document", file);
 
       const res = await acceptOfferMutation(formData).unwrap();
-      console.log(res);
 
       if (res?.success) {
         toast.success("Offer accepted successfully ✅");
       }
     } catch (error: any) {
-      console.error(error);
       toast.error("Failed to accept offer ❌");
     } finally {
       // reset input so same file can be re-selected

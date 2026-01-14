@@ -9,8 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useArtistRegisterMutation } from "@/redux/features/auth/authAPI";  
-import { toast } from "sonner"; 
+import { useArtistRegisterMutation } from "@/redux/features/auth/authAPI";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export default function SignUpFormForArtist() {
@@ -57,14 +57,13 @@ export default function SignUpFormForArtist() {
 
     try {
       const res = await artistRegisterMutation(data).unwrap();
-      console.log(res);
 
       if (res?.success) {
         toast.success("Verification OTP sent successfully.");
         router.push(`/verify-otp?email=${email}`);
       }
-    } catch (error) {
-      console.error("Error signing up:", error);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setIsLoading(false);
     }

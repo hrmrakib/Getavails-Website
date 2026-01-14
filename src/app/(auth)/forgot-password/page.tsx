@@ -25,13 +25,12 @@ export default function SignUpFormForAgent() {
 
     try {
       const res = await forgotPasswordMutation({ email }).unwrap();
-      console.log(res);
       if (res?.success) {
         toast.success("Verification OTP sent successfully.");
         router.push(`/verify-otp?email=${email}&type=forgot-password`);
       }
-    } catch (error) {
-      console.error("Error signing up:", error);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setIsLoading(false);
     }

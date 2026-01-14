@@ -74,14 +74,12 @@ export default function BlogPage() {
       const res = await deleteBlogMutation({
         blog_id: postToDelete,
       }).unwrap();
-      console.log(res);
       if (res?.success) {
         refetch();
         toast.success("Blog deleted successfully!");
         router.push("/dashboard/blog-management");
       }
     } catch (error: any) {
-      console.error("Error deleting blog:", error);
       toast.error(error?.data?.message || "Failed to delete blog");
     } finally {
       setDeleteModalOpen(false);

@@ -40,12 +40,10 @@ export default function SignUpForm() {
     // Simulate sign up process
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log("Sign up attempt:", { fullName, email, password });
     setIsLoading(false);
   };
 
   const handleGoogleSignUp = () => {
-    console.log("Google sign up clicked");
     // Implement Google OAuth here
   };
 

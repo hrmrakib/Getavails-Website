@@ -108,8 +108,6 @@ export default function VenueForm() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("first");
-
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -131,8 +129,8 @@ export default function VenueForm() {
         setSuccessMessage("Changes saved successfully!");
         setTimeout(() => setSuccessMessage(""), 3000);
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    } catch (error: any) {
+      toast.error("Error submitting form:", error?.data?.message);
     } finally {
       setIsSubmitting(false);
     }

@@ -17,8 +17,6 @@ import { RoleRedirect } from "@/utils/makePrivate";
 const OrganizerSidebar = () => {
   const pathname = usePathname();
 
-  console.log(pathname);
-
   return (
     <RoleRedirect allowedRole='ORGANIZER'>
       <>

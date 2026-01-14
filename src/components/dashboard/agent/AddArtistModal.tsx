@@ -24,7 +24,6 @@ export function AddArtistModal({ open, onOpenChange }: AddArtistModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log("Adding artist with email:", email);
     setEmail("");
     onOpenChange(false);
   };

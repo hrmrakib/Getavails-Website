@@ -30,7 +30,6 @@ export function AIAssistantInterface() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      console.log("[v0] Submitted query:", inputValue);
       // Handle the query submission here
       setInputValue("");
     }

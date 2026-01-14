@@ -42,12 +42,10 @@ export default function MessageDetailPage() {
         mail_id: id,
       }).unwrap();
 
-      console.log(res);
       if (res?.success) {
         refetch();
       }
     } catch (error) {
-      console.error("Error occurred", error);
       toast.error("Unexpected error occurred!");
     }
   };

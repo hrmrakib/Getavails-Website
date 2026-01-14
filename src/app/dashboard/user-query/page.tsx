@@ -48,8 +48,6 @@ export default function AdminMessagesPage() {
     refetch();
   }, [search, filterRole, filterRead]);
 
-  console.log("mail -> ", filterRead);
-
   const totalMail = userMail?.meta?.pagination?.total || 0;
   const newMail = userMail?.data?.filter(
     (mail: Inquiry) => mail.unread === true
@@ -66,7 +64,6 @@ export default function AdminMessagesPage() {
         refetch();
       }
     } catch (error) {
-      console.error("Error occurred", error);
       toast.error("Unexpected error occurred!");
     }
   };
@@ -77,12 +74,10 @@ export default function AdminMessagesPage() {
         mail_id: id,
       }).unwrap();
 
-      console.log(res);
       if (res?.success) {
         refetch();
       }
     } catch (error) {
-      console.error("Error occurred", error);
       toast.error("Unexpected error occurred!");
     }
   };

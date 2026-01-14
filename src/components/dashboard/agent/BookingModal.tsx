@@ -46,12 +46,7 @@ export function BookingModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle booking submission
-    console.log("Booking artist:", {
-      artist: artist.name,
-      date: `${selectedDate} ${selectedMonth} ${selectedYear}`,
-      time: `${selectedHour}:${selectedMinute} ${selectedPeriod}`,
-      message,
-    });
+
     onOpenChange(false);
   };
 

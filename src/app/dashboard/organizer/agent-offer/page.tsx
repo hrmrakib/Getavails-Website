@@ -102,13 +102,10 @@ export default function ArtistBooking() {
         artist_id: deleteId,
       }).unwrap();
 
-      console.log(res, deleteId);
-
       if (res?.success) {
         toast.success("Artist deleted successfully");
       }
     } catch (error) {
-      console.error("Error deleting artist:", error);
       toast.error("Error deleting artist");
     } finally {
       setOpenDeleteDialog(false);

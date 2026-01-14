@@ -7,6 +7,7 @@ import { Facebook, Linkedin, MessageCircle, Link, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useGetBlogQuery } from "@/redux/features/admin/blogAPI";
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
 
 interface Admin {
   name: string;
@@ -36,8 +37,8 @@ export default function BlogPost() {
       await navigator.clipboard.writeText(window.location.href);
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy link:", err);
+    } catch (err: any) {
+      toast.error(err?.data?.message);
     }
   };
 

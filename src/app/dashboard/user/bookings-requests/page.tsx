@@ -113,13 +113,9 @@ export default function BookingRequestLists() {
     }
   };
 
-  const handleMessageClick = (request: BookingRequest) => {
-    console.log(`Messaging ${request.type}:`, request.title);
-  };
+  const handleMessageClick = (request: BookingRequest) => {};
 
-  const handleCancelClick = (request: BookingRequest) => {
-    console.log("Cancelling request:", request.title);
-  };
+  const handleCancelClick = (request: BookingRequest) => {};
 
   return (
     <div className='min-h-screen bg-transparent p-4 md:p-6'>

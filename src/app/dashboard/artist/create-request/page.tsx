@@ -76,8 +76,6 @@ export default function BookingsPage() {
     pending: "pending",
   };
 
-  console.log(assignments);
-
   const payload = Object.entries(assignments).map(([offer_id, assignment]) => {
     const obj = {
       offer_id,
@@ -90,8 +88,6 @@ export default function BookingsPage() {
       Object.entries(obj).filter(([_, value]) => value != null)
     );
   });
-
-  console.log(payload[0]);
 
   const { data, isLoading, refetch } = useGetAllOffersQuery({
     page: 1,
@@ -197,9 +193,8 @@ export default function BookingsPage() {
         refetch();
         toast.success("Offer accepted and sent successfully");
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error accepting offer");
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
     }
   };
@@ -221,8 +216,8 @@ export default function BookingsPage() {
 
       // Cleanup
       window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.error("Download failed", err);
+    } catch (err: any) {
+      toast.error(err?.data?.message);
     }
   };
 

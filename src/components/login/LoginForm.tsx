@@ -56,9 +56,7 @@ export function LoginForm() {
         router.push("/");
       }
     },
-    onError: () => {
-      console.log("Login Failed");
-    },
+    onError: () => {},
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -112,22 +110,18 @@ export function LoginForm() {
     credential?: string;
   }) => {
     try {
-      console.log("{{credentialResponse}}", credentialResponse);
-
       if (!credentialResponse.credential) {
         throw new Error("No credential received from Google");
       }
 
       // Decode the JWT to get user info
       const GoogleJwtPayload = credentialResponse;
-      console.log("Google user info:", GoogleJwtPayload);
 
       // Send to backend
       const response = await googleLogin({
         id_token: credentialResponse.credential,
         user: GoogleJwtPayload,
       }).unwrap();
-      console.log(response);
 
       if (response.success) {
         await saveTokens(response?.data?.access);
@@ -139,7 +133,6 @@ export function LoginForm() {
         toast.error(response.message || "Google login failed");
       }
     } catch (error: unknown) {
-      console.error("Google login error:", error);
       toast.error(
         error &&
           typeof error === "object" &&
@@ -158,7 +151,6 @@ export function LoginForm() {
   };
 
   const handleGoogleError = () => {
-    console.log("Google login failed");
     toast.error("Google login failed. Please try again.");
   };
 

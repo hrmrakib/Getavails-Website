@@ -73,7 +73,6 @@ export function NewArtistTableInAgentPage({
         toast.success("Artist invited successfully!");
       }
     } catch (error: any) {
-      console.error("Error inviting artist:", error);
       toast.error(error?.data?.message || "Failed to invite artist");
     }
   };

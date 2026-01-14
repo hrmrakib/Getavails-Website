@@ -56,14 +56,11 @@ export function PricingSection() {
         subscriptionId: plan.id,
       }).unwrap();
 
-      console.log(res);
-
       if (res?.success && res?.data?.url) {
         window.open(res.data.url, "_blank"); //? Open in new tab
       }
     } catch (error) {
       toast.error("Error accepting offer");
-      console.error("Error accepting offer:", error);
     }
   };
 

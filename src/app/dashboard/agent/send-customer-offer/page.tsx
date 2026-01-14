@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface FormData {
   organizerName: string;
@@ -95,7 +96,6 @@ export default function Home() {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      console.log("Form submitted:", formData);
       alert("Event created successfully!");
 
       // Reset form
@@ -109,9 +109,8 @@ export default function Home() {
         time: "",
         amount: "",
       });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Error creating event. Please try again.");
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setIsSubmitting(false);
     }

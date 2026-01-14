@@ -62,7 +62,6 @@ export default function ContactFormSection({
       }
     } catch (error: any) {
       toast.error(error?.data?.message);
-      console.log(error);
     } finally {
       setIsSubmitting(false);
     }

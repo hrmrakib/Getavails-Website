@@ -24,7 +24,6 @@ export function HeroSection() {
   const [dateRange, setDateRange] = useState("");
 
   const handleSearch = () => {
-    console.log("[v0] Search triggered:", { searchQuery, location, dateRange });
     // Implement search functionality here
   };
 

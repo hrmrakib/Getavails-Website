@@ -65,8 +65,6 @@ export default function AgentListPage() {
     search: searchTerm,
   });
 
-  console.log(users);
-
   const pagination = users?.meta?.pagination;
   const currentPage = pagination?.page || 1;
   const totalPages = pagination?.totalPages || 1;
@@ -95,14 +93,12 @@ export default function AgentListPage() {
         userId: deleteUserId,
       }).unwrap();
 
-      console.log(res);
-
       if (res?.success) {
         refetch();
         toast.success("User deleted successfully");
       }
-    } catch (error) {
-      console.error("Error deleting user:", error);
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setDeleteModalOpen(false);
       setActionModalOpen(false);

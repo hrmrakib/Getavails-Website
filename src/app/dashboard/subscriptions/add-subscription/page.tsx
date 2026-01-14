@@ -78,7 +78,6 @@ export default function AddSubscriptionPage() {
         router.push("/dashboard/subscriptions");
       }
     } catch (error) {
-      console.error("Error creating subscription:", error);
       toast.error("Error creating subscription");
     }
   };

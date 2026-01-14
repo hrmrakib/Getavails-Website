@@ -108,14 +108,11 @@ export default function ArtistBooking() {
         artist_id: deleteId,
       }).unwrap();
 
-      console.log(res, deleteId);
-
       if (res?.success) {
         toast.success("Artist deleted successfully");
       }
-    } catch (error) {
-      console.error("Error deleting artist:", error);
-      toast.error("Error deleting artist");
+    } catch (error: any) {
+      toast.error(error?.data?.message);
     } finally {
       setOpenDeleteDialog(false);
     }
@@ -133,8 +130,6 @@ export default function ArtistBooking() {
     return (
       <p className='text-center text-muted-foreground py-6'>Loading ...</p>
     );
-
-  console.log({ myArtists });
 
   // if (myArtists?.data?.length === 0)
   //   return (

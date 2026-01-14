@@ -80,8 +80,6 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
     }
   }, [data]);
 
-  console.log(allUsers);
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 

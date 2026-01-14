@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 interface IOfferRequest {
   id: string;
@@ -94,14 +95,12 @@ export default function AgentDetailsPage({
         offer_id: currentId,
       }).unwrap();
 
-      console.log(res);
-
       if (res?.success) {
         window.open(res?.data?.url, "_blank");
         setStatus("confirmed");
       }
-    } catch (error) {
-      console.error("Error accepting offer:", error);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Error accepting offer");
     } finally {
       setStatus(null);
       setOpenModal(false);

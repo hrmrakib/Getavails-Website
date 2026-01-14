@@ -105,7 +105,6 @@ export default function ConfirmArtistPage() {
   };
 
   const handleMessage = (artistId: string) => {
-    console.log("[v0] Message artist:", artistId);
     // Message functionality would be implemented here
   };
 

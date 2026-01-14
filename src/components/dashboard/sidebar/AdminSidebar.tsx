@@ -20,8 +20,6 @@ const AdminSidebar = () => {
     setIsUserManagementOpen(!isUserManagementOpen);
   };
 
-  console.log(pathname);
-
   return (
     <>
       <SidebarMenu className='px-4 space-y-2'>
