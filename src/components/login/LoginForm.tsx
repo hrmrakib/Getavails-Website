@@ -36,24 +36,28 @@ export function LoginForm() {
     scope:
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
     onSuccess: async (tokenResponse) => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            access_token: tokenResponse.access_token,
-          }),
-        }
-      ).then((res) => res.json());
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              access_token: tokenResponse.access_token,
+            }),
+          }
+        ).then((res) => res.json());
 
-      if (res.success) {
-        await saveTokens(res?.data?.access_token);
-        localStorage.setItem("access_token", res?.data?.access_token);
-        toast.success("Google login successful!");
-        router.push("/");
+        if (res.success) {
+          await saveTokens(res?.data?.access_token);
+          localStorage.setItem("access_token", res?.data?.access_token);
+          toast.success("Google login successful!");
+          router.push("/");
+        }
+      } catch (error: any) {
+        toast.error(error?.data?.message);
       }
     },
     onError: () => {},
@@ -73,11 +77,13 @@ export function LoginForm() {
           email,
           password,
         }),
-      }).then((res) => res.json());
+      });
 
-      if (res?.success) {
-        await saveTokens(res?.data?.access_token);
-        localStorage?.setItem("access_token", res?.data?.access_token);
+      const data = await res.json();
+
+      if (data?.success) {
+        await saveTokens(data?.data?.access_token);
+        localStorage?.setItem("access_token", data?.data?.access_token);
 
         dispatch(userTrack());
 
@@ -90,17 +96,12 @@ export function LoginForm() {
         }
         router.push("/");
       }
-    } catch (error) {
-      if (error && typeof error === "object" && "data" in error) {
-        const err = error as { data?: { message?: string } };
-        if (err.data?.message) {
-          toast.error(err.data.message);
-        } else {
-          toast.error("Something went wrong");
-        }
-      } else {
-        toast.error("Unknown error occurred");
+
+      if (!data?.success) {
+        throw new Error(data?.message);
       }
+    } catch (err: any) {
+      toast.error(err?.message ?? "Something went wrong");
     } finally {
       setIsLoading(false);
     }

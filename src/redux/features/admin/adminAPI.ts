@@ -16,6 +16,14 @@ const adminAPI = baseAPI.injectEndpoints({
       }),
     }),
 
+    editProfile: builder.mutation({
+      query: ({ userId, data }) => ({
+        url: `/admin/users/${userId}/edit`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
+
     deleteUser: builder.mutation({
       query: ({ userId }) => ({
         url: `/admin/users/${userId}/delete`,
@@ -73,6 +81,7 @@ const adminAPI = baseAPI.injectEndpoints({
 export const {
   useGetAdminOverviewQuery,
   useGetUsersQuery,
+  useEditProfileMutation,
   useDeleteUserMutation,
   useGetSubscriptionInfoQuery,
   useGetSingleSubscriptionQuery,

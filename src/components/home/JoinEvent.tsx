@@ -83,7 +83,7 @@ export default function JoinEvent() {
   };
 
   return (
-    <main className='w-full min-h-screen bg-background'>
+    <main className='w-full min-h- bg-background'>
       <div className='container mx-auto'>
         {/* Header Section */}
         <section className='w-full py-8 md:py-16 px-4 md:px-8 text-center'>

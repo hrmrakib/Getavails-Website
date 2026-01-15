@@ -78,7 +78,7 @@ export function ExpandableNavItem({
           >
             <Icon size={18} />
             <span
-              className={`text-lg text-nowrap flex-1 text-left ${
+              className={`text-base text-nowrap flex-1 text-left ${
                 active ? "text-sidebar-active-color" : ""
               }`}
             >

@@ -17,12 +17,14 @@ import {
 import { Label } from "@/components/ui/label";
 import {
   useDeleteUserMutation,
+  useEditProfileMutation,
   useGetUsersQuery,
 } from "@/redux/features/admin/adminAPI";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useNewChatMutation } from "@/redux/features/chat/chatAPI";
 import { useRouter } from "next/navigation";
+import { Switch } from "@/components/ui/switch";
 
 interface IOrganizer {
   id: string;
@@ -44,6 +46,10 @@ interface IOrganizer {
 }
 
 export default function UserListPage() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [actionModalOpen, setActionModalOpen] = useState(false);
@@ -55,6 +61,7 @@ export default function UserListPage() {
   const limit = 10;
   const [newChat] = useNewChatMutation();
   const router = useRouter();
+  const [editProfileMutation] = useEditProfileMutation();
 
   const { data: users, refetch } = useGetUsersQuery({
     role: "ORGANIZER",
@@ -97,6 +104,57 @@ export default function UserListPage() {
     } finally {
       setDeleteModalOpen(false);
       setActionModalOpen(false);
+    }
+  };
+
+  const handleSingleStatusUpdate = async (
+    field: "is_admin" | "is_active" | "is_verified",
+    value: boolean
+  ) => {
+    if (!selectedUser) return;
+
+    console.log(selectedUser.id);
+
+    const prevValue =
+      field === "is_admin"
+        ? isAdmin
+        : field === "is_verified"
+        ? isVerified
+        : isActive;
+
+    if (field === "is_admin") {
+      setIsAdmin(value);
+    }
+    if (field === "is_active") {
+      setIsActive(value);
+    }
+    if (field === "is_verified") {
+      setIsVerified(value);
+    }
+
+    try {
+      const res = await editProfileMutation({
+        userId: selectedUser.id,
+        data: {
+          [field]: value,
+        },
+      }).unwrap();
+
+      if (res?.success) {
+        refetch();
+        toast.success("User status updated successfully");
+      }
+    } catch (error: any) {
+      if (field === "is_admin") setIsAdmin(prevValue);
+      if (field === "is_verified") setIsVerified(prevValue);
+      if (field === "is_active") setIsActive(prevValue);
+
+      const errorMessage =
+        error?.data?.errorMessages?.[0]?.message ||
+        error?.data?.message ||
+        "Something went wrong";
+
+      toast.error(errorMessage);
     }
   };
 
@@ -297,6 +355,142 @@ export default function UserListPage() {
         </div>
 
         <Dialog open={actionModalOpen} onOpenChange={setActionModalOpen}>
+          <DialogContent className='sm:max-w-md max-h-[80vh] overflow-y-auto'>
+            <DialogHeader className='flex flex-row items-center justify-center space-y-0 pb-4'>
+              <DialogTitle className='text-lg text-center font-semibold text-black'>
+                Detail of {selectedUser?.name}
+              </DialogTitle>
+            </DialogHeader>
+            {selectedUser && (
+              <div className='space-y-4'>
+                <div className='flex flex-col gap-5 text-sm'>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Make Admin:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      <Switch
+                        checked={isAdmin}
+                        onCheckedChange={(checked) =>
+                          handleSingleStatusUpdate("is_admin", checked)
+                        }
+                      />
+                    </p>
+                  </div>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      User Id:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.id}
+                    </p>
+                  </div>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      User Name:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.name}
+                    </p>
+                  </div>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Email Address:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.email}
+                    </p>
+                  </div>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Is Verified:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.is_verified
+                        ? "✅ Verified"
+                        : "❌ Not Verified"}
+                    </p>
+                  </div>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Make Verified:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      <Switch
+                        checked={isVerified}
+                        onCheckedChange={(checked) =>
+                          handleSingleStatusUpdate("is_verified", checked)
+                        }
+                      />
+                    </p>
+                  </div>
+
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Is Active:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.is_active ? "✅ Active" : "❌ Not Active"}
+                    </p>
+                  </div>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Make Active:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      <Switch
+                        checked={isActive}
+                        onCheckedChange={(checked) =>
+                          handleSingleStatusUpdate("is_active", checked)
+                        }
+                      />
+                    </p>
+                  </div>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Gender:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.gender}
+                    </p>
+                  </div>
+                  <div className='flex items-center justify-between border-b pb-5'>
+                    <Label className='text-[#333338] text-xl font-medium'>
+                      Payment Method:
+                    </Label>
+                    <p className='text-[#3e3e41] text-base font-medium'>
+                      {selectedUser.is_stripe_connected
+                        ? "✅ Connected"
+                        : "❌ Not Connected"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className='space-y-4 pt-4'>
+                  <div className='flex items-center justify-between'>
+                    <Label
+                      htmlFor='delete-account'
+                      className='text-[#333338] text-xl font-medium'
+                    >
+                      Delete User Account
+                    </Label>
+                    <Button
+                      onClick={() => {
+                        setDeleteModalOpen(true);
+                        setDeleteUserId(selectedUser.id);
+                      }}
+                      className='bg-red-500'
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* <Dialog open={actionModalOpen} onOpenChange={setActionModalOpen}>
           <DialogContent className='sm:max-w-md'>
             <DialogHeader className='flex flex-row items-center justify-center space-y-0 pb-4'>
               <DialogTitle className='text-lg text-center font-semibold text-black'>
@@ -382,7 +576,7 @@ export default function UserListPage() {
               </div>
             )}
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
 
         <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
           <DialogContent className='sm:max-w-[400px]'>

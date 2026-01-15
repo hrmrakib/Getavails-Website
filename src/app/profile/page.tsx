@@ -250,6 +250,8 @@ export default function ProfilePage() {
     }
   };
 
+  console.log(user?.is_stripe_connected);
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'>
       <div className='mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8'>
@@ -452,7 +454,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {user?.is_stripe_connected ? (
+                {!user?.is_stripe_connected ? (
                   <div className='space-y-3'>
                     <div className='flex items-start gap-3 rounded-lg bg-blue-50 p-4'>
                       <AlertTriangle className='mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600' />

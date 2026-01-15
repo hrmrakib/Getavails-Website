@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { Edit, Loader2 } from "lucide-react";
+import { Edit, Loader, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,6 +20,7 @@ import {
 } from "@/redux/features/events/eventsAPI";
 import { toast } from "sonner";
 import { RoleRedirect } from "@/utils/makePrivate";
+import { format } from "path";
 
 interface Event {
   id: string;
@@ -70,9 +71,17 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const { data: eventList, refetch } = useGetEventListQuery({
+  const {
+    data: eventList,
+    isFetching,
+    refetch,
+  } = useGetEventListQuery({
     status: activeTab === "event-list" ? "running" : "completed",
   });
+
+  useEffect(() => {
+    refetch();
+  }, [activeTab]);
 
   useEffect(() => {
     if (activeTab === "add-event") {
@@ -158,8 +167,38 @@ export default function Home() {
 
     try {
       const res = await createNewEventMutation(formDataToSend).unwrap();
+
+      if (res?.success) {
+        refetch();
+        setActiveTab("event-list");
+        toast.success("Event created successfully");
+      } else {
+        console.log(res);
+        toast.error(res?.data?.errorMessages[0]?.message);
+      }
     } catch (error: any) {
-      toast.error("Error signing up:", error?.data?.message);
+      const errorMessage =
+        error?.data?.errorMessages?.[0]?.message ||
+        error?.data?.message ||
+        "Failed to create event";
+
+      toast.error(errorMessage);
+    } finally {
+      setFormData({
+        title: "",
+        artist: "",
+        location: "",
+        description: "",
+        ticketPrice: "",
+        capacity: "",
+        startDate: "",
+        startTime: "",
+        endDate: "",
+        endTime: "",
+        image: "" as string | null,
+      });
+      setImageFile(null);
+      setPreviewImage(null);
     }
   };
 
@@ -236,6 +275,12 @@ export default function Home() {
       setOpenModal(false);
     }
   };
+
+  if (isFetching) {
+    <div className='flex items-center gap-2'>
+      Loading <Loader className='animate-spin' />
+    </div>;
+  }
 
   return (
     <RoleRedirect allowedRole='ORGANIZER'>
@@ -417,20 +462,25 @@ export default function Home() {
                     >
                       {previewImage || formData.image ? (
                         <div className='space-y-4'>
-                          <Image
-                            src={
-                              // If selecting a new file → preview BASE64
-                              previewImage
-                                ? previewImage
-                                : // If editing → show existing image URL
-                                  `${process.env.NEXT_PUBLIC_IMAGE_URL}${formData.image}`
-                            }
-                            alt='Preview'
-                            width={600}
-                            height={300}
-                            unoptimized
-                            className='mx-auto h-40 w-full object-cover rounded'
-                          />
+                          {formData.image ? (
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${formData.image}`}
+                              alt='Preview'
+                              width={600}
+                              height={300}
+                              unoptimized
+                              className='mx-auto h-40 w-full object-cover rounded'
+                            />
+                          ) : (
+                            <Image
+                              src={previewImage!}
+                              alt='Preview'
+                              width={600}
+                              height={300}
+                              unoptimized
+                              className='mx-auto h-40 w-full object-cover rounded'
+                            />
+                          )}
 
                           <p className='text-sm text-[#235789]'>
                             Change Picture
