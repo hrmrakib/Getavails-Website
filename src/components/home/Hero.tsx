@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,11 +17,33 @@ import {
   SearchIcon,
   ArrowRightIcon,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 
 export function HeroSection() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
   const [dateRange, setDateRange] = useState("");
+
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage?.getItem("access_token"));
+  }, []);
+
+  const { data: profile } = useGetProfileQuery(undefined, {
+    skip: !hasToken,
+  });
+
+  const handleStartExploring = () => {
+    if (profile?.data?.role) {
+      router.push(`/dashboard/${profile?.data?.role}`);
+      return;
+    } else if (!profile?.data?.role) {
+      router.push("/login");
+    }
+  };
 
   const handleSearch = () => {
     // Implement search functionality here
@@ -48,6 +70,7 @@ export function HeroSection() {
             <div className='flex items-center justify-center lg:justify-start'>
               <Button
                 size='lg'
+                onClick={() => handleStartExploring()}
                 className='bg-[#235789] hover:bg-[#235889d0] text-white !px-8 !py-6 rounded-full text-lg font-medium cursor-pointer'
               >
                 Start Exploring

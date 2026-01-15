@@ -1,10 +1,24 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
 
 export function ServicesHeroSection() {
+  const router = useRouter();
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage?.getItem("access_token"));
+  }, []);
+
+  const { data: profile } = useGetProfileQuery(undefined, {
+    skip: !hasToken,
+  });
+
   return (
     <section className='py-16 px-4 sm:px-6 lg:px-8 container mx-auto'>
       <div className='grid lg:grid-cols-2 gap-10'>
@@ -36,6 +50,7 @@ export function ServicesHeroSection() {
           <div className='pt-4'>
             <Button
               size='lg'
+              onClick={() => router.push(`/dashboard/${profile?.data?.role}`)}
               className='bg-[#235789] hover:bg-[#235789] text-white px-8 py-3 text-lg font-semibold cursor-pointer rounded-full transition-all duration-200 hover:scale-105'
             >
               Explore Role-Based Services

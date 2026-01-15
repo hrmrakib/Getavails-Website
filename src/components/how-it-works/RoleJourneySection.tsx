@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChevronDown,
   ChevronUp,
@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
+import { toast } from "sonner";
 
 const journeys = [
   {
@@ -68,6 +70,15 @@ export function RoleJourneySection() {
   const [expandedJourney, setExpandedJourney] = useState("agent");
   const [selectRole, setSelectRole] = useState("artist");
   const router = useRouter();
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage?.getItem("access_token"));
+  }, []);
+
+  const { data: profile } = useGetProfileQuery(undefined, {
+    skip: !hasToken,
+  });
 
   const toggleJourney = (journeyId: string) => {
     setExpandedJourney(expandedJourney === journeyId ? "" : journeyId);
@@ -75,6 +86,11 @@ export function RoleJourneySection() {
 
   const handleSelectRole = (role: string) => {
     setSelectRole(role);
+
+    if (profile?.data?.role) {
+      toast.info("You are already logged in as " + profile?.data?.role);
+      return;
+    }
 
     setTimeout(() => {
       router.push(`/signup/${role}`);
