@@ -36,6 +36,8 @@ export function HeroSection() {
     skip: !hasToken,
   });
 
+  console.log(profile)
+
   const handleStartExploring = () => {
     if (profile?.data?.role) {
       router.push(`/dashboard/${profile?.data?.role}`);
