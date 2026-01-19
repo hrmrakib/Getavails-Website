@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 import Link from "next/link";
 

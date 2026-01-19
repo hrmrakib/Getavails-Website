@@ -14,9 +14,12 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
 
 interface JourneyStep {
   id: string;
+  link: string;
   title: string;
   description: string;
   icon: React.ReactNode;
@@ -30,6 +33,7 @@ interface JourneyStep {
 const journeySteps: JourneyStep[] = [
   {
     id: "profile",
+    link: "/profile",
     title: "Set Up Your Profile",
     description:
       "Quickly onboard and set up a role-based profile to start using Getavails.",
@@ -47,6 +51,7 @@ const journeySteps: JourneyStep[] = [
   },
   {
     id: "discover",
+    link: "/dashboard",
     title: "Discover Talent & Venues",
     description:
       "Browse and filter through artists, venues, and available events with smart search.",
@@ -64,6 +69,7 @@ const journeySteps: JourneyStep[] = [
   },
   {
     id: "offers",
+    link: "/how-it-works",
     title: "Make Offers & Inquiries",
     description:
       "Send offers, submit inquiries, and manage negotiations - all inside the platform.",
@@ -82,8 +88,19 @@ const journeySteps: JourneyStep[] = [
 ];
 
 export function FeaturesSection() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    setHasToken(!!localStorage?.getItem("access_token"));
+  }, []);
+
+  const { data: profile } = useGetProfileQuery(undefined, {
+    skip: hasToken === false,
+  });
 
   // Auto-advance carousel
   useEffect(() => {
@@ -103,7 +120,7 @@ export function FeaturesSection() {
 
   const prevStep = () => {
     setCurrentStep(
-      (prev) => (prev - 1 + journeySteps.length) % journeySteps.length
+      (prev) => (prev - 1 + journeySteps.length) % journeySteps.length,
     );
     setIsAutoPlaying(false);
   };
@@ -111,6 +128,16 @@ export function FeaturesSection() {
   const goToStep = (index: number) => {
     setCurrentStep(index);
     setIsAutoPlaying(false);
+  };
+
+  const handleRoute = (path: string) => {
+    if (path === "/profile") {
+      router.push(path);
+    } else if (path === "/dashboard") {
+      router.push(`${path}/${profile?.data?.role}`);
+    } else {
+      router.push(path);
+    }
   };
 
   return (
@@ -135,7 +162,7 @@ export function FeaturesSection() {
               "bg-transparent relative overflow-hidden transition-all duration-300 hover:shadow-lg",
               (index === 0 && "border border-[#235789]") ||
                 (index === 1 && "border border-[#A88F4E]") ||
-                (index === 2 && "border border-[#C1292E]")
+                (index === 2 && "border border-[#C1292E]"),
             )}
           >
             <CardContent className='p-6 h-full flex flex-col'>
@@ -145,7 +172,7 @@ export function FeaturesSection() {
                     "p-2 rounded-lg",
                     index === 0 && "text-[#235789]",
                     index === 1 && "text-[#A88F4E]",
-                    index === 2 && "text-[#C1292E]"
+                    index === 2 && "text-[#C1292E]",
                   )}
                 >
                   {step.icon}
@@ -183,13 +210,13 @@ export function FeaturesSection() {
               </div>
 
               <Button
+                onClick={() => handleRoute(step.link)}
                 variant={step.buttonVariant}
                 className={`w-full h-[44px] group text-white rounded-3xl cursor-pointer ${
                   (index === 0 && "bg-[#235789] hover:bg-[#235789]") ||
                   (index === 1 && "bg-[#A88F4E] hover:bg-[#A88F4E]") ||
                   (index === 2 && "bg-[#C1292E] hover:bg-[#C1292E]")
                 }`}
-                onClick={() => goToStep(index)}
               >
                 {step.buttonText}
                 <ArrowRight className='w-4 h-4 ml-2 transition-transform group-hover:translate-x-1' />
@@ -216,7 +243,7 @@ export function FeaturesSection() {
                           "p-2 rounded-lg",
                           index === 0 && "bg-primary/10 text-primary",
                           index === 1 && "bg-secondary/10 text-secondary",
-                          index === 2 && "bg-destructive/10 text-destructive"
+                          index === 2 && "bg-destructive/10 text-destructive",
                         )}
                       >
                         {step.icon}
@@ -250,6 +277,7 @@ export function FeaturesSection() {
                     <Button
                       variant={step.buttonVariant}
                       className='w-full group'
+                      onClick={() => handleRoute(step.link)}
                     >
                       {step.buttonText}
                       <ArrowRight className='w-4 h-4 ml-2 transition-transform group-hover:translate-x-1' />
@@ -282,7 +310,7 @@ export function FeaturesSection() {
                   "w-2 h-2 rounded-full transition-all duration-300",
                   currentStep === index
                     ? "bg-primary w-6"
-                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50",
                 )}
               />
             ))}
