@@ -10,20 +10,21 @@ import {
   useConnectGoogleCalendarMutation,
   useGetGoogleCalendarEventsQuery,
 } from "@/redux/features/tourManager/tourManagerAPI";
-import { GoogleCalendarEvent } from "./events.type";
+
 import { useRouter } from "next/navigation";
+import { IGoogleCalendarEvent } from "./events.type";
 
 type ISODateRange = {
   from?: string;
   to?: string;
 };
 
-const getEventDate = (event: GoogleCalendarEvent): Date | null => {
+const getEventDate = (event: IGoogleCalendarEvent): Date | null => {
   const dateTime = event.start.dateTime || event.start.date;
   return dateTime ? new Date(dateTime) : null;
 };
 
-export default function Home() {
+export default function GoogleCalendarEvent() {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -128,7 +129,7 @@ export default function Home() {
     }
   };
 
-  const getStartAndEndTime = (events: GoogleCalendarEvent[]) => {
+  const getStartAndEndTime = (events: IGoogleCalendarEvent[]) => {
     if (!events || events.length === 0) return "";
 
     let hasAllDayEvent = false;
@@ -249,7 +250,7 @@ export default function Home() {
                       {/* Events Column */}
                       <div className='flex-1 space-y-3 min-w-0'>
                         {dateEvents.length > 0 ? (
-                          dateEvents.map((event: GoogleCalendarEvent) => (
+                          dateEvents.map((event: IGoogleCalendarEvent) => (
                             <div
                               key={event.id}
                               className='bg-muted/40 rounded-lg p-4 md:p-6 hover:bg-muted/60 transition-colors group relative'
@@ -288,7 +289,7 @@ export default function Home() {
                             </p>
                             <button
                               onClick={() => handleAddClick(date)}
-                              className='inline-flex items-center gap-2 px-6 py-2 bg-[#1e5a8f] hover:bg-[#184778] text-white font-semibold rounded-full transition-colors text-sm md:text-base'
+                              className='inline-flex items-center gap-2 px-6 py-2 bg-[#1e5a8f] hover:bg-[#184778] text-white font-semibold rounded-full transition-colors text-sm md:text-base cursor-pointer!'
                             >
                               <Plus className='w-4 h-4' />
                               Add New

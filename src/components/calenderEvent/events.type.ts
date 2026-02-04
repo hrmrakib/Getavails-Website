@@ -1,4 +1,4 @@
-export interface GoogleCalendarEvent {
+export interface IGoogleCalendarEvent {
   kind: string; // "calendar#event"
   etag: string;
   id: string;
