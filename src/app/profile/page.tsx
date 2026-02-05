@@ -371,6 +371,7 @@ export default function ProfilePage() {
                   />
                 </div>
 
+                {/* Implement Google Location */}
                 <div className='space-y-2'>
                   <Label htmlFor='location'>Location</Label>
                   <Input
@@ -412,11 +413,16 @@ export default function ProfilePage() {
                     disabled={isUpdatingProfile}
                     className='w-full sm:w-auto bg-[#235789] hover:bg-[#235789]/90'
                   >
-                    {isUpdatingProfile && (
-                      <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                    )}
-                    Save Changes
+                    <span className='flex items-center'>
+                      <Loader2
+                        className={`mr-2 h-4 w-4 animate-spin ${
+                          isUpdatingProfile ? "opacity-100" : "opacity-0"
+                        }`}
+                      />
+                      <span>Save Changes</span>
+                    </span>
                   </Button>
+
                   <Button
                     onClick={handleLogout}
                     className='w-full sm:w-auto bg-[#d35a2a] hover:bg-[#bb3d0b]/90'

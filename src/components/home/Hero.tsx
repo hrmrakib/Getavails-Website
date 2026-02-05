@@ -36,7 +36,7 @@ export function HeroSection() {
     skip: !hasToken,
   });
 
-  console.log(profile)
+  console.log(profile);
 
   const handleStartExploring = () => {
     if (profile?.data?.role) {
@@ -52,7 +52,7 @@ export function HeroSection() {
   };
 
   return (
-    <div className='min-h-screen flex flex-col lg:flex-row'>
+    <div className='min-h-[calc(100vh-120px)] flex flex-col lg:flex-row'>
       <div className='container mx-auto flex flex-col lg:flex-row items-center justify-between gap-20 p-6 lg:p-0'>
         {/* Left side - Content */}
         <div className='order-2 lg:order-1 w-full lg:w-1/2 flex items-center justify-center'>
@@ -81,7 +81,7 @@ export function HeroSection() {
             </div>
 
             {/* Search form */}
-            {/* <div className='bg-white border border-[#1E1E1ECC] rounded-2xl p-6 shadow-sm space-y-8'>
+            <div className='bg-white border border-[#1E1E1ECC] rounded-2xl p-6 shadow-sm space-y-8'>
               <div className='space-y-2'>
                 <Select>
                   <SelectTrigger className='w-full !h-12 text-[#6B7280] border border-[#1E1E1E33] bg-transparent rounded-3xl'>
@@ -130,7 +130,7 @@ export function HeroSection() {
                 <SearchIcon className='mr-2 h-5 w-5' />
                 Search Availability
               </Button>
-            </div> */}
+            </div>
           </div>
         </div>
 
