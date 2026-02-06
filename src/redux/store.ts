@@ -1,17 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import baseAPI from "./api/api";
-import AuthenticationAPI from "./features/auth/authAPI";
 import authSlice from "./features/auth/authSlice";
+import aiChatAPI from "./features/aiChat/aiChatAPI";
 
 export const store = configureStore({
   reducer: {
     [baseAPI.reducerPath]: baseAPI.reducer,
-    // auth: AuthenticationAPI.reducer,
+    [aiChatAPI.reducerPath]: aiChatAPI.reducer,
     auth: authSlice,
   },
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(AuthenticationAPI.middleware),
+    getDefaultMiddleware()
+      .concat(aiChatAPI.middleware)
+      .concat(baseAPI.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
