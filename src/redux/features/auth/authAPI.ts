@@ -11,11 +11,6 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
         body,
       }),
 
-      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //   const { data } = await queryFulfilled;
-      //   dispatch(setUser({ user: data.data, token: data.access_token }));
-      // },
-
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         const { data } = await queryFulfilled;
 
@@ -23,13 +18,13 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
           setUser({
             user: data.data,
             token: data.access_token,
-          })
+          }),
         );
 
         dispatch(
           profileAPI.endpoints.getProfile.initiate(undefined, {
             forceRefetch: true,
-          })
+          }),
         );
       },
 
@@ -87,6 +82,14 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
     organizerRegister: builder.mutation({
       query: (data) => ({
         url: "/auth/organizer-register",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    tourManagerRegister: builder.mutation({
+      query: (data) => ({
+        url: "/auth/tour-manager-register",
         method: "POST",
         body: data,
       }),
@@ -151,6 +154,7 @@ export const {
   useVenueRegisterMutation,
   useBuyerRegisterMutation,
   useOrganizerRegisterMutation,
+  useTourManagerRegisterMutation,
   useVerifyOtpMutation,
   useSendOtpMutation,
   useResendOtpMutation,

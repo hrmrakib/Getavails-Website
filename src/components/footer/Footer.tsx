@@ -47,7 +47,8 @@ export function FooterSection() {
     pathname === "/signup/venue" ||
     pathname === "/signup/buyer" ||
     pathname === "/signup/user" ||
-    pathname === "/signup/organizer"
+    pathname === "/signup/organizer" ||
+    pathname === "/signup/tour-manager"
   ) {
     return null;
   }

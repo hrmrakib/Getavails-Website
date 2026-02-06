@@ -118,6 +118,58 @@ export default function ProfilePage() {
   const [deleteProfileMutation, { isLoading: isDeletingProfile }] =
     useDeleteProfileMutation();
   const [hasToken, setHasToken] = useState(false);
+  // google places auto-suggest
+  const locationInputRef = useRef<HTMLInputElement>(null);
+  const [mapsInstance, setMapsInstance] = useState<any>(null);
+
+  // google places auto-suggest
+  useEffect(() => {
+    if (window.google?.maps) {
+      setMapsInstance(window.google.maps);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_AUTO_SUGGESTION}&libraries=places`;
+    script.async = true;
+    script.defer = true;
+
+    script.onload = () => {
+      setMapsInstance(window.google.maps);
+    };
+
+    document.head.appendChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (!mapsInstance || !locationInputRef.current) return;
+
+    const autocomplete = new mapsInstance.places.Autocomplete(
+      locationInputRef.current,
+      {
+        types: ["geocode"], // homes + buildings
+        fields: ["formatted_address", "geometry", "name"],
+      },
+    );
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+
+      if (!place.formatted_address) {
+        toast.error("Please select a location from the list");
+        return;
+      }
+
+      setUser((prev) => ({
+        ...prev,
+        location: place.formatted_address,
+      }));
+    });
+
+    return () => {
+      mapsInstance.event.clearInstanceListeners(autocomplete);
+    };
+  }, [mapsInstance]);
 
   useEffect(() => {
     setHasToken(!!localStorage?.getItem("access_token"));
@@ -377,6 +429,7 @@ export default function ProfilePage() {
                   <Input
                     id='location'
                     type='text'
+                    ref={locationInputRef}
                     value={user.location ?? ""}
                     onChange={(e) =>
                       setUser((prev) => ({ ...prev, location: e.target.value }))
