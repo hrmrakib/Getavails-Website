@@ -33,6 +33,7 @@ import {
 import {
   useAiChatMutation,
   useCreateNewChatWithSessionMutation,
+  useDeleteSessionMutation,
   useGetAllSessionsHistoryQuery,
   useGetChatHistoryBySessionIdQuery,
   useUpdateSessionTitleMutation,
@@ -56,8 +57,6 @@ interface Message {
   timestamp?: string;
 }
 
-let isTrackChange = false;
-
 function ChatSidebar({
   sessions,
   isLoading,
@@ -65,6 +64,7 @@ function ChatSidebar({
   onSelectSession,
   onDeleteSession,
   onUpdateSession,
+  onTrackChange,
 }: {
   sessions: Session[];
   isLoading: boolean;
@@ -72,6 +72,7 @@ function ChatSidebar({
   onSelectSession: (sessionId: string) => void;
   onDeleteSession: (sessionId: string) => void;
   onUpdateSession: (sessionId: string, newTitle: string) => void;
+  onTrackChange: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
@@ -80,6 +81,7 @@ function ChatSidebar({
   const [searchQuery, setSearchQuery] = useState("");
   const [updateSessionTitleMutation, { isLoading: isUpdateLoading }] =
     useUpdateSessionTitleMutation();
+  const [deleteSessionMutation] = useDeleteSessionMutation();
 
   const handleEdit = async (session: Session) => {
     console.log({ sIdForEdit: session });
@@ -99,11 +101,27 @@ function ChatSidebar({
       }).unwrap();
 
       if (res?.message) {
-        console.log("res", res);
-        isTrackChange = !isTrackChange;
+        onTrackChange();
         toast.success(res?.message);
         setEditSessionId(null);
         setEditTitle("");
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+  };
+  const handleDelete = async () => {
+    if (!deleteSessionId) {
+      return;
+    }
+
+    try {
+      const res = await deleteSessionMutation(deleteSessionId).unwrap();
+
+      if (res?.message) {
+        onTrackChange();
+        toast.success(res?.message);
+        setDeleteSessionId(null);
       }
     } catch (error: any) {
       console.error(error);
@@ -219,7 +237,7 @@ function ChatSidebar({
                       className={`p-1.5 rounded transition-colors ${
                         activeSessionId === session.session_id
                           ? "hover:bg-white/20"
-                          : "hover:bg-destructive hover:text-destructive-foreground"
+                          : "hover:bg-destructive hover:text-white!"
                       }`}
                       title='Delete session'
                     >
@@ -281,13 +299,8 @@ function ChatSidebar({
           <div className='flex gap-3 justify-end mt-6'>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => {
-                if (deleteSessionId) {
-                  onDeleteSession(deleteSessionId);
-                  setDeleteSessionId(null);
-                }
-              }}
-              className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+              onClick={() => handleDelete()}
+              className='bg-destructive text-white hover:bg-destructive/90'
             >
               Delete
             </AlertDialogAction>
@@ -357,6 +370,8 @@ function ChatMessages({
     });
   };
 
+  console.log(messages.length);
+
   if (messages.length === 0) {
     return (
       <div className='flex-1 flex flex-col items-center justify-center p-4 bg-background'>
@@ -387,44 +402,47 @@ function ChatMessages({
         </div>
       )}
 
-      {messages.map((message, index) => (
-        <div key={index} className='flex gap-3 md:gap-4 group'>
-          {message.role === "assistant" && (
-            <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 text-xs font-semibold'>
-              AI
-            </div>
-          )}
+      {messages?.length > 0 &&
+        messages.map((message, index) => (
+          <div key={index} className='flex gap-3 md:gap-4 group'>
+            {message.role === "assistant" && (
+              <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 text-xs font-semibold'>
+                AI
+              </div>
+            )}
 
-          <div className={`flex-1 ${message.role === "user" ? "ml-auto" : ""}`}>
             <div
-              className={`inline-block max-w-xs md:max-w-2xl px-4 py-2.5 rounded-lg ${
-                message.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-none"
-                  : "bg-secondary text-secondary-foreground rounded-bl-none border border-border"
-              }`}
+              className={`flex-1 ${message.role === "user" ? "ml-auto" : ""}`}
             >
-              <div className='prose prose-lg text-sm md:text-base leading-relaxed break-words prose-p:my-5 prose-li:my-3 prose-h3:mt-8 prose-h3:mb-4'>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {message.content}
-                </ReactMarkdown>
+              <div
+                className={`inline-block max-w-xs md:max-w-2xl px-4 py-2.5 rounded-lg ${
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground rounded-br-none"
+                    : "bg-secondary text-secondary-foreground rounded-bl-none border border-border"
+                }`}
+              >
+                <div className='prose prose-lg text-sm md:text-base leading-relaxed break-words prose-p:my-5 prose-li:my-3 prose-h3:mt-8 prose-h3:mb-4'>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
+              </div>
+              <div
+                className={`text-xs text-muted-foreground mt-1.5 ${
+                  message.role === "user" ? "text-right" : ""
+                }`}
+              >
+                {/* {formatTime(message.timestamp)} */}
               </div>
             </div>
-            <div
-              className={`text-xs text-muted-foreground mt-1.5 ${
-                message.role === "user" ? "text-right" : ""
-              }`}
-            >
-              {/* {formatTime(message.timestamp)} */}
-            </div>
-          </div>
 
-          {message.role === "user" && (
-            <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-muted text-foreground flex items-center justify-center flex-shrink-0 text-xs font-semibold'>
-              U
-            </div>
-          )}
-        </div>
-      ))}
+            {message.role === "user" && (
+              <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-muted text-foreground flex items-center justify-center flex-shrink-0 text-xs font-semibold'>
+                U
+              </div>
+            )}
+          </div>
+        ))}
 
       {isLoading && (
         <div className='flex gap-3 md:gap-4'>
@@ -545,6 +563,7 @@ export default function ChatPage() {
   const [createNewChatWithSessionMutation] =
     useCreateNewChatWithSessionMutation();
   const [chatMutation] = useAiChatMutation();
+  const [trackChange, setTrackChange] = useState(false);
 
   const {
     data: sessionHistory,
@@ -570,7 +589,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     refetchSessionHistory();
-  }, [isTrackChange]);
+  }, [trackChange]);
 
   const activeSession = sessions.find((s) => s.session_id === activeSessionId);
   const activeMessages = chatHistory || [];
@@ -656,6 +675,7 @@ export default function ChatPage() {
         onSelectSession={handleSelectSession}
         onDeleteSession={handleDeleteSession}
         onUpdateSession={handleUpdateSession}
+        onTrackChange={() => setTrackChange(!trackChange)}
       />
 
       <div className='flex-1 flex flex-col min-w-0 pt-16 md:pt-0'>
