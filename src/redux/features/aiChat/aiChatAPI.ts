@@ -49,7 +49,7 @@ const aiChatAPI = createApi({
     updateSessionTitle: build.mutation({
       query: (body) => ({
         url: `/sessions/update-title`,
-        method: "PATCH",
+        method: "PUT",
         body,
       }),
     }),

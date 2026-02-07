@@ -35,9 +35,11 @@ import {
   useCreateNewChatWithSessionMutation,
   useGetAllSessionsHistoryQuery,
   useGetChatHistoryBySessionIdQuery,
+  useUpdateSessionTitleMutation,
 } from "@/redux/features/aiChat/aiChatAPI";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 
 interface Session {
   session_id: string;
@@ -53,6 +55,8 @@ interface Message {
   session_id?: string;
   timestamp?: string;
 }
+
+let isTrackChange = false;
 
 function ChatSidebar({
   sessions,
@@ -74,17 +78,35 @@ function ChatSidebar({
   const [editSessionId, setEditSessionId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [updateSessionTitleMutation, { isLoading: isUpdateLoading }] =
+    useUpdateSessionTitleMutation();
 
-  const handleEdit = (session: Session) => {
+  const handleEdit = async (session: Session) => {
+    console.log({ sIdForEdit: session });
     setEditSessionId(session.session_id);
     setEditTitle(session.title);
   };
 
-  const handleSaveEdit = () => {
-    if (editSessionId && editTitle.trim()) {
-      onUpdateSession(editSessionId, editTitle);
-      setEditSessionId(null);
-      setEditTitle("");
+  const handleSaveEdit = async () => {
+    if (!editSessionId && editTitle.trim()) {
+      return;
+    }
+
+    try {
+      const res = await updateSessionTitleMutation({
+        session_id: editSessionId,
+        title: editTitle,
+      }).unwrap();
+
+      if (res?.message) {
+        console.log("res", res);
+        isTrackChange = !isTrackChange;
+        toast.success(res?.message);
+        setEditSessionId(null);
+        setEditTitle("");
+      }
+    } catch (error: any) {
+      console.error(error);
     }
   };
 
@@ -179,6 +201,7 @@ function ChatSidebar({
                         e.stopPropagation();
                         handleEdit(session);
                       }}
+                      disabled={isUpdateLoading}
                       className={`p-1.5 rounded transition-colors ${
                         activeSessionId === session.session_id
                           ? "hover:bg-white/20"
@@ -232,8 +255,14 @@ function ChatSidebar({
             <Button variant='outline' onClick={() => setEditSessionId(null)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveEdit} disabled={!editTitle.trim()}>
-              Save
+            <Button
+              onClick={handleSaveEdit}
+              disabled={isUpdateLoading || !editTitle.trim()}
+            >
+              Save{" "}
+              {isUpdateLoading && (
+                <Loader2 className='w-4 h-4 ml-2 animate-spin' />
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -517,8 +546,12 @@ export default function ChatPage() {
     useCreateNewChatWithSessionMutation();
   const [chatMutation] = useAiChatMutation();
 
-  const { data: sessionHistory, isLoading: isLoadingSessionHistory } =
-    useGetAllSessionsHistoryQuery({});
+  const {
+    data: sessionHistory,
+    isLoading: isLoadingSessionHistory,
+    refetch: refetchSessionHistory,
+  } = useGetAllSessionsHistoryQuery({});
+
   const { data: sessionHistoryBySessionId } =
     useGetChatHistoryBySessionIdQuery(activeSessionId);
 
@@ -534,6 +567,10 @@ export default function ChatPage() {
       setActiveSessionId(sessionHistoryBySessionId?.session_id);
     }
   }, [sessionHistoryBySessionId?.messages]);
+
+  useEffect(() => {
+    refetchSessionHistory();
+  }, [isTrackChange]);
 
   const activeSession = sessions.find((s) => s.session_id === activeSessionId);
   const activeMessages = chatHistory || [];
@@ -579,7 +616,7 @@ export default function ChatPage() {
 
       console.log({ res });
 
-      setChatHistory((prev) => [...prev, res]);
+      setChatHistory((prev) => [...prev, userMessage, res]);
     } catch (error) {
       console.error(error);
     } finally {
@@ -587,7 +624,7 @@ export default function ChatPage() {
     }
   };
 
-  const handleNewSession = () => {
+  const handleNewSession = async () => {
     const newSessionId = `session-${Date.now()}`;
     const newSession: Session = {
       session_id: newSessionId,
@@ -595,6 +632,12 @@ export default function ChatPage() {
       title: `New Chat ${new Date().toLocaleDateString()}`,
       created_at: new Date().toISOString(),
     };
+
+    try {
+      const res = await createNewChatWithSessionMutation(newSession).unwrap();
+
+      console.log({ res });
+    } catch (error) {}
 
     setSessions([newSession, ...sessions]);
     setActiveSessionId(newSessionId);
