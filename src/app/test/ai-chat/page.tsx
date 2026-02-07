@@ -110,6 +110,7 @@ function ChatSidebar({
       console.error(error);
     }
   };
+
   const handleDelete = async () => {
     if (!deleteSessionId) {
       return;
@@ -120,7 +121,6 @@ function ChatSidebar({
 
       if (res?.message) {
         onTrackChange();
-        toast.success(res?.message);
         setDeleteSessionId(null);
       }
     } catch (error: any) {
@@ -370,8 +370,6 @@ function ChatMessages({
     });
   };
 
-  console.log(messages.length);
-
   if (messages.length === 0) {
     return (
       <div className='flex-1 flex flex-col items-center justify-center p-4 bg-background'>
@@ -530,14 +528,6 @@ function ChatInput({
               rows={1}
               disabled={isLoading}
             />
-
-            {/* <button
-              className='p-2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50'
-              title='Voice input (coming soon)'
-              disabled={isLoading}
-            >
-              <Mic className='w-5 h-5' />
-            </button> */}
           </div>
 
           <Button
@@ -560,7 +550,8 @@ export default function ChatPage() {
   const [activeSessionId, setActiveSessionId] = useState<string | null>("");
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [createNewChatWithSessionMutation] =
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [createNewChatWithSessionMutation, { isLoading: isCreatingSession }] =
     useCreateNewChatWithSessionMutation();
   const [chatMutation] = useAiChatMutation();
   const [trackChange, setTrackChange] = useState(false);
@@ -584,6 +575,7 @@ export default function ChatPage() {
     if (sessionHistoryBySessionId?.messages) {
       setChatHistory(sessionHistoryBySessionId?.messages);
       setActiveSessionId(sessionHistoryBySessionId?.session_id);
+      setIsChatLoading(false);
     }
   }, [sessionHistoryBySessionId?.messages]);
 
@@ -596,6 +588,7 @@ export default function ChatPage() {
 
   const handleSelectSession = (sessionId: string) => {
     setActiveSessionId(sessionId);
+    setIsChatLoading(true);
   };
 
   const handleDeleteSession = (sessionId: string) => {
@@ -617,7 +610,9 @@ export default function ChatPage() {
   };
 
   const handleSendMessage = async (message: string) => {
-    if (!activeSessionId) return;
+    if (!activeSessionId) {
+      await handleNewSession();
+    }
 
     const userMessage: Message = {
       role: "user",
@@ -644,26 +639,14 @@ export default function ChatPage() {
   };
 
   const handleNewSession = async () => {
-    const newSessionId = `session-${Date.now()}`;
-    const newSession: Session = {
-      session_id: newSessionId,
-      user_id: "13",
-      title: `New Chat ${new Date().toLocaleDateString()}`,
-      created_at: new Date().toISOString(),
-    };
-
     try {
-      const res = await createNewChatWithSessionMutation(newSession).unwrap();
+      const res = await createNewChatWithSessionMutation({}).unwrap();
 
-      console.log({ res });
+      if (res?.session_id) {
+        setActiveSessionId(res?.session_id);
+        refetchSessionHistory();
+      }
     } catch (error) {}
-
-    setSessions([newSession, ...sessions]);
-    setActiveSessionId(newSessionId);
-    setChatHistory((prev) => ({
-      ...prev,
-      [newSessionId]: [],
-    }));
   };
 
   return (
@@ -679,11 +662,18 @@ export default function ChatPage() {
       />
 
       <div className='flex-1 flex flex-col min-w-0 pt-16 md:pt-0'>
-        <ChatMessages
-          messages={activeMessages}
-          sessionTitle={activeSession?.title}
-          isLoading={isLoading}
-        />
+        {isCreatingSession || isChatLoading ? (
+          <div className='flex-1 flex items-center justify-center gap-3 p-4 bg-background'>
+            {isChatLoading ? "Progressing..." : "Creating session"}{" "}
+            <Loader2 className='w-5 h-5 text-primary animate-spin' />
+          </div>
+        ) : (
+          <ChatMessages
+            messages={activeMessages}
+            sessionTitle={activeSession?.title}
+            isLoading={isLoading}
+          />
+        )}
 
         <ChatInput
           onSendMessage={handleSendMessage}
