@@ -33,8 +33,8 @@ const aiChatAPI = createApi({
     }),
 
     getAllSessionsHistory: build.query({
-      query: () => ({
-        url: "/sessions",
+      query: ({ page = 1, limit = 30, search = "" }) => ({
+        url: `/sessions?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
     }),

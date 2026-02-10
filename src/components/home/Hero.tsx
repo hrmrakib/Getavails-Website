@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useGetProfileQuery } from "@/redux/features/profile/profileAPI";
+import { SearchSection } from "./HeroSearch";
 
 export function HeroSection() {
   const router = useRouter();
@@ -56,10 +57,10 @@ export function HeroSection() {
       <div className='container mx-auto flex flex-col lg:flex-row items-center justify-between gap-20 p-6 lg:p-0'>
         {/* Left side - Content */}
         <div className='order-2 lg:order-1 w-full lg:w-1/2 flex items-center justify-center'>
-          <div className='w-full space-y-8'>
+          <div className='w-full space-y-6'>
             {/* Main heading */}
             <div className='space-y-4'>
-              <h1 className='text-3xl xl:text-[48px] font-bold text-primary text-center lg:text-left leading-tight text-balance mb-8 '>
+              <h1 className='text-3xl xl:text-[48px] font-bold text-primary text-center lg:text-left leading-tight text-balance mb-4'>
                 Smarter Talent Booking, All in One Place
               </h1>
               <p className='max-w-[550px] text-lg lg:text-xl text-[#6B7280] text-center lg:text-left leading-relaxed text-pretty'>
@@ -81,7 +82,8 @@ export function HeroSection() {
             </div>
 
             {/* Search form */}
-            <div className='bg-white border border-[#1E1E1ECC] rounded-2xl p-6 shadow-sm space-y-8'>
+            <SearchSection />
+            {/* <div className='bg-white border border-[#1E1E1ECC] rounded-2xl p-6 shadow-sm space-y-8'>
               <div className='space-y-2'>
                 <Select>
                   <SelectTrigger className='w-full !h-12 text-[#6B7280] border border-[#1E1E1E33] bg-transparent rounded-3xl'>
@@ -130,7 +132,7 @@ export function HeroSection() {
                 <SearchIcon className='mr-2 h-5 w-5' />
                 Search Availability
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
 

@@ -341,8 +341,123 @@ function ChatSidebar({
     </>
   );
 }
-
 function ChatMessages({
+  messages,
+  sessionTitle,
+  isLoading = false,
+}: {
+  messages: Message[];
+  sessionTitle?: string;
+  isLoading?: boolean;
+}) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
+  // Case 1: No messages + loading → show AI typing loader
+  if (messages.length === 0 && isLoading) {
+    return (
+      <div className='flex-1 flex p-4 bg-background'>
+        <div className='flex gap-3 md:gap-4'>
+          <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold'>
+            AI
+          </div>
+          <div className='flex-1'>
+            <div className='inline-block px-4 py-2.5 rounded-lg bg-secondary text-secondary-foreground rounded-bl-none border border-border'>
+              <div className='flex gap-1'>
+                <div className='w-2 h-2 rounded-full bg-muted-foreground animate-bounce' />
+                <div className='w-2 h-2 rounded-full bg-muted-foreground animate-bounce animation-delay-200' />
+                <div className='w-2 h-2 rounded-full bg-muted-foreground animate-bounce animation-delay-400' />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Case 2: No messages + not loading → show placeholder
+  if (messages.length === 0) {
+    return (
+      <div className='flex-1 flex flex-col items-center justify-center p-4 bg-background'>
+        <div className='text-center'>
+          <MessageCircle className='w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50' />
+          <h2 className='text-xl font-semibold text-foreground mb-2'>
+            {sessionTitle || "Start a Conversation"}
+          </h2>
+          <p className='text-muted-foreground max-w-md'>
+            Begin chatting to see messages here. Your AI assistant is ready to
+            help!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Case 3: Has messages → show messages + bottom loader if loading
+  return (
+    <div className='flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-background'>
+      {messages.map((message, index) => (
+        <div key={index} className='flex gap-3 md:gap-4 group'>
+          {message.role === "assistant" && (
+            <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 text-xs font-semibold'>
+              AI
+            </div>
+          )}
+
+          <div className={`flex-1 ${message.role === "user" ? "ml-auto" : ""}`}>
+            <div
+              className={`inline-block max-w-xs md:max-w-2xl px-4 py-2.5 rounded-lg ${
+                message.role === "user"
+                  ? "bg-primary text-primary-foreground rounded-br-none"
+                  : "bg-secondary text-secondary-foreground rounded-bl-none border border-border"
+              }`}
+            >
+              <div className='prose prose-lg text-sm md:text-base leading-relaxed break-words prose-p:my-5 prose-li:my-3 prose-h3:mt-8 prose-h3:mb-4'>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </div>
+
+          {message.role === "user" && (
+            <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-muted text-foreground flex items-center justify-center flex-shrink-0 text-xs font-semibold'>
+              U
+            </div>
+          )}
+        </div>
+      ))}
+
+      {isLoading && (
+        <div className='flex gap-3 md:gap-4'>
+          <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 text-xs font-semibold'>
+            AI
+          </div>
+          <div className='flex-1'>
+            <div className='inline-block px-4 py-2.5 rounded-lg bg-secondary text-secondary-foreground rounded-bl-none border border-border'>
+              <div className='flex gap-1'>
+                <div className='w-2 h-2 rounded-full bg-muted-foreground animate-bounce' />
+                <div className='w-2 h-2 rounded-full bg-muted-foreground animate-bounce animation-delay-200' />
+                <div className='w-2 h-2 rounded-full bg-muted-foreground animate-bounce animation-delay-400' />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div ref={messagesEndRef} />
+    </div>
+  );
+}
+
+function ChatMessages2({
   messages,
   sessionTitle,
   isLoading = false,
@@ -556,6 +671,8 @@ export default function ChatPage() {
   const [chatMutation] = useAiChatMutation();
   const [trackChange, setTrackChange] = useState(false);
 
+  console.log({ activeSessionId });
+
   const {
     data: sessionHistory,
     isLoading: isLoadingSessionHistory,
@@ -610,6 +727,8 @@ export default function ChatPage() {
   };
 
   const handleSendMessage = async (message: string) => {
+    setIsLoading(true);
+
     if (!activeSessionId) {
       await handleNewSession();
     }
@@ -620,15 +739,11 @@ export default function ChatPage() {
       timestamp: new Date().toISOString(),
     };
 
-    setIsLoading(true);
-
     try {
       const res = await chatMutation({
         message: message,
         session_id: activeSessionId,
       }).unwrap();
-
-      console.log({ res });
 
       setChatHistory((prev) => [...prev, userMessage, res]);
     } catch (error) {
@@ -640,6 +755,7 @@ export default function ChatPage() {
 
   const handleNewSession = async () => {
     try {
+      setChatHistory([]);
       const res = await createNewChatWithSessionMutation({}).unwrap();
 
       if (res?.session_id) {
@@ -648,6 +764,8 @@ export default function ChatPage() {
       }
     } catch (error) {}
   };
+
+  console.log("isLoading", isLoading);
 
   return (
     <div className='flex h-screen bg-background overflow-hidden'>

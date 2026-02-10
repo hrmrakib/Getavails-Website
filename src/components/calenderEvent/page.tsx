@@ -46,6 +46,8 @@ export default function GoogleCalendarEvent() {
 
   const events = data?.data ?? [];
 
+  console.log(data?.meta?.is_connected);
+
   console.log({ events });
   // Convert ISO → Date for Calendar
   const calendarRange: DateRange | undefined = {
@@ -202,123 +204,120 @@ export default function GoogleCalendarEvent() {
         </div>
 
         {/* Events - Right Side */}
-
         {/* true for test - get data from profile (is google calaneder connected) */}
-        {true ? (
-          isFetching ? (
-            <LoadingSpinner />
-          ) : events.length > 0 ? (
-            <div className='flex-1 m-5 sm:m-0'>
-              {/* Header */}
-              <div className='flex items-center gap-4 mb-8'>
-                <button className='inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card hover:bg-muted transition-colors'>
-                  <CalendarIcon className='w-4 h-4' />
-                  <span className='text-sm font-medium'>Today</span>
-                </button>
-                <h2 className='text-xl md:text-3xl font-bold'>
-                  {formatDate(today)}
-                </h2>
-              </div>
+        {isFetching ? (
+          <LoadingSpinner />
+        ) : events.length > 0 ? (
+          <div className='flex-1 m-5 sm:m-0'>
+            {/* Header */}
+            <div className='flex items-center gap-4 mb-8'>
+              <button className='inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card hover:bg-muted transition-colors'>
+                <CalendarIcon className='w-4 h-4' />
+                <span className='text-sm font-medium'>Today</span>
+              </button>
+              <h2 className='text-xl md:text-3xl font-bold'>
+                {formatDate(today)}
+              </h2>
+            </div>
 
-              {/* Events Timeline */}
-              <div className='space-y-0'>
-                {dates.map((date) => {
-                  const dateEvents = getEventsForDate(date);
-                  const dateNum = date.getDate().toString().padStart(2, "0");
-                  const dayOfWeek = getDayOfWeek(date);
-                  const monthName = getMonthName(date);
-                  const startandEndTime = getStartAndEndTime(dateEvents);
+            {/* Events Timeline */}
+            <div className='space-y-0'>
+              {dates.map((date) => {
+                const dateEvents = getEventsForDate(date);
+                const dateNum = date.getDate().toString().padStart(2, "0");
+                const dayOfWeek = getDayOfWeek(date);
+                const monthName = getMonthName(date);
+                const startandEndTime = getStartAndEndTime(dateEvents);
 
-                  return (
-                    <div
-                      // key={date.getTime()}
-                      className='flex gap-4 md:gap-8 pb-6 md:pb-8'
-                    >
-                      {/* Date Column */}
-                      <div className='flex-shrink-0 pt-4'>
-                        <div className='text-2xl md:text-3xl font-bold text-foreground'>
-                          {dateNum}
-                        </div>
-                        <div className='text-xs md:text-sm font-semibold text-muted-foreground mt-1'>
-                          {monthName}, {dayOfWeek}
-                        </div>
-                        <div className='text-xs text-muted-foreground mt-1'>
-                          {startandEndTime}
-                        </div>
+                return (
+                  <div
+                    // key={date.getTime()}
+                    className='flex gap-4 md:gap-8 pb-6 md:pb-8'
+                  >
+                    {/* Date Column */}
+                    <div className='flex-shrink-0 pt-4'>
+                      <div className='text-2xl md:text-3xl font-bold text-foreground'>
+                        {dateNum}
                       </div>
-
-                      {/* Events Column */}
-                      <div className='flex-1 space-y-3 min-w-0'>
-                        {dateEvents.length > 0 ? (
-                          dateEvents.map((event: IGoogleCalendarEvent) => (
-                            <div
-                              key={event.id}
-                              className='bg-muted/40 rounded-lg p-4 md:p-6 hover:bg-muted/60 transition-colors group relative'
-                            >
-                              <div className='flex gap-3 md:gap-4'>
-                                {/* Indicator */}
-                                <div className='w-5 h-5 md:w-6 md:h-6 bg-[#1e5a8f] rounded-sm mt-1 flex-shrink-0' />
-
-                                {/* Content */}
-                                <div className='flex-1 min-w-0'>
-                                  <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2'>
-                                    <h3 className='font-semibold text-sm md:text-base text-foreground truncate'>
-                                      {event?.summary}
-                                    </h3>
-                                    <div className='flex items-center gap-3 md:gap-4 text-xs md:text-sm text-muted-foreground'>
-                                      <span className='whitespace-nowrap'>
-                                        {event.location}
-                                      </span>
-                                    </div>
-                                  </div>
-
-                                  <p
-                                    className='text-xs md:text-sm text-muted-foreground'
-                                    dangerouslySetInnerHTML={{
-                                      __html: event?.description || "",
-                                    }}
-                                  ></p>
-                                </div>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <div className='bg-muted/40 rounded-lg p-6 md:p-8 text-center'>
-                            <p className='text-muted-foreground mb-4 text-sm md:text-base'>
-                              Empty
-                            </p>
-                            <button
-                              onClick={() => handleAddClick(date)}
-                              className='inline-flex items-center gap-2 px-6 py-2 bg-[#1e5a8f] hover:bg-[#184778] text-white font-semibold rounded-full transition-colors text-sm md:text-base cursor-pointer!'
-                            >
-                              <Plus className='w-4 h-4' />
-                              Add New
-                            </button>
-                          </div>
-                        )}
+                      <div className='text-xs md:text-sm font-semibold text-muted-foreground mt-1'>
+                        {monthName}, {dayOfWeek}
+                      </div>
+                      <div className='text-xs text-muted-foreground mt-1'>
+                        {startandEndTime}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+
+                    {/* Events Column */}
+                    <div className='flex-1 space-y-3 min-w-0'>
+                      {dateEvents.length > 0 ? (
+                        dateEvents.map((event: IGoogleCalendarEvent) => (
+                          <div
+                            key={event.id}
+                            className='bg-muted/40 rounded-lg p-4 md:p-6 hover:bg-muted/60 transition-colors group relative'
+                          >
+                            <div className='flex gap-3 md:gap-4'>
+                              {/* Indicator */}
+                              <div className='w-5 h-5 md:w-6 md:h-6 bg-[#1e5a8f] rounded-sm mt-1 flex-shrink-0' />
+
+                              {/* Content */}
+                              <div className='flex-1 min-w-0'>
+                                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2'>
+                                  <h3 className='font-semibold text-sm md:text-base text-foreground truncate'>
+                                    {event?.summary}
+                                  </h3>
+                                  <div className='flex items-center gap-3 md:gap-4 text-xs md:text-sm text-muted-foreground text-wrap'>
+                                    <span className='text-wrap'>
+                                      {event.location}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <p
+                                  className='text-xs md:text-sm text-muted-foreground'
+                                  dangerouslySetInnerHTML={{
+                                    __html: event?.description || "",
+                                  }}
+                                ></p>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className='bg-muted/40 rounded-lg p-6 md:p-8 text-center'>
+                          <p className='text-muted-foreground mb-4 text-sm md:text-base'>
+                            Empty
+                          </p>
+                          <button
+                            onClick={() => handleAddClick(date)}
+                            className='inline-flex items-center gap-2 px-6 py-2 bg-[#1e5a8f] hover:bg-[#184778] text-white font-semibold rounded-full transition-colors text-sm md:text-base cursor-pointer!'
+                          >
+                            <Plus className='w-4 h-4' />
+                            Add New
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ) : (
-            <div className='w-full bg-muted/40 rounded-lg p-6 text-center'>
-              <p className='text-muted-foreground mb-4'>Empty</p>
-              <button
-                onClick={() =>
-                  window.open(
-                    "https://calendar.google.com/calendar/u/0/r/month?pli=1",
-                    "_blank",
-                  )
-                }
-                className='inline-flex items-center gap-2 px-6 py-2 bg-[#1e5a8f] text-white rounded-full'
-              >
-                <Plus className='w-4 h-4' />
-                Add New
-              </button>
-            </div>
-          )
+          </div>
+        ) : data?.meta?.is_connected ? (
+          <div className='w-full bg-muted/40 rounded-lg p-6 text-center'>
+            <p className='text-muted-foreground mb-4'>Empty</p>
+            <button
+              onClick={() =>
+                window.open(
+                  "https://calendar.google.com/calendar/u/0/r/month?pli=1",
+                  "_blank",
+                )
+              }
+              className='inline-flex items-center gap-2 px-6 py-2 bg-[#1e5a8f] text-white rounded-full'
+            >
+              <Plus className='w-4 h-4' />
+              Add New
+            </button>
+          </div>
         ) : (
           <div className='flex-1 m-5 sm:m-0'>
             <div className='flex flex-col items-center justify-center h-full gap-4 border-2 border-dashed border-gray-200 rounded-lg p-6'>
