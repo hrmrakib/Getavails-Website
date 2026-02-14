@@ -82,62 +82,12 @@ export function HeroSection() {
             </div>
 
             {/* Search form */}
-            <SearchSection />
-            {/* <div className='bg-white border border-[#1E1E1ECC] rounded-2xl p-6 shadow-sm space-y-8'>
-              <div className='space-y-2'>
-                <Select>
-                  <SelectTrigger className='w-full !h-12 text-[#6B7280] border border-[#1E1E1E33] bg-transparent rounded-3xl'>
-                    <SelectValue
-                      className='text-base'
-                      placeholder='Search for Artists'
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='musicians'>Musicians</SelectItem>
-                    <SelectItem value='bands'>Bands</SelectItem>
-                    <SelectItem value='djs'>DJs</SelectItem>
-                    <SelectItem value='comedians'>Comedians</SelectItem>
-                    <SelectItem value='speakers'>Speakers</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div className='relative'>
-                  <MapPinIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400' />
-                  <Input
-                    placeholder='Select Location'
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className='!h-12 pl-10 text-[#6B7280] border border-[#1E1E1E33] bg-transparent rounded-3xl placeholder:text-[#6B7280]'
-                  />
-                </div>
-                <div className='relative'>
-                  <CalendarIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400' />
-                  <Input
-                    type='date'
-                    placeholder='Select Date Range'
-                    value={dateRange}
-                    onChange={(e) => setDateRange(e.target.value)}
-                    className='!h-12 pl-10 text-[#6B7280] border border-[#1E1E1E33] bg-transparent rounded-3xl placeholder:text-[#6B7280]'
-                  />
-                </div>
-              </div>
-
-              <Button
-                disabled={!searchQuery || !location || !dateRange}
-                onClick={handleSearch}
-                className='w-full h-12 bg-[#1E1E1E] hover:bg-gray-800 text-white rounded-3xl font-medium cursor-pointer disabled:opacity-100 disabled:cursor-not-allowed'
-              >
-                <SearchIcon className='mr-2 h-5 w-5' />
-                Search Availability
-              </Button>
-            </div> */}
+            <SearchSection  />
           </div>
         </div>
 
         {/* Right side - Concert image */}
-        <div className='order-1 lg:order-2 w-full lg:w-1/2 relative h-[320px] lg:h-[600px]'>
+        <div className='order-1 lg:order-2 w-full lg:w-1/2 relative h-[320px] lg:h-[750px]'>
           <video
             src='/hero.mp4'
             autoPlay

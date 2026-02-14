@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import baseAPI from "./api/api";
 import authSlice from "./features/auth/authSlice";
 import aiChatAPI from "./features/aiChat/aiChatAPI";
+import searchReducer from "./features/search/searchSlice";
 
 export const store = configureStore({
   reducer: {
     [baseAPI.reducerPath]: baseAPI.reducer,
     [aiChatAPI.reducerPath]: aiChatAPI.reducer,
     auth: authSlice,
+    search: searchReducer,
   },
 
   middleware: (getDefaultMiddleware) =>
