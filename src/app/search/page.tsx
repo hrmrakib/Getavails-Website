@@ -46,7 +46,9 @@ type SearchResult = Venue | Artist;
 export default function Home() {
   const [bookedArtists, setBookedArtists] = useState<Set<string>>(new Set());
   const results = useSelector((state: any) => state?.search?.results);
-
+  const searchLoading = useSelector(
+    (state: any) => state?.search?.searchLoading,
+  );
   const handleBook = (artistId: string) => {
     setBookedArtists((prev) => {
       const newSet = new Set(prev);
@@ -175,6 +177,10 @@ export default function Home() {
                   </div>
                 );
               })}
+            </div>
+          ) : searchLoading ? (
+            <div className='bg-secondary rounded-2xl p-8 text-center'>
+              <p className='text-foreground font-medium'>Loading ...</p>
             </div>
           ) : (
             <div className='bg-secondary rounded-2xl p-8 text-center'>

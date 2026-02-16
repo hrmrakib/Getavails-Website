@@ -23,7 +23,10 @@ import {
   useSearchVenuesQuery,
 } from "@/redux/features/search/searchAPI";
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchResult } from "@/redux/features/search/searchSlice";
+import {
+  setSearchLoading,
+  setSearchResult,
+} from "@/redux/features/search/searchSlice";
 import { useRouter } from "next/navigation";
 
 export function SearchSection({ className }: { className?: string }) {
@@ -53,13 +56,10 @@ export function SearchSection({ className }: { className?: string }) {
     useLazySearchVenuesQuery();
   const { data: artists } = useSearchArtistsQuery({});
   const { data: venuesList } = useSearchVenuesQuery({});
-
-  const dispatch = useDispatch();
-
-  const currentDataOnSearch = useSelector(
-    (state: any) => state?.search?.message,
+  const searchLoading = useSelector(
+    (state: any) => state?.search?.searchLoading,
   );
-  console.log(currentDataOnSearch);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (artists?.meta?.total_genres) {
@@ -181,12 +181,14 @@ export function SearchSection({ className }: { className?: string }) {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    dispatch(setSearchLoading(true));
+
     try {
       if (onSearchTypeChange === "artist") {
         const res = await triggerArtistSearch({
           genres: selectedGenres.join(","),
-          // start_date: dateRange?.from?.toISOString(),
-          // end_date: dateRange?.to?.toISOString(),
+          start_date: dateRange?.from?.toISOString(),
+          end_date: dateRange?.to?.toISOString(),
           location_lat: coordinates?.lat,
           location_lng: coordinates?.lng,
         }).unwrap();
@@ -197,13 +199,13 @@ export function SearchSection({ className }: { className?: string }) {
         }
       } else {
         const res = await triggerVenueSearch({
-          // venue_types: selectedVenues.join(","),
-          // min_capacity: minVenueCapacity,
-          // max_capacity: maxVenueCapacity,
+          venue_types: selectedVenues.join(","),
+          min_capacity: minVenueCapacity,
+          max_capacity: maxVenueCapacity,
           location_lat: coordinates?.lat,
           location_lng: coordinates?.lng,
-          // start_date: dateRange?.from?.toISOString(),
-          // end_date: dateRange?.to?.toISOString(),
+          start_date: dateRange?.from?.toISOString(),
+          end_date: dateRange?.to?.toISOString(),
         }).unwrap();
 
         if (res?.success) {
@@ -213,6 +215,10 @@ export function SearchSection({ className }: { className?: string }) {
       }
     } catch (error) {
       console.error("Search error:", error);
+    } finally {
+      setTimeout(() => {
+        dispatch(setSearchLoading(false));
+      }, 1000);
     }
   };
 
@@ -229,7 +235,18 @@ export function SearchSection({ className }: { className?: string }) {
       ? "All Genres"
       : selectedGenres.length === genres.length
         ? "All Genres"
-        : `${selectedGenres.length} Genre${selectedGenres.length > 1 ? "s" : ""}`;
+        : selectedGenres.length <= 2
+          ? selectedGenres.join(", ")
+          : `${selectedGenres.length} Genres Selected`;
+
+  const venueDisplayText =
+    selectedVenues.length === 0
+      ? "All Venue Types"
+      : selectedVenues.length === venues.length
+        ? "All Venue Types"
+        : selectedVenues.length <= 2
+          ? selectedVenues.join(", ")
+          : `${selectedVenues.length} Venue Types Selected`;
 
   const dateDisplayText =
     dateRange?.from && dateRange?.to
@@ -353,8 +370,7 @@ export function SearchSection({ className }: { className?: string }) {
                     <PopoverTrigger asChild>
                       <button className='w-full px-4 sm:px-6 py-3 sm:py-4 border border-gray-300 rounded-full text-gray-600 hover:border-gray-400 transition-colors flex items-center justify-between bg-white'>
                         <span className='text-sm sm:text-base'>
-                          {/* {genreDisplayText} */}
-                          Select type of venue
+                          {venueDisplayText}
                         </span>
                         <ChevronDown
                           className={`w-5 h-5 transition-transform ${isGenreOpen ? "rotate-180" : ""}`}
@@ -558,7 +574,8 @@ export function SearchSection({ className }: { className?: string }) {
             {/* Search Button */}
             <Button
               onClick={handleSearch}
-              className='w-full h-11 bg-[#1E1E1E] hover:bg-[#0e0d0d] text-white py-3 sm:py-4 text-base sm:text-lg rounded-full flex items-center justify-center gap-2 transition-colors'
+              disabled={searchLoading}
+              className='w-full h-11 bg-[#1E1E1E] hover:bg-[#0e0d0d] text-white py-3 sm:py-4 text-base sm:text-lg rounded-full flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
             >
               <Search className='w-5 h-5' />
               Search Availability

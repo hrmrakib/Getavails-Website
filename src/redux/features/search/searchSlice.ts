@@ -4,12 +4,14 @@ interface SearchState {
   results: any[];
   meta: any | null;
   message: string | null;
+  searchLoading: boolean;
 }
 
 const initialState: SearchState = {
   results: [],
   meta: null,
   message: null,
+  searchLoading: false,
 };
 
 const searchSlice = createSlice({
@@ -27,8 +29,13 @@ const searchSlice = createSlice({
       state.meta = null;
       state.message = null;
     },
+
+    setSearchLoading: (state, action: PayloadAction<boolean>) => {
+      state.searchLoading = action.payload;
+    },
   },
 });
 
-export const { setSearchResult, clearSearchResult } = searchSlice.actions;
+export const { setSearchResult, clearSearchResult, setSearchLoading } =
+  searchSlice.actions;
 export default searchSlice.reducer;
