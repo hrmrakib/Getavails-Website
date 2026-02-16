@@ -78,13 +78,13 @@ export default function BookingRequestLists() {
 
   const filteredRequests = bookingRequests.filter(
     (request) =>
-      request.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      request.title?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
       (request.artistAgent &&
         request.artistAgent
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())) ||
+          ?.toLowerCase()
+          .includes(searchQuery?.toLowerCase())) ||
       (request.location &&
-        request.location.toLowerCase().includes(searchQuery.toLowerCase()))
+        request.location?.toLowerCase().includes(searchQuery?.toLowerCase())),
   );
 
   const getStatusIcon = (status: string) => {

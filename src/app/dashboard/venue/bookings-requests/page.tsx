@@ -314,7 +314,7 @@ const mockBookings: BookingRequest[] = [
 export default function BookingRequestsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<BookingRequest | null>(
-    null
+    null,
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   //   const [currentPage, setCurrentPage] = useState(1);
@@ -322,13 +322,13 @@ export default function BookingRequestsPage() {
 
   const filteredBookings = bookings.filter(
     (booking) =>
-      booking.buyerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.artistName.toLowerCase().includes(searchTerm.toLowerCase())
+      booking.buyerName?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      booking.artistName?.toLowerCase().includes(searchTerm?.toLowerCase()),
   );
 
   const handleStatusChange = (
     bookingIndex: number,
-    newStatus: "Confirmed" | "Cancelled"
+    newStatus: "Confirmed" | "Cancelled",
   ) => {
     const updatedBookings = [...bookings];
     updatedBookings[bookingIndex].status = newStatus;
@@ -579,7 +579,7 @@ export default function BookingRequestsPage() {
                     onClick={() =>
                       handleStatusChange(
                         bookings.findIndex((b) => b === selectedBooking),
-                        "Confirmed"
+                        "Confirmed",
                       )
                     }
                   >
@@ -591,7 +591,7 @@ export default function BookingRequestsPage() {
                     onClick={() =>
                       handleStatusChange(
                         bookings.findIndex((b) => b === selectedBooking),
-                        "Cancelled"
+                        "Cancelled",
                       )
                     }
                   >

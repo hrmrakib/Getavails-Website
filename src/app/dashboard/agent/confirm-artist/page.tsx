@@ -79,9 +79,9 @@ export default function ConfirmArtistPage() {
 
   const filteredArtists = artists.filter(
     (artist) =>
-      artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      artist.genre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      artist.location.toLowerCase().includes(searchTerm.toLowerCase())
+      artist.name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      artist.genre?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      artist.location?.toLowerCase().includes(searchTerm?.toLowerCase()),
   );
 
   const handleAccept = (artistId: string) => {
@@ -89,8 +89,8 @@ export default function ConfirmArtistPage() {
       prev.map((artist) =>
         artist.id === artistId
           ? { ...artist, status: "Confirmed" as const }
-          : artist
-      )
+          : artist,
+      ),
     );
   };
 
@@ -99,8 +99,8 @@ export default function ConfirmArtistPage() {
       prev.map((artist) =>
         artist.id === artistId
           ? { ...artist, status: "Rejected" as const }
-          : artist
-      )
+          : artist,
+      ),
     );
   };
 

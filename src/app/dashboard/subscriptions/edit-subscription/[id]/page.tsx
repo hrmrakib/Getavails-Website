@@ -63,10 +63,10 @@ export default function UpdateSubscriptionPage() {
     }
   }, [isLoading, subscriptionsResponse]);
 
-  const norm = (s: string) => s.trim().toLowerCase();
+  const norm = (s: string) => s.trim()?.toLowerCase();
   const selectedSet = useMemo(
     () => new Set(selectedFeatures?.map(norm)),
-    [selectedFeatures]
+    [selectedFeatures],
   );
 
   const addFeature = (label: string) => {

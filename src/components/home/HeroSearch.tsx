@@ -223,11 +223,11 @@ export function SearchSection({ className }: { className?: string }) {
   };
 
   const filteredGenres = genres?.filter((genre: any) =>
-    genre.toLowerCase().includes(genreSearchInput.toLowerCase()),
+    genre?.toLowerCase().includes(genreSearchInput?.toLowerCase()),
   );
 
   const filteredVenues = venues?.filter((venue: any) =>
-    venue.toLowerCase().includes(genreSearchInput.toLowerCase()),
+    venue?.toLowerCase().includes(genreSearchInput?.toLowerCase()),
   );
 
   const genreDisplayText =

@@ -294,7 +294,7 @@ export default function Home() {
     return mockArtists.filter((artist) => {
       // Filter by location - if location is empty, show all
       if (location.trim() !== "") {
-        if (!artist.address.toLowerCase().includes(location.toLowerCase())) {
+        if (!artist.address?.toLowerCase().includes(location?.toLowerCase())) {
           return false;
         }
       }

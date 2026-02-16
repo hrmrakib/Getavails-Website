@@ -23,7 +23,7 @@ export function RoleRedirect({ allowedRole, children }: RoleRedirectProps) {
       if (!userRole) {
         router.replace("/login"); // Not logged in
       } else if (allowed && userRole !== allowed) {
-        router.replace(`/dashboard/${userRole.toLowerCase()}`);
+        router.replace(`/dashboard/${userRole?.toLowerCase()}`);
       } else {
         setAuthorized(true); // Authorized
       }
@@ -77,7 +77,7 @@ export function RoleRedirect({ allowedRole, children }: RoleRedirectProps) {
 //         router.replace("/login");
 //       } else if (profile.data.role !== allowedRole) {
 //         // Redirect to their role-specific dashboard
-//         router.replace(`/dashboard/${profile.data.role.toLowerCase()}`);
+//         router.replace(`/dashboard/${profile.data.role?.toLowerCase()}`);
 //       } else {
 //         // User is allowed
 //         setAuthorized(true);

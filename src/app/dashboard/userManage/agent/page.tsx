@@ -39,9 +39,9 @@ export default function AfentListPage() {
   // Filter users based on search term
   const filteredUsers = mockUsers.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.contactNumber.includes(searchTerm)
+      user.name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      user.contactNumber.includes(searchTerm),
   );
 
   // Calculate pagination
@@ -57,7 +57,7 @@ export default function AfentListPage() {
 
   const handleToggleChange = (
     field: "disableAccess" | "deleteAccount",
-    value: boolean
+    value: boolean,
   ) => {
     if (selectedUser) {
       setSelectedUser({ ...selectedUser, [field]: value });
@@ -86,7 +86,7 @@ export default function AfentListPage() {
           currentPage,
           currentPage + 1,
           "...",
-          totalPages
+          totalPages,
         );
       }
     }

@@ -47,7 +47,7 @@ export default function EventsList({ events, tab }: any) {
     return (
       <div className='text-center py-12'>
         <p className='text-muted-foreground text-lg'>
-          No {getTabTitle().toLowerCase()} found
+          No {getTabTitle()?.toLowerCase()} found
         </p>
       </div>
     );
@@ -192,7 +192,7 @@ export default function EventsList({ events, tab }: any) {
                       onClick={async () => {
                         await downloadFileFromUrl(
                           process.env.NEXT_PUBLIC_IMAGE_URL +
-                            event?.organizer_document_url
+                            event?.organizer_document_url,
                         );
                       }}
                       className='px-3 py-1 text-black cursor-pointer border border-gray-400 rounded-sm'

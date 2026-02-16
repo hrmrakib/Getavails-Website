@@ -29,6 +29,7 @@ import ArtistSidebar from "./ArtistSidebar";
 import UserSidebar from "./UserSidebar";
 import OrganizerSidebar from "./OrganizerSidebar";
 import { logout } from "@/service/authService";
+import TourManagerSidebar from "./TourManagerSidebar";
 
 export default function DashboardSidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -80,6 +81,7 @@ export default function DashboardSidebar() {
               sidebarView !== "venue" &&
               sidebarView !== "artist" &&
               sidebarView !== "organizer" &&
+              sidebarView !== "tour_manager" &&
               sidebarView !== "user" && <AdminSidebar />}
 
             {sidebarView === "organizer" && <OrganizerSidebar />}
@@ -87,6 +89,7 @@ export default function DashboardSidebar() {
             {sidebarView === "venue" && <VenueSidebar />}
             {sidebarView === "artist" && <ArtistSidebar />}
             {sidebarView === "user" && <UserSidebar />}
+            {sidebarView === "tour_manager" && <TourManagerSidebar />}
           </SidebarContent>
 
           <SidebarFooter className='p-6'>

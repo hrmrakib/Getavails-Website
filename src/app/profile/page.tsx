@@ -63,6 +63,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { logout } from "@/service/authService";
+import { Autocomplete, useLoadScript } from "@react-google-maps/api";
 
 interface IUserProfile {
   id: string;
@@ -81,6 +82,8 @@ interface IUserProfile {
   is_stripe_connected: boolean;
   subscription_name: string;
 }
+
+const libraries: any = ["places"];
 
 export default function ProfilePage() {
   const [user, setUser] = useState<IUserProfile>({
@@ -121,25 +124,38 @@ export default function ProfilePage() {
   // google places auto-suggest
   const locationInputRef = useRef<HTMLInputElement>(null);
   const [mapsInstance, setMapsInstance] = useState<any>(null);
+  // Add new state variables
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
+
+  // Google Autocomplete Ref
+  const locationRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  // Load Google Maps script
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey:
+      process.env.NEXT_PUBLIC_GOOGLE_PLACES_AUTO_SUGGESTION || "",
+    libraries,
+  });
 
   // google places auto-suggest
-  useEffect(() => {
-    if (window.google?.maps) {
-      setMapsInstance(window.google.maps);
-      return;
-    }
+  // useEffect(() => {
+  //   if (window.google?.maps) {
+  //     setMapsInstance(window.google.maps);
+  //     return;
+  //   }
 
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_AUTO_SUGGESTION}&libraries=places`;
-    script.async = true;
-    script.defer = true;
+  //   const script = document.createElement("script");
+  //   script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_AUTO_SUGGESTION}&libraries=places`;
+  //   script.async = true;
+  //   script.defer = true;
 
-    script.onload = () => {
-      setMapsInstance(window.google.maps);
-    };
+  //   script.onload = () => {
+  //     setMapsInstance(window.google.maps);
+  //   };
 
-    document.head.appendChild(script);
-  }, []);
+  //   document.head.appendChild(script);
+  // }, []);
 
   useEffect(() => {
     if (!mapsInstance || !locationInputRef.current) return;
@@ -229,6 +245,8 @@ export default function ProfilePage() {
 
       formData.append("name", user.name);
       formData.append("email", user.email);
+      formData.append("location_lat", lat !== null ? lat.toString() : "");
+      formData.append("location_lng", lng !== null ? lng.toString() : "");
       formData.append("gender", user.gender);
       formData.append("location", user.location || "");
 
@@ -301,6 +319,27 @@ export default function ProfilePage() {
       toast.error(error?.data?.message || "Failed to delete account");
     }
   };
+
+  const onPlaceChanged = () => {
+    if (locationRef.current) {
+      const place = locationRef.current.getPlace();
+
+      setUser((prev) => ({
+        ...prev,
+        location: place.formatted_address || "",
+      }));
+
+      if (place.geometry && place.geometry.location) {
+        setLat(place.geometry.location.lat());
+        setLng(place.geometry.location.lng());
+      }
+    }
+  };
+
+  console.log(lat, lng);
+
+  if (loadError) return <div>Error loading maps</div>;
+  // if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100'>
@@ -423,8 +462,64 @@ export default function ProfilePage() {
                   />
                 </div>
 
+                {/* Location / Address Field */}
+                {isLoaded ? (
+                  <Autocomplete
+                    onLoad={(autocomplete) =>
+                      (locationRef.current = autocomplete)
+                    }
+                    onPlaceChanged={onPlaceChanged}
+                  >
+                    <div className='space-y-2'>
+                      <Label
+                        htmlFor='location'
+                        className='text-sm font-medium text-muted-foreground'
+                      >
+                        Location / Address
+                      </Label>
+                      <Input
+                        id='location'
+                        type='text'
+                        placeholder='Enter Your Location / Address'
+                        value={user.location ?? ""}
+                        onChange={(e) =>
+                          setUser((prev) => ({
+                            ...prev,
+                            location: e.target.value,
+                          }))
+                        }
+                        required
+                        className='h-12'
+                      />
+                    </div>
+                  </Autocomplete>
+                ) : (
+                  <div className='space-y-2'>
+                    <Label
+                      htmlFor='location'
+                      className='text-sm font-medium text-muted-foreground'
+                    >
+                      Location / Address
+                    </Label>
+                    <Input
+                      id='location'
+                      type='text'
+                      placeholder='Enter Your Location / Address'
+                      value={user.location ?? ""}
+                      onChange={(e) =>
+                        setUser((prev) => ({
+                          ...prev,
+                          location: e.target.value,
+                        }))
+                      }
+                      required
+                      className='h-12'
+                    />
+                  </div>
+                )}
+
                 {/* Implement Google Location */}
-                <div className='space-y-2'>
+                {/* <div className='space-y-2'>
                   <Label htmlFor='location'>Location</Label>
                   <Input
                     id='location'
@@ -436,7 +531,7 @@ export default function ProfilePage() {
                     }
                     placeholder='Enter your location'
                   />
-                </div>
+                </div> */}
 
                 <div className='space-y-2'>
                   <Label htmlFor='gender'>Gender</Label>

@@ -31,9 +31,14 @@ export default function GoogleCalendarEvent() {
 
   const today = new Date();
 
-  const [dateRange, setDateRange] = useState<ISODateRange>({
-    from: today.toISOString(),
-    to: addDays(new Date(new Date().getFullYear(), 0, 12), 30).toISOString(),
+  const [dateRange, setDateRange] = useState<ISODateRange>(() => {
+    const from = new Date();
+    const to = addDays(from, 7);
+
+    return {
+      from: from.toISOString(),
+      to: to.toISOString(),
+    };
   });
 
   const [connectGoogleCalendarMutation] = useConnectGoogleCalendarMutation();
@@ -46,9 +51,6 @@ export default function GoogleCalendarEvent() {
 
   const events = data?.data ?? [];
 
-  console.log(data?.meta?.is_connected);
-
-  console.log({ events });
   // Convert ISO → Date for Calendar
   const calendarRange: DateRange | undefined = {
     from: dateRange.from ? new Date(dateRange.from) : undefined,

@@ -174,28 +174,36 @@ export default function AdvancedMap() {
 
         {/* Pickup */}
         <div className='px-5 mb-3'>
-          <Autocomplete
-            onLoad={(ref) => (pickRef.current = ref)}
-            onPlaceChanged={handlePick}
-          >
-            <input
-              type='text'
-              placeholder='Pickup location'
-              className='border p-2 w-full rounded mb-3'
-            />
-          </Autocomplete>
+          <div className='flex items-center gap-1.5 mb-3'>
+            <span className='text-[#b90707] font-semibold'>A</span>
+            <Autocomplete
+              onLoad={(ref) => (pickRef.current = ref)}
+              onPlaceChanged={handlePick}
+              className='flex-1'
+            >
+              <input
+                type='text'
+                placeholder='Pickup location'
+                className='border p-2 w-full! rounded'
+              />
+            </Autocomplete>
+          </div>
 
           {/* Drop */}
-          <Autocomplete
-            onLoad={(ref) => (dropRef.current = ref)}
-            onPlaceChanged={handleDrop}
-          >
-            <input
-              type='text'
-              placeholder='Drop location'
-              className='border p-2 w-full rounded mb-3'
-            />
-          </Autocomplete>
+          <div className='flex items-center gap-1.5 mb-3'>
+            <span className='text-[#b90707] font-semibold'>B</span>
+            <Autocomplete
+              onLoad={(ref) => (dropRef.current = ref)}
+              onPlaceChanged={handleDrop}
+              className='flex-1'
+            >
+              <input
+                type='text'
+                placeholder='Drop location'
+                className='border p-2 w-full! rounded'
+              />
+            </Autocomplete>
+          </div>
 
           <button
             onClick={calculateRoute}

@@ -33,7 +33,8 @@ const Header = () => {
     pathname === "/forget-password" ||
     pathname === "/verify-password" ||
     pathname === "/verify-otp" ||
-    pathname === "/reset-password"
+    pathname === "/reset-password" ||
+    pathname === "/dashboard/tour_manager/chatbot"
   ) {
     return null;
   }
