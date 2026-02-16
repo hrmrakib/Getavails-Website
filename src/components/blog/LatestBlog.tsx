@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useGetBlogsQuery } from "@/redux/features/admin/blogAPI";
+import Link from "next/link";
 
 interface Admin {
   name: string;
@@ -72,53 +73,44 @@ export default function LatestBlog() {
         {/* Blog Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
           {blogs?.data?.map((post: BlogPost) => (
-            <Card
-              key={post.id}
-              className='bg-transparent !border-none rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer'
-            >
-              <div className='aspect-video relative overflow-hidden rounded-3xl'>
-                <Image
-                  width={420}
-                  height={240}
-                  src={post.banner_url}
-                  alt={post.title}
-                  className='w-full h-full object-cover'
-                />
-              </div>
-              <div className='p-4'>
-                {/* <div
-                  className={`text-sm text-[#2C73B8] font-medium mb-2 ${getCategoryColor(
-                    post.category
-                  )}`}
-                >
-                  {post.category}
-                </div> */}
-                <h2 className='text-xl font-semibold text-[#000000] mb-2 line-clamp-2'>
-                  {post.title}
-                </h2>
-                <p className='text-[#4D4D4D] text-sm lg:text-base leading-relaxed mb-4 line-clamp-2'>
-                  {post.description}
-                </p>
-                <div className='flex items-center gap-3'>
-                  <Avatar className='w-10 h-10'>
-                    <AvatarImage src='/user.png' />
-                    <AvatarFallback>LM</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className='text-sm lg:text-base font-medium text-[#000000]'>
-                      {post.admin.name}
-                    </div>
-                    <div className='text-xs text-[#838383] font-medium'>
-                      {post.published_at.split("T")[0]}
+            <Link href={`/blog/${post.id}`} key={post.id}>
+              <Card className='bg-transparent !border-none rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer'>
+                <div className='aspect-video relative overflow-hidden rounded-3xl'>
+                  <Image
+                    width={420}
+                    height={240}
+                    src={post.banner_url}
+                    alt={post.title}
+                    className='w-full h-full object-cover'
+                  />
+                </div>
+                <div className='p-4'>
+                  <h2 className='text-xl font-semibold text-[#000000] mb-2 line-clamp-2'>
+                    {post.title}
+                  </h2>
+                  <p className='text-[#4D4D4D] text-sm lg:text-base leading-relaxed mb-4 line-clamp-2'>
+                    {post.description}
+                  </p>
+                  <div className='flex items-center gap-3'>
+                    <Avatar className='w-10 h-10'>
+                      <AvatarImage src='/user.png' />
+                      <AvatarFallback>LM</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className='text-sm lg:text-base font-medium text-[#000000]'>
+                        {post.admin.name}
+                      </div>
+                      <div className='text-xs text-[#838383] font-medium'>
+                        {post.published_at.split("T")[0]}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           ))}
         </div>
 
-        {/* Pagination */}
         {/* Pagination */}
         {blogs?.totalPages > 1 && (
           <div className='flex items-center justify-center gap-2 mt-10'>
@@ -151,7 +143,7 @@ export default function LatestBlog() {
                   >
                     {p}
                   </Button>
-                )
+                ),
               )}
             </div>
 

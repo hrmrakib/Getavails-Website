@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import Image from "next/image";
+import {
+  useCreateNewChatWithSessionMutation,
+  useGetChatHistoryBySessionIdQuery,
+  usePublicChatMutation,
+} from "@/redux/features/aiChat/aiChatAPI";
 
 const exampleQueries = [
   "Find available rock artists in Austin",
@@ -18,6 +23,12 @@ const exampleQueries = [
 export function AIAssistantInterface() {
   const [currentQuery, setCurrentQuery] = useState(0);
   const [inputValue, setInputValue] = useState("");
+  const [sessionId, setSessionId] = useState("");
+
+  const [publicChatMutation] = usePublicChatMutation();
+  const [createNewChatWithSessionMutation] =
+    useCreateNewChatWithSessionMutation();
+  const {} = useGetChatHistoryBySessionIdQuery({});
 
   // Auto-rotate example queries every 3 seconds
   useState(() => {
@@ -89,17 +100,16 @@ export function AIAssistantInterface() {
               type='text'
               placeholder='Need to find talent, check availability, confirm a venue, or send a contract?'
               value={inputValue}
-              disabled
               onChange={(e) => setInputValue(e.target.value)}
               className='w-full h-16 px-6 pr-16 text-lg lg:text-xl rounded-2xl border-2 border-[#1602114D] bg-background/80 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 placeholder:text-[#A4A4A4] placeholder:text-lg'
             />
             <Button
               type='submit'
               size='icon'
-              className='absolute right-2 top-2 h-12 w-12 bg-transparent transition-colors duration-200'
+              className='absolute right-2 top-2 h-12 w-12 bg-[#333] transition-colors duration-200'
               disabled={!inputValue.trim()}
             >
-              <Send className='h-8 w-8 text-[#A4A4A4]' />
+              <Send className='h-8 w-8 text-[#ebebeb]' />
               <span className='sr-only'>Send message</span>
             </Button>
           </div>

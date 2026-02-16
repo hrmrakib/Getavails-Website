@@ -7,7 +7,7 @@ import {
   Autocomplete,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-import { Car, Bike, PersonStanding, X } from "lucide-react";
+import { Car, Bike, PersonStanding, X, ArrowUpDown } from "lucide-react";
 
 const libraries: any = ["places"];
 
@@ -174,7 +174,7 @@ export default function AdvancedMap() {
 
         {/* Pickup */}
         <div className='px-5 mb-3'>
-          <div className='flex items-center gap-1.5 mb-3'>
+          <div className='relative flex items-center gap-1.5 mb-3'>
             <span className='text-[#b90707] font-semibold'>A</span>
             <Autocomplete
               onLoad={(ref) => (pickRef.current = ref)}
@@ -187,6 +187,9 @@ export default function AdvancedMap() {
                 className='border p-2 w-full! rounded'
               />
             </Autocomplete>
+            <div className='absolute top-9 -left-1'>
+              <ArrowUpDown className='text-blue-400' size={18} />
+            </div>
           </div>
 
           {/* Drop */}

@@ -25,6 +25,14 @@ const aiChatAPI = createApi({
       }),
     }),
 
+    publicChat: build.mutation({
+      query: (body) => ({
+        url: "/public/chat",
+        method: "POST",
+        body,
+      }),
+    }),
+
     createNewChatWithSession: build.mutation({
       query: () => ({
         url: "/create-session",
@@ -65,6 +73,7 @@ const aiChatAPI = createApi({
 
 export const {
   useAiChatMutation,
+  usePublicChatMutation,
   useCreateNewChatWithSessionMutation,
   useGetAllSessionsHistoryQuery,
   useGetChatHistoryBySessionIdQuery,
