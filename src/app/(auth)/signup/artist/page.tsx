@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +12,15 @@ import Image from "next/image";
 import { useArtistRegisterMutation } from "@/redux/features/auth/authAPI";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Autocomplete, useLoadScript } from "@react-google-maps/api";
+
+const libraries: any = ["places"];
 
 export default function SignUpFormForArtist() {
+  // Add new state variables
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [artistName, setArtistName] = useState("");
@@ -27,6 +34,15 @@ export default function SignUpFormForArtist() {
   const [passwordError, setPasswordError] = useState("");
   const [artistRegisterMutation] = useArtistRegisterMutation();
   const router = useRouter();
+  // Google Autocomplete Ref
+  const locationRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  // Load Google Maps script
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey:
+      process.env.NEXT_PUBLIC_GOOGLE_PLACES_AUTO_SUGGESTION || "",
+    libraries,
+  });
 
   const validatePasswords = () => {
     if (password && confirmPassword && password !== confirmPassword) {
@@ -52,6 +68,8 @@ export default function SignUpFormForArtist() {
       password: password,
       genre: artistCategory,
       location: location,
+      location_lat: lat,
+      location_lng: lng,
       price: price,
     };
 
@@ -73,7 +91,7 @@ export default function SignUpFormForArtist() {
     setPassword(value);
     if (confirmPassword) {
       setPasswordError(
-        value !== confirmPassword ? "Passwords do not match" : ""
+        value !== confirmPassword ? "Passwords do not match" : "",
       );
     }
   };
@@ -82,6 +100,21 @@ export default function SignUpFormForArtist() {
     setConfirmPassword(value);
     setPasswordError(password !== value ? "Passwords do not match" : "");
   };
+
+  const onPlaceChanged = () => {
+    if (locationRef.current) {
+      const place = locationRef.current.getPlace();
+      setLocation(place.formatted_address || "");
+
+      if (place.geometry && place.geometry.location) {
+        setLat(place.geometry.location.lat());
+        setLng(place.geometry.location.lng());
+      }
+    }
+  };
+
+  if (loadError) return <div>Error loading maps</div>;
+  if (!isLoaded) return <div>Loading Maps...</div>;
 
   return (
     <div className='min-h-screen flex'>
@@ -202,23 +235,28 @@ export default function SignUpFormForArtist() {
               </div>
 
               {/* Location / Address Field */}
-              <div className='space-y-2'>
-                <Label
-                  htmlFor='location'
-                  className='text-sm font-medium text-muted-foreground'
-                >
-                  Location / Address
-                </Label>
-                <Input
-                  id='location'
-                  type='text'
-                  placeholder='Enter Your Location / Address'
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  required
-                  className='h-12'
-                />
-              </div>
+              <Autocomplete
+                onLoad={(autocomplete) => (locationRef.current = autocomplete)}
+                onPlaceChanged={onPlaceChanged}
+              >
+                <div className='space-y-2'>
+                  <Label
+                    htmlFor='location'
+                    className='text-sm font-medium text-muted-foreground'
+                  >
+                    Location / Address
+                  </Label>
+                  <Input
+                    id='location'
+                    type='text'
+                    placeholder='Enter Your Location / Address'
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    required
+                    className='h-12'
+                  />
+                </div>
+              </Autocomplete>
 
               {/* Password Field */}
               <div className='space-y-2'>

@@ -3,7 +3,7 @@
 import React from "react";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import { NavItem } from "./CommonItem";
-import { LayoutDashboard, MessageCircleMore, Palette } from "lucide-react";
+import { LayoutDashboard, Map, MessageCircleMore, Palette } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { RoleRedirect } from "@/utils/makePrivate";
 
@@ -11,53 +11,52 @@ const AgentSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <RoleRedirect allowedRole='AGENT'>
+    <RoleRedirect allowedRole='TOUR_MANAGER'>
       <>
         <SidebarMenu className='px-4 space-y-2'>
           <NavItem
-            href='/dashboard/agent'
+            href='/dashboard/tour-manager'
             icon={LayoutDashboard}
-            label='Overview '
-            active={pathname === "/dashboard/agent"}
+            label='Calendar'
+            active={pathname === "/dashboard/tour-manager"}
           />
 
           <NavItem
-            href='/dashboard/agent/create-request'
+            href='/dashboard/tour-manager/create-request'
             icon={Palette}
             label='Create Request'
             active={
-              pathname === "/dashboard/agent/create-request" ||
-              pathname.startsWith("/dashboard/agent/create-request/")
+              pathname === "/dashboard/tour-manager/create-request" ||
+              pathname.startsWith("/dashboard/tour-manager/create-request/")
             }
           />
 
           <NavItem
-            href='/dashboard/agent/artists-management'
-            icon={Palette}
-            label='Artists Management'
-            active={
-              pathname === "/dashboard/agent/artists-management" ||
-              pathname.startsWith("/dashboard/agent/artists-management/")
-            }
-          />
-
-          {/* <NavItem
-            href='/dashboard/agent/send-customer-offer'
-            icon={NotebookPen}
-            label='Send Customer Offer'
-            active={
-              pathname === "/dashboard/agent/send-customer-offer" ||
-              pathname.startsWith("/dashboard/agent/send-customer-offer/")
-            }
-          /> */}
-
-          <NavItem
-            href='/dashboard/agent/message'
+            href='/dashboard/tour-manager/message'
             icon={MessageCircleMore}
             label='Message'
             active={
-              pathname === "/dashboard/agent/message" ||
-              pathname.startsWith("/dashboard/agent/message/")
+              pathname === "/dashboard/tour-manager/message" ||
+              pathname.startsWith("/dashboard/tour-manager/message/")
+            }
+          />
+
+          <NavItem
+            href='/dashboard/tour-manager/chatbot'
+            icon={MessageCircleMore}
+            label='Chatbot'
+            active={
+              pathname === "/dashboard/tour-manager/chatbot" ||
+              pathname.startsWith("/dashboard/tour-manager/chatbot/")
+            }
+          />
+          <NavItem
+            href='/dashboard/tour-manager/map'
+            icon={Map}
+            label='Map'
+            active={
+              pathname === "/dashboard/tour-manager/map" ||
+              pathname.startsWith("/dashboard/tour-manager/map/")
             }
           />
         </SidebarMenu>

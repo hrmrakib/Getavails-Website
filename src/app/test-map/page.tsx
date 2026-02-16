@@ -7,7 +7,7 @@ import {
   Autocomplete,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-import { Car, Bike, PersonStanding, Menu, X } from "lucide-react";
+import { Car, Bike, PersonStanding, X } from "lucide-react";
 
 const libraries: any = ["places"];
 
