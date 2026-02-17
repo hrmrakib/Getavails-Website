@@ -51,14 +51,10 @@ export function AIAssistantInterface() {
       setMessages(historyData.messages);
     }
   }, [historyData]);
-  // useEffect(() => {
-  //   if (historyData?.messages) {
-  //     setMessages(historyData.messages);
-  //   }
-  // }, [historyData]);
 
   // Scroll to bottom
   useEffect(() => {
+    if (messages.length === 0) return;
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "center",
@@ -168,7 +164,9 @@ export function AIAssistantInterface() {
         </div>
 
         {/* Messages Display */}
-        <div className='mb-10 min-h-110 max-h-130 overflow-y-auto space-y-3'>
+        <div
+          className={`mb-10 ${messages.length > 0 && "min-h-110 max-h-130"} overflow-y-auto space-y-3`}
+        >
           {messages.map((msg, index) => (
             <div
               key={index}

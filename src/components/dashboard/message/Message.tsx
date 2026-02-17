@@ -12,6 +12,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
   useGetInboxChatsQuery,
   useGetMessagesQuery,
+  useNewChatMutation,
 } from "@/redux/features/chat/chatAPI";
 import { TMessagesResponse } from "./interface";
 import dayjs from "dayjs";
@@ -53,13 +54,15 @@ export default function MessagePage() {
   const { socket, onlineUsers } = useSocket();
   const { id: chat_id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedContact, setSelectedContact] = useState<IChat | null>(null);
   const [messageInput, setMessageInput] = useState("");
   const [activeTab, setActiveTab] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const [hasToken, setHasToken] = useState(false);
+  const [newChat] = useNewChatMutation();
+
+  console.log({ chat_id });
 
   useEffect(() => {
     setHasToken(!!localStorage?.getItem("access_token"));
@@ -255,7 +258,12 @@ export default function MessagePage() {
       setIsMobileView(true);
     }
 
-    router.push(`${getRoleBasePath()}/${contact.id}`);
+    const data = await newChat({ user_id: contact.user_id }).unwrap();
+    const chatId = data?.data?.id;
+
+    console.log({ contact });
+    if (!chatId) return;
+    router.push(`${getRoleBasePath()}/${chatId}`);
   };
 
   const formatTime = (ts?: string) => {
