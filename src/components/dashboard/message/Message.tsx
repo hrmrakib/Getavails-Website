@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Mic, Send, CheckCheck, ArrowLeft } from "lucide-react";
+import { Search, Send, CheckCheck, ArrowLeft } from "lucide-react";
 import { useSocket } from "@/provider/SocketProvider";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -85,7 +85,7 @@ export default function MessagePage() {
       search: debouncedSearch,
       unread: activeTab,
     },
-    { skip: false }
+    { skip: false },
   );
 
   const messagesData = messagesResponse?.data || [];
@@ -114,7 +114,7 @@ export default function MessagePage() {
 
     setMessages((prev) => {
       const newItems = messagesData.filter(
-        (msg) => !prev.some((p) => p.id === msg.id)
+        (msg) => !prev.some((p) => p.id === msg.id),
       );
 
       return [...newItems, ...prev];
@@ -135,7 +135,7 @@ export default function MessagePage() {
         root: null,
         rootMargin: "20px", // preload early
         threshold: 0.1,
-      }
+      },
     );
 
     if (loaderRef.current) observer.observe(loaderRef.current);
@@ -175,6 +175,8 @@ export default function MessagePage() {
     const isAdmin = profile?.data?.is_admin;
     const role = profile?.data?.role?.toLowerCase() || "";
 
+    console.log({ role });
+
     if (isAdmin) return "/dashboard/message";
 
     const map: Record<string, string> = {
@@ -183,26 +185,12 @@ export default function MessagePage() {
       organizer: "/dashboard/organizer/message",
       venue: "/dashboard/venue/message",
       user: "/dashboard/user/message",
+      tour_manager: "/dashboard/tour_manager/message",
     };
 
     return map[role] || "/dashboard/user/message";
   };
 
-  const handleSendMessageOLD = () => {
-    if (!messageInput.trim()) return;
-
-    socket?.emit(
-      "send_message",
-      {
-        chat_id,
-        text: messageInput,
-      },
-      () => refetchMessages()
-    );
-
-    setMessageInput("");
-  };
-  
   const handleSendMessage = () => {
     if (!messageInput.trim()) return;
     if (!socket || !chat_id) return;
@@ -240,13 +228,6 @@ export default function MessagePage() {
 
   useEffect(() => {
     if (!socket) return;
-
-    // const handler = (payload: any) => {
-    //   const message = JSON.parse(payload).data;
-    //   if (message.chat_id === chat_id) {
-    //     refetchMessages();
-    //   }
-    // };
 
     const handler = (payload: any) => {
       const message = JSON.parse(payload).data;

@@ -211,6 +211,8 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
+  console.log({ user, profile });
+
   const handleLogout = async () => {
     await logout();
     localStorage?.removeItem("access_token");

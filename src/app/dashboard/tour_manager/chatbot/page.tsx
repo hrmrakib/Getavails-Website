@@ -341,6 +341,7 @@ function ChatSidebar({
     </>
   );
 }
+
 function ChatMessages({
   messages,
   sessionTitle,
