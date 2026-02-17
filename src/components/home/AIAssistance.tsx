@@ -12,6 +12,8 @@ import {
   useGetChatHistoryBySessionIdQuery,
   usePublicChatMutation,
 } from "@/redux/features/aiChat/aiChatAPI";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const exampleQueries = [
   "Find available rock artists in Austin",
@@ -157,7 +159,7 @@ export function AIAssistantInterface() {
       </div>
 
       <div className='w-full max-w-4xl bg-[#a4a4a400] border border-[#5F7F9E4D] rounded-3xl p-8 md:p-12 lg:p-16'>
-        <div className='text-center mb-12'>
+        <div className={`text-center mb-12 ${messages.length > 0 && "hidden"}`}>
           <h2 className='text-3xl md:text-4xl font-bold text-[#235789] mb-14 text-balance'>
             Seamless Event Planning
             <br />
@@ -166,7 +168,7 @@ export function AIAssistantInterface() {
         </div>
 
         {/* Messages Display */}
-        <div className='mb-10 max-h-80 overflow-y-auto space-y-3'>
+        <div className='mb-10 min-h-110 max-h-130 overflow-y-auto space-y-3'>
           {messages.map((msg, index) => (
             <div
               key={index}
@@ -175,7 +177,7 @@ export function AIAssistantInterface() {
               }`}
             >
               <div
-                className={`px-4 py-3 rounded-2xl max-w-[70%] text-sm ${
+                className={`px-4 py-3 rounded-2xl max-w-[75%] text-sm sm:text-base leading-relaxed ${
                   msg.role === "user"
                     ? "bg-[#235789] text-white"
                     : "bg-gray-100 text-gray-800"
@@ -184,7 +186,10 @@ export function AIAssistantInterface() {
                 {msg.loading ? (
                   <Loader2 className='h-5 w-5 animate-spin text-gray-500' />
                 ) : (
-                  msg.content
+                  // msg.content
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {msg.content}
+                  </ReactMarkdown>
                 )}
               </div>
             </div>
