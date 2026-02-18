@@ -62,8 +62,6 @@ export default function MessagePage() {
   const [hasToken, setHasToken] = useState(false);
   const [newChat] = useNewChatMutation();
 
-  console.log({ chat_id });
-
   useEffect(() => {
     setHasToken(!!localStorage?.getItem("access_token"));
   }, []);
@@ -76,10 +74,14 @@ export default function MessagePage() {
   const [page, setPage] = useState(1);
   const limit = 15;
 
-  const { data: messagesResponse, refetch: refetchMessages } =
-    useGetMessagesQuery<{
-      data: TMessagesResponse;
-    }>({ page, limit, chat_id, search: undefined }, { skip: !chat_id });
+  const {
+    data: messagesResponse,
+    refetch: refetchMessages,
+    isFetching: isFetchingMessages,
+  } = useGetMessagesQuery(
+    { page, limit, chat_id, search: undefined },
+    { skip: !chat_id },
+  );
 
   const { data: inboxChats, refetch: inboxRefetch } = useGetInboxChatsQuery(
     {
@@ -117,7 +119,7 @@ export default function MessagePage() {
 
     setMessages((prev) => {
       const newItems = messagesData.filter(
-        (msg) => !prev.some((p) => p.id === msg.id),
+        (msg: any) => !prev.some((p) => p.id === msg.id),
       );
 
       return [...newItems, ...prev];
@@ -165,7 +167,7 @@ export default function MessagePage() {
   }, [profile?.data]);
 
   useEffect(() => {
-    if (!inboxChats?.data) return;
+    if (!inboxChats?.data || !chat_id) return;
     const contact = inboxChats.data.find((c: IChat) => c.id === chat_id);
     if (contact) {
       setSelectedContact(contact);
@@ -251,9 +253,6 @@ export default function MessagePage() {
   }, [socket, chat_id, refetchMessages]);
 
   const handleSelectContact = async (contact: IChat) => {
-    inboxRefetch(); // force refetch
-
-    setSelectedContact(contact);
     if (window.innerWidth < 640) {
       setIsMobileView(true);
     }
@@ -261,10 +260,20 @@ export default function MessagePage() {
     const data = await newChat({ user_id: contact.user_id }).unwrap();
     const chatId = data?.data?.id;
 
-    console.log({ contact });
     if (!chatId) return;
-    router.push(`${getRoleBasePath()}/${chatId}`);
+
+    if (chatId !== chat_id) {
+      setSelectedContact(contact);
+
+      // router.replace(`${getRoleBasePath()}/${chatId}`);
+      window.history.replaceState(null, "", `${getRoleBasePath()}/${chatId}`);
+
+      inboxRefetch(); // force refetch
+      refetchMessages();
+    }
   };
+
+  console.log({ isFetchingMessages });
 
   const formatTime = (ts?: string) => {
     if (!ts) return "";
@@ -386,7 +395,7 @@ export default function MessagePage() {
                   className='sm:hidden text-gray-600'
                   onClick={() => {
                     setIsMobileView(false);
-                    setSelectedContact(null);
+                    // setSelectedContact(null);
                   }}
                 >
                   <ArrowLeft className='h-5 w-5 mr-2' />

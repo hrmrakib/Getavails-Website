@@ -28,6 +28,8 @@ import {
   setSearchResult,
 } from "@/redux/features/search/searchSlice";
 import { useRouter } from "next/navigation";
+import { Slider } from "../ui/slider";
+import SearchRange from "../ui/Sliderwithtooltip";
 
 export function SearchSection({ className }: { className?: string }) {
   const router = useRouter();
@@ -47,6 +49,7 @@ export function SearchSection({ className }: { className?: string }) {
   const [onSearchTypeChange, setOnSearchTypeChange] = useState<
     "artist" | "venue"
   >("artist");
+  const [radiusValue, setRadiusValue] = useState([0, 0]);
   const [minVenueCapacity, setMinVenueCapacity] = useState(0);
   const [maxVenueCapacity, setMaxVenueCapacity] = useState(0);
   const [triggerArtistSearch, { data: artistData, isLoading: artistLoading }] =
@@ -60,6 +63,9 @@ export function SearchSection({ className }: { className?: string }) {
     (state: any) => state?.search?.searchLoading,
   );
   const dispatch = useDispatch();
+
+  // ?
+  console.log(radiusValue);
 
   useEffect(() => {
     if (artists?.meta?.total_genres) {
@@ -191,6 +197,7 @@ export function SearchSection({ className }: { className?: string }) {
           end_date: dateRange?.to?.toISOString(),
           location_lat: coordinates?.lat,
           location_lng: coordinates?.lng,
+          radius: radiusValue[0],
         }).unwrap();
 
         if (res?.success) {
@@ -204,6 +211,7 @@ export function SearchSection({ className }: { className?: string }) {
           max_capacity: maxVenueCapacity,
           location_lat: coordinates?.lat,
           location_lng: coordinates?.lng,
+          radius: radiusValue[0],
           start_date: dateRange?.from?.toISOString(),
           end_date: dateRange?.to?.toISOString(),
         }).unwrap();
@@ -569,6 +577,13 @@ export function SearchSection({ className }: { className?: string }) {
                   </PopoverContent>
                 </Popover>
               </div>
+            </div>
+
+            <div className='mb-6 sm:mb-8'>
+              <SearchRange
+                radiusValue={radiusValue}
+                setRadiusValue={setRadiusValue}
+              />
             </div>
 
             {/* Search Button */}
