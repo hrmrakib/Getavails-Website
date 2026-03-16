@@ -23,10 +23,6 @@ import { SearchSection } from "./HeroSearch";
 
 export function HeroSection() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [location, setLocation] = useState("");
-  const [dateRange, setDateRange] = useState("");
-
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
@@ -37,8 +33,6 @@ export function HeroSection() {
     skip: !hasToken,
   });
 
-  console.log(profile);
-
   const handleStartExploring = () => {
     if (profile?.data?.role) {
       router.push(`/dashboard/${profile?.data?.role}`);
@@ -46,10 +40,6 @@ export function HeroSection() {
     } else if (!profile?.data?.role) {
       router.push("/login");
     }
-  };
-
-  const handleSearch = () => {
-    // Implement search functionality here
   };
 
   return (
@@ -82,7 +72,7 @@ export function HeroSection() {
             </div>
 
             {/* Search form */}
-            <SearchSection  />
+            <SearchSection />
           </div>
         </div>
 

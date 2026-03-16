@@ -9,7 +9,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DateRange } from "react-day-picker";
 import { format, set } from "date-fns";
@@ -17,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { addDays } from "date-fns";
 import { toast } from "sonner";
 import {
+  useGetAllGenresQuery,
   useLazySearchArtistsQuery,
   useLazySearchVenuesQuery,
   useSearchArtistsQuery,
@@ -24,57 +24,48 @@ import {
 } from "@/redux/features/search/searchAPI";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  setResultType,
   setSearchLoading,
   setSearchResult,
 } from "@/redux/features/search/searchSlice";
 import { useRouter } from "next/navigation";
-import { Slider } from "../ui/slider";
 import SearchRange from "../ui/Sliderwithtooltip";
 
 export function SearchSection({ className }: { className?: string }) {
   const router = useRouter();
   const [genres, setGenres] = useState([]);
-  const [venues, setVenues] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [selectedVenues, setSelectedVenues] = useState<string[]>([]);
   const [location, setLocation] = useState("");
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(new Date().getFullYear(), 0, 12),
-    to: addDays(new Date(new Date().getFullYear(), 0, 12), 30),
-  });
   const [isGenreOpen, setIsGenreOpen] = useState(false);
-  const [isDateOpen, setIsDateOpen] = useState(false);
   const [genreSearchInput, setGenreSearchInput] = useState("");
+  const [genresSearchInput, setGenresSearchInput] = useState("");
   const [venueSearchInput, setVenueSearchInput] = useState("");
   const [onSearchTypeChange, setOnSearchTypeChange] = useState<
     "artist" | "venue"
   >("artist");
   const [radiusValue, setRadiusValue] = useState([0, 0]);
-  const [minVenueCapacity, setMinVenueCapacity] = useState(0);
-  const [maxVenueCapacity, setMaxVenueCapacity] = useState(0);
+
   const [triggerArtistSearch, { data: artistData, isLoading: artistLoading }] =
     useLazySearchArtistsQuery();
-
   const [triggerVenueSearch, { data: venueData, isLoading: venueLoading }] =
     useLazySearchVenuesQuery();
   const { data: artists } = useSearchArtistsQuery({});
   const { data: venuesList } = useSearchVenuesQuery({});
+
+  const { data } = useGetAllGenresQuery({});
+
+  const genresList = data?.data;
+
   const searchLoading = useSelector(
     (state: any) => state?.search?.searchLoading,
   );
   const dispatch = useDispatch();
 
-  // ?
-  console.log(radiusValue);
-
   useEffect(() => {
-    if (artists?.meta?.total_genres) {
-      setGenres(artists?.meta?.total_genres);
+    if (genresList) {
+      setGenres(genresList);
     }
-    if (venuesList?.meta?.total_venue_types) {
-      setVenues(venuesList?.meta?.total_venue_types);
-    }
-  }, [artists, venuesList]);
+  }, [genresList]);
 
   // google places auto-suggest
   const [coordinates, setCoordinates] = useState<{
@@ -151,37 +142,12 @@ export function SearchSection({ className }: { className?: string }) {
     );
   };
 
-  const handleVenueToggle = (venue: string) => {
-    setSelectedVenues((prev) =>
-      prev.includes(venue) ? prev.filter((g) => g !== venue) : [...prev, venue],
-    );
-  };
-
   const handleSelectAllGenres = () => {
     if (selectedGenres.length === genres.length) {
       setSelectedGenres([]);
     } else {
       setSelectedGenres([...genres]);
     }
-  };
-
-  const handleSelectAllVenues = () => {
-    if (selectedVenues.length === venues.length) {
-      setSelectedVenues([]);
-    } else {
-      setSelectedVenues([...venues]);
-    }
-  };
-
-  const handleDateSelect = (day: Date, position: "from" | "to") => {
-    setDateRange((prev) => {
-      if (!prev) return { from: day, to: undefined };
-      if (position === "from") {
-        return { from: day, to: prev.to };
-      } else {
-        return { from: prev.from, to: day };
-      }
-    });
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -192,31 +158,28 @@ export function SearchSection({ className }: { className?: string }) {
     try {
       if (onSearchTypeChange === "artist") {
         const res = await triggerArtistSearch({
+          search: genresSearchInput,
           genres: selectedGenres.join(","),
-          start_date: dateRange?.from?.toISOString(),
-          end_date: dateRange?.to?.toISOString(),
           location_lat: coordinates?.lat,
           location_lng: coordinates?.lng,
-          radius: radiusValue[0],
+          radius_mi: radiusValue[0],
         }).unwrap();
 
         if (res?.success) {
+          dispatch(setResultType("artist"));
           dispatch(setSearchResult(res));
           router.push("/search");
         }
       } else {
         const res = await triggerVenueSearch({
-          venue_types: selectedVenues.join(","),
-          min_capacity: minVenueCapacity,
-          max_capacity: maxVenueCapacity,
           location_lat: coordinates?.lat,
           location_lng: coordinates?.lng,
-          radius: radiusValue[0],
-          start_date: dateRange?.from?.toISOString(),
-          end_date: dateRange?.to?.toISOString(),
+          radius_mi: radiusValue[0],
+          search: venueSearchInput,
         }).unwrap();
 
         if (res?.success) {
+          dispatch(setResultType("venue"));
           dispatch(setSearchResult(res));
           router.push("/search");
         }
@@ -234,10 +197,6 @@ export function SearchSection({ className }: { className?: string }) {
     genre?.toLowerCase().includes(genreSearchInput?.toLowerCase()),
   );
 
-  const filteredVenues = venues?.filter((venue: any) =>
-    venue?.toLowerCase().includes(genreSearchInput?.toLowerCase()),
-  );
-
   const genreDisplayText =
     selectedGenres.length === 0
       ? "All Genres"
@@ -246,20 +205,6 @@ export function SearchSection({ className }: { className?: string }) {
         : selectedGenres.length <= 2
           ? selectedGenres.join(", ")
           : `${selectedGenres.length} Genres Selected`;
-
-  const venueDisplayText =
-    selectedVenues.length === 0
-      ? "All Venue Types"
-      : selectedVenues.length === venues.length
-        ? "All Venue Types"
-        : selectedVenues.length <= 2
-          ? selectedVenues.join(", ")
-          : `${selectedVenues.length} Venue Types Selected`;
-
-  const dateDisplayText =
-    dateRange?.from && dateRange?.to
-      ? `${format(dateRange.from, "MMM dd")} - ${format(dateRange.to, "MMM dd, yyyy")}`
-      : "Date Range";
 
   return (
     <div className={`w-full max-w-3xl ${className}`}>
@@ -300,85 +245,27 @@ export function SearchSection({ className }: { className?: string }) {
           <div className='bg-white rounded-3xl p-4 sm:p-6 mt-4'>
             {/* Genres Section */}
             {onSearchTypeChange === "artist" ? (
-              <div className='mb-6 sm:mb-8'>
-                <label className='block text-sm sm:text-base font-medium text-gray-700 mb-3'>
-                  Genres
-                </label>
-                <Popover open={isGenreOpen} onOpenChange={setIsGenreOpen}>
-                  <PopoverTrigger asChild>
-                    <button className='w-full px-4 sm:px-6 py-3 sm:py-4 border border-gray-300 rounded-full text-gray-600 hover:border-gray-400 transition-colors flex items-center justify-between bg-white'>
-                      <span className='text-sm sm:text-base'>
-                        {genreDisplayText}
-                      </span>
-                      <ChevronDown
-                        className={`w-5 h-5 transition-transform ${isGenreOpen ? "rotate-180" : ""}`}
-                      />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className='lg:min-w-[572px]! p-0 border-0'
-                    align='end'
-                  >
-                    <div className='p-4 sm:p-6 space-y-4'>
-                      {/* Search Input */}
-                      <div className='relative'>
-                        <Input
-                          placeholder='Search genres...'
-                          value={genreSearchInput}
-                          onChange={(e) => setGenreSearchInput(e.target.value)}
-                          className='pl-4 pr-10 bg-gray-100 border-0'
-                        />
-                        <Search className='absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
-                      </div>
+              <>
+                {/* Search Input */}
+                <div className='relative mb-5'>
+                  <Input
+                    placeholder='Search for genres...'
+                    value={genresSearchInput}
+                    onChange={(e) => setGenresSearchInput(e.target.value)}
+                    className='h-12 pl-4 pr-10 bg-white! border border-gray-300 rounded-full'
+                  />
+                  <Search className='absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
+                </div>
 
-                      {/* Select All Genres */}
-                      <div className='flex items-center space-x-3 py-2 cursor-pointer'>
-                        <Checkbox
-                          id='select-all-genres'
-                          checked={selectedGenres.length === genres.length}
-                          onCheckedChange={handleSelectAllGenres}
-                        />
-                        <Label
-                          htmlFor='select-all-genres'
-                          className='text-sm sm:text-base font-medium'
-                        >
-                          Select all genres
-                        </Label>
-                      </div>
-
-                      {/* Genre List */}
-                      <div className='space-y-2 max-h-60 overflow-y-auto'>
-                        {filteredGenres.map((genre) => (
-                          <div
-                            key={genre}
-                            className='flex items-center space-x-3 py-2 cursor-pointer hover:bg-gray-50 px-2 rounded'
-                            onClick={() => handleGenreToggle(genre)}
-                          >
-                            <Checkbox
-                              checked={selectedGenres.includes(genre)}
-                              onCheckedChange={() => handleGenreToggle(genre)}
-                            />
-                            <span className='text-sm sm:text-base'>
-                              {genre}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            ) : (
-              <div>
                 <div className='mb-6 sm:mb-8'>
                   <label className='block text-sm sm:text-base font-medium text-gray-700 mb-3'>
-                    Type of venue
+                    Genres
                   </label>
                   <Popover open={isGenreOpen} onOpenChange={setIsGenreOpen}>
                     <PopoverTrigger asChild>
                       <button className='w-full px-4 sm:px-6 py-3 sm:py-4 border border-gray-300 rounded-full text-gray-600 hover:border-gray-400 transition-colors flex items-center justify-between bg-white'>
                         <span className='text-sm sm:text-base'>
-                          {venueDisplayText}
+                          {genreDisplayText}
                         </span>
                         <ChevronDown
                           className={`w-5 h-5 transition-transform ${isGenreOpen ? "rotate-180" : ""}`}
@@ -386,17 +273,17 @@ export function SearchSection({ className }: { className?: string }) {
                       </button>
                     </PopoverTrigger>
                     <PopoverContent
-                      className='lg:min-w-min! p-0 border-0'
+                      className='lg:min-w-[572px]! p-0 border-0'
                       align='end'
                     >
                       <div className='p-4 sm:p-6 space-y-4'>
                         {/* Search Input */}
                         <div className='relative'>
                           <Input
-                            placeholder='Type of venue'
-                            value={venueSearchInput}
+                            placeholder='Search genres...'
+                            value={genreSearchInput}
                             onChange={(e) =>
-                              setVenueSearchInput(e.target.value)
+                              setGenreSearchInput(e.target.value)
                             }
                             className='pl-4 pr-10 bg-gray-100 border-0'
                           />
@@ -407,8 +294,8 @@ export function SearchSection({ className }: { className?: string }) {
                         <div className='flex items-center space-x-3 py-2 cursor-pointer'>
                           <Checkbox
                             id='select-all-genres'
-                            checked={selectedVenues.length === venues.length}
-                            onCheckedChange={handleSelectAllVenues}
+                            checked={selectedGenres.length === genres.length}
+                            onCheckedChange={handleSelectAllGenres}
                           />
                           <Label
                             htmlFor='select-all-genres'
@@ -418,20 +305,20 @@ export function SearchSection({ className }: { className?: string }) {
                           </Label>
                         </div>
 
-                        {/* VENUES List */}
+                        {/* Genre List */}
                         <div className='space-y-2 max-h-60 overflow-y-auto'>
-                          {filteredVenues?.map((venue) => (
+                          {filteredGenres.map((genre) => (
                             <div
-                              key={venue}
+                              key={genre}
                               className='flex items-center space-x-3 py-2 cursor-pointer hover:bg-gray-50 px-2 rounded'
-                              onClick={() => handleVenueToggle(venue)}
+                              onClick={() => handleGenreToggle(genre)}
                             >
                               <Checkbox
-                                checked={selectedVenues.includes(venue)}
-                                onCheckedChange={() => handleVenueToggle(venue)}
+                                checked={selectedGenres.includes(genre)}
+                                onCheckedChange={() => handleGenreToggle(genre)}
                               />
                               <span className='text-sm sm:text-base'>
-                                {venue}
+                                {genre}
                               </span>
                             </div>
                           ))}
@@ -440,49 +327,20 @@ export function SearchSection({ className }: { className?: string }) {
                     </PopoverContent>
                   </Popover>
                 </div>
-
+              </>
+            ) : (
+              <div>
                 <div className='mb-6 sm:mb-8'>
-                  <label className='block text-sm sm:text-base font-medium text-gray-700 mb-3'>
-                    Venue Capacity
-                  </label>
-
-                  <div className='w-full flex flex-col lg:flex-row items-center justify-between gap-2 lg:gap-5 lg:border border-gray-300 rounded-full px-4 py-1'>
-                    <div className='flex items-center gap-3'>
-                      <label className='block text-sm sm:text-base font-medium text-gray-700'>
-                        Minimum
-                      </label>
-                      {/* Search Input */}
-                      <div className='relative p-1'>
-                        <Input
-                          type='number'
-                          placeholder='0'
-                          value={minVenueCapacity}
-                          onChange={(e) =>
-                            setMinVenueCapacity(Number(e.target.value))
-                          }
-                          className='bg-transparent border rounded-full'
-                        />
-                      </div>
-                    </div>
-                    <div className='hidden lg:block'>
-                      <Minus className='w-5 h-5 text-gray-400' />{" "}
-                    </div>
-                    <div className='flex items-center gap-3'>
-                      <label className='block text-sm sm:text-base font-medium text-gray-700'>
-                        Maximum
-                      </label>
-                      {/* Search Input */}
-                      <div className='relative p-1'>
-                        <Input
-                          type='number'
-                          placeholder='0'
-                          value={maxVenueCapacity}
-                          onChange={(e) =>
-                            setMaxVenueCapacity(Number(e.target.value))
-                          }
-                          className='min-w-20 bg-transparent border rounded-full'
-                        />
-                      </div>
+                  <div className='space-y-4'>
+                    {/* Search Input */}
+                    <div className='relative'>
+                      <Input
+                        placeholder='Search venue'
+                        value={venueSearchInput}
+                        onChange={(e) => setVenueSearchInput(e.target.value)}
+                        className='h-12 pl-4 pr-10 bg-white! border border-gray-300 rounded-full'
+                      />
+                      <Search className='absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
                     </div>
                   </div>
                 </div>
@@ -490,7 +348,7 @@ export function SearchSection({ className }: { className?: string }) {
             )}
 
             {/* Location and Dates Section */}
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8'>
+            <div className='grid grid-cols-1  gap-4 sm:gap-6 mb-6 sm:mb-8'>
               {/* Location */}
               <div>
                 <label className='block text-sm sm:text-base font-medium text-gray-700 mb-3'>
@@ -502,7 +360,7 @@ export function SearchSection({ className }: { className?: string }) {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     ref={locationInputRef}
-                    className='pr-10 border-gray-300 text-sm sm:text-base h-12 sm:h-14 rounded-full'
+                    className='bg-white! pr-10 border-gray-300 text-sm sm:text-base h-12 sm:h-14 rounded-full'
                   />
                   {location && (
                     <button
@@ -513,69 +371,6 @@ export function SearchSection({ className }: { className?: string }) {
                     </button>
                   )}
                 </div>
-              </div>
-
-              {/* Dates */}
-              <div>
-                <label className='block text-sm sm:text-base font-medium text-gray-700 mb-3'>
-                  Dates
-                </label>
-                <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
-                  <PopoverTrigger asChild>
-                    <button className='w-full px-4 sm:px-6 py-3 sm:py-4 border border-gray-300 rounded-full text-gray-600 hover:border-gray-400 transition-colors flex items-center justify-between bg-white text-sm sm:text-base'>
-                      <span>{dateDisplayText}</span>
-                      <Calendar className='w-5 h-5' />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className='w-full sm:w-auto p-4' align='end'>
-                    <div className='space-y-4'>
-                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                        {/* From Date */}
-                        <div>
-                          <h3 className='text-sm font-semibold mb-2 text-gray-700'>
-                            From
-                          </h3>
-                          <CalendarComponent
-                            mode='single'
-                            selected={dateRange?.from}
-                            onSelect={(day) =>
-                              day && handleDateSelect(day, "from")
-                            }
-                            disabled={(date) =>
-                              dateRange?.to ? date > dateRange.to : false
-                            }
-                            className='text-sm'
-                          />
-                        </div>
-
-                        {/* To Date */}
-                        <div>
-                          <h3 className='text-sm font-semibold mb-2 text-gray-700'>
-                            To
-                          </h3>
-                          <CalendarComponent
-                            mode='single'
-                            selected={dateRange?.to}
-                            onSelect={(day) =>
-                              day && handleDateSelect(day, "to")
-                            }
-                            disabled={(date) =>
-                              dateRange?.from ? date < dateRange.from : false
-                            }
-                            className='text-sm'
-                          />
-                        </div>
-                      </div>
-
-                      <Button
-                        onClick={() => setIsDateOpen(false)}
-                        className='w-full bg-gray-900 hover:bg-gray-800 text-white'
-                      >
-                        Apply
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
               </div>
             </div>
 

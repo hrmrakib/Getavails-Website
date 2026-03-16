@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { set } from "date-fns";
 
 interface SearchState {
+  page: number;
+  limit: number;
+  resultType: string;
   results: any[];
   meta: any | null;
   message: string | null;
@@ -8,6 +12,9 @@ interface SearchState {
 }
 
 const initialState: SearchState = {
+  page: 1,
+  limit: 10,
+  resultType: "",
   results: [],
   meta: null,
   message: null,
@@ -33,9 +40,27 @@ const searchSlice = createSlice({
     setSearchLoading: (state, action: PayloadAction<boolean>) => {
       state.searchLoading = action.payload;
     },
+
+    setResultType: (state, action: PayloadAction<string>) => {
+      state.resultType = action.payload;
+    },
+
+    setPage: (state, action: PayloadAction<number>) => {
+      state.page = action.payload;
+    },
+
+    setLimit: (state, action: PayloadAction<number>) => {
+      state.limit = action.payload;
+    },
   },
 });
 
-export const { setSearchResult, clearSearchResult, setSearchLoading } =
-  searchSlice.actions;
+export const {
+  setSearchResult,
+  clearSearchResult,
+  setSearchLoading,
+  setResultType,
+  setPage,
+  setLimit,
+} = searchSlice.actions;
 export default searchSlice.reducer;
