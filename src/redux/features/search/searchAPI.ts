@@ -1,3 +1,4 @@
+import page from "@/app/dashboard/venue/message/[id]/page";
 import baseAPI from "@/redux/api/api";
 
 const searchAPI = baseAPI.injectEndpoints({
@@ -18,11 +19,23 @@ const searchAPI = baseAPI.injectEndpoints({
     }),
 
     searchArtists: build.query({
-      query: (params) => ({
-        url: "/system-performers/search-performers",
-        method: "GET",
-        params,
-      }),
+      query: ({ page, limit, search, genres }) => {
+        // url: "/system-performers/search-performers",
+        // method: "GET",
+        // params,
+
+        const query = new URLSearchParams({});
+
+        if (page) query.set("page", page.toString());
+        if (limit) query.set("limit", limit.toString());
+        if (search) query.set("search", search);
+        if (genres) query.set("genres", genres);
+
+        return {
+          url: `/system-performers/search-performers?${query.toString()}`,
+          method: "GET",
+        };
+      },
     }),
   }),
 });

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { set } from "date-fns";
 
 interface SearchState {
   page: number;
@@ -13,7 +12,7 @@ interface SearchState {
 
 const initialState: SearchState = {
   page: 1,
-  limit: 10,
+  limit: 25,
   resultType: "",
   results: [],
   meta: null,
