@@ -7,7 +7,7 @@ import {
   useGetVenueDetailQuery,
   useOfferRequestMutation,
 } from "@/redux/features/book/bookAPI";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 
 interface BookingFormData {
@@ -37,7 +37,11 @@ const MONTHS = [
 export default function BookingCalendar() {
   const router = useRouter();
   const { id } = useParams();
+  const searchParams = useSearchParams();
   const today = new Date();
+  const type = searchParams.get("type");
+
+  console.log({ type }); // artist
 
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -55,12 +59,12 @@ export default function BookingCalendar() {
     notes: "",
   });
 
-  const resultType = useSelector((state: any) => state?.search?.resultType);
+  // const resultType = useSelector((state: any) => state?.search?.resultType);
   const { data: performerData } = useGetPerformerDetailQuery(id, {
-    skip: resultType !== "artist",
+    skip: type !== "artist",
   });
   const { data: venueData } = useGetVenueDetailQuery(id, {
-    skip: resultType !== "venue",
+    skip: type !== "venue",
   });
   const [offerRequestMutation, { isLoading }] = useOfferRequestMutation();
 
@@ -157,7 +161,7 @@ export default function BookingCalendar() {
         : formData.preferredTime;
 
     const payload: Record<string, unknown> = {
-      kind: resultType === "artist" ? "ARTIST" : "VENUE",
+      kind: type === "artist" ? "ARTIST" : "VENUE",
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
@@ -167,7 +171,7 @@ export default function BookingCalendar() {
       additional_info: formData.notes,
     };
 
-    if (resultType === "artist") {
+    if (type === "artist") {
       payload.artist_name = performer?.name;
       payload.system_performer_id = performer?.id;
     } else {
