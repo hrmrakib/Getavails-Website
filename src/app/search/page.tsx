@@ -248,7 +248,14 @@ export default function Home() {
 
                           {/* CTA */}
                           <div className='mt-4 flex flex-wrap gap-3 items-center'>
-                            <Button className='w-full sm:w-auto rounded-full font-semibold px-6 md:px-8 py-2 md:py-3 bg-primary text-primary-foreground hover:bg-primary/90'>
+                            <Button
+                              onClick={() =>
+                                router.push(
+                                  `/book-now/${venue.id}?type=${resultType}`,
+                                )
+                              }
+                              className='w-full sm:w-auto rounded-full font-semibold px-6 md:px-8 py-2 md:py-3 bg-primary text-primary-foreground hover:bg-primary/90'
+                            >
                               Book Venue
                             </Button>
                             {venue.source_url && (

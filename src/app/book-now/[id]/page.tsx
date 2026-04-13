@@ -9,6 +9,7 @@ import {
 } from "@/redux/features/book/bookAPI";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 interface BookingFormData {
   name: string;
@@ -180,7 +181,7 @@ export default function BookingCalendar() {
     }
 
     try {
-      await offerRequestMutation(payload).unwrap();
+      const res = await offerRequestMutation(payload).unwrap();
       setIsModalOpen(false);
       setFormData({
         name: "",
@@ -190,6 +191,10 @@ export default function BookingCalendar() {
         budget: "",
         notes: "",
       });
+
+      if (res?.success) {
+        toast.success(res.message || "Booking successful");
+      }
     } catch (err) {
       console.error("Booking error:", err);
     }

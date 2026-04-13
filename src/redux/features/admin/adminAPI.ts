@@ -75,6 +75,13 @@ const adminAPI = baseAPI.injectEndpoints({
         method: "POST",
       }),
     }),
+
+    getAllOfferRequest: builder.query({
+      query: ({ kind = "VENUE", page = 1, limit = 10 }) => ({
+        url: `/offer-request?kind=${kind}&page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -89,4 +96,5 @@ export const {
   useUpdateSubscriptionMutation,
   useDeleteSubscriptionMutation,
   usePaySubscriptionMutation,
+  useGetAllOfferRequestQuery,
 } = adminAPI;

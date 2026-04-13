@@ -10,6 +10,7 @@ import {
   Medal,
   FolderKanban,
   MessageCircleMore,
+  BookImage,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -110,6 +111,15 @@ const AdminSidebar = () => {
           active={
             pathname === "/dashboard/user-query" ||
             pathname.startsWith("/dashboard/user-query/")
+          }
+        />
+        <NavItem
+          href='/dashboard/booking-request'
+          icon={BookImage}
+          label='Booking Request'
+          active={
+            pathname === "/dashboard/booking-request" ||
+            pathname.startsWith("/dashboard/booking-request/")
           }
         />
 
