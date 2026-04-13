@@ -207,6 +207,7 @@ export function SearchSection({ className }: { className?: string }) {
           };
 
     // Persist params so pagination can replay the same query
+
     lastSearchParams.current = params;
 
     await runSearch(params, 1, limit);
@@ -378,13 +379,19 @@ export function SearchSection({ className }: { className?: string }) {
                   <Input
                     placeholder='City or Zip Code'
                     value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    onChange={(e) => {
+                      setLocation(e.target.value);
+                      setCoordinates(null);
+                    }}
                     ref={locationInputRef}
                     className='bg-white! pr-10 border-gray-300 text-sm sm:text-base h-12 sm:h-14 rounded-full'
                   />
                   {location && (
                     <button
-                      onClick={() => setLocation("")}
+                      onClick={() => {
+                        setLocation("");
+                        setCoordinates(null);
+                      }}
                       className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors'
                     >
                       <X className='w-5 h-5' />
