@@ -5,6 +5,8 @@ import Image from "next/image";
 import { SearchSection } from "@/components/home/HeroSearch";
 import { useSelector, useDispatch } from "react-redux";
 import { setPage, setLimit } from "@/redux/features/search/searchSlice";
+import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // --- Venue shape (from SeatGeek venues API) ---
 interface VenueResult {
@@ -37,10 +39,9 @@ interface ArtistResult {
   booked_dates: Record<string, string>; // { "ISO date string": "event name" }
 }
 
-const LIMIT_OPTIONS = [10, 20, 50];
-
 // Main Page Component
 export default function Home() {
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const results = useSelector((state: any) => state?.search?.results ?? []);
@@ -51,6 +52,7 @@ export default function Home() {
   const { page, limit, total, totalPages } = useSelector(
     (state: any) => state?.search?.meta?.pagination ?? 1,
   );
+  console.log({ resultType });
 
   const data = useSelector((state: any) => state?.search);
 
@@ -170,7 +172,10 @@ export default function Home() {
 
                             {/* CTA */}
                             <div className='mt-4 flex flex-wrap gap-3 items-center'>
-                              <Button className='w-full sm:w-auto rounded-full font-semibold px-6 md:px-8 py-2 md:py-3 bg-primary text-primary-foreground hover:bg-primary/90'>
+                              <Button
+                                onClick={() => router.push(`/book-now/${artist.id}`)}
+                                className='w-full sm:w-auto rounded-full font-semibold px-6 md:px-8 py-2 md:py-3 bg-primary text-primary-foreground hover:bg-primary/90'
+                              >
                                 Book Artist
                               </Button>
                               {artist.source_url && (
@@ -259,12 +264,19 @@ export default function Home() {
                   ))}
               </div>
 
+              {/* ──── Loading Indicator ─── */}
+              {searchLoading && (
+                <div className='flex justify-center items-center gap-2 mt-8'>
+                  Get more <Loader className='animate-spin' />
+                </div>
+              )}
+
               {/* ── PAGINATION ── */}
               {totalPages > 1 && (
                 <div className='flex justify-center items-center gap-2 mt-8'>
                   {/* Prev Button */}
                   <button
-                    disabled={page === 1}
+                    disabled={page === 1 || searchLoading}
                     onClick={() => dispatch(setPage(page - 1))}
                     className='w-8 h-8 rounded-full border border-border flex items-center justify-center disabled:opacity-50'
                   >
@@ -294,7 +306,7 @@ export default function Home() {
 
                   {/* Next Button */}
                   <button
-                    disabled={page === totalPages}
+                    disabled={page === totalPages || searchLoading}
                     onClick={() => dispatch(setPage(page + 1))}
                     className='w-8 h-8 rounded-full border border-border flex items-center justify-center disabled:opacity-50'
                   >
