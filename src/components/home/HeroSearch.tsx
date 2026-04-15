@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Calendar, Search, X, ChevronDown, Minus } from "lucide-react";
+import { Search, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -41,6 +41,11 @@ export function SearchSection({ className }: { className?: string }) {
     "artist" | "venue"
   >("artist");
   const [radiusValue, setRadiusValue] = useState([0, 0]);
+  // google places auto-suggest
+  const [coordinates, setCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   // Track the last submitted search params so pagination can re-use them
   const lastSearchParams = useRef<Record<string, any> | null>(null);
@@ -76,11 +81,7 @@ export function SearchSection({ className }: { className?: string }) {
     runSearch(lastSearchParams.current, page, limit);
   }, [page, limit]);
 
-  // google places auto-suggest
-  const [coordinates, setCoordinates] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  console.log({ coordinates });
 
   const locationInputRef = useRef<HTMLInputElement>(null);
   const [mapsInstance, setMapsInstance] = useState<any>(null);
