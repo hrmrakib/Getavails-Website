@@ -52,7 +52,6 @@ export default function Home() {
   const { page, limit, total, totalPages } = useSelector(
     (state: any) => state?.search?.meta?.pagination ?? 1,
   );
-  console.log({ resultType });
 
   const data = useSelector((state: any) => state?.search);
 
@@ -303,7 +302,11 @@ export default function Home() {
                     .map((p) => (
                       <button
                         key={p}
-                        onClick={() => dispatch(setPage(p))}
+                        onClick={() => {
+                          dispatch(setPage(p));
+
+                          console.log("first", p);
+                        }}
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm
                         ${
                           page === p
